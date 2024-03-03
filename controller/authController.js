@@ -152,7 +152,7 @@ const login = async (req, res) => {
     await user.save();
 
     // Tạo một token JWT
-    const token = AuthService.generateToken({userId: user._id})
+    const token = AuthService.generateToken({user})
 
     // Gửi token về cho client
     res.status(200).json({
