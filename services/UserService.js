@@ -1,5 +1,5 @@
 // services/userService.js
-const UserModel = require('../models/userModel').UserModel;
+const UserModel = require('../models/usermodel');
 
 const getUserInfo = async (userId) => {
   // Implement get user info logic here
