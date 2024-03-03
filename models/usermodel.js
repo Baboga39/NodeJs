@@ -1,7 +1,7 @@
 // models/UserModel.js
 const mongoose = require('mongoose');
 const validator = require('validator');
-//const bcrypt = require('bcryp');
+//const bcrypt = require('bcrypt');
 const bcrypt = require('bcryptjs');
 
 if (mongoose.models.User) {
