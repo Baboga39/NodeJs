@@ -48,7 +48,7 @@ const register = async (req, res) => {
         success: false,
         statusCode: 500,
         message: 'Internal server error',
-        result: null,
+        result: error.message,
       });
     }
   }
