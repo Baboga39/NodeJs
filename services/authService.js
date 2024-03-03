@@ -27,6 +27,7 @@ class AuthService {
   };
   static resetPassword = async(user, password) =>{
   user.password = password; // Đảm bảo rằng bạn đã mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+  user.status ="completed";
   await VerificationToken.findOneAndDelete({ user_id: user._id });
   await user.save();
   }
