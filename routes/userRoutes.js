@@ -1,8 +1,8 @@
-// routes/userRoutes.js
-const express = require('express');
-const userController = require('../controller/index').userController;
-const router = express.Router();
+// // routes/userRoutes.js
+// const express = require('express');
+// const userController = require('../controller/index').userController;
+// const router = express.Router();
 
-router.get('/info', userController.getUserInfo);
+// router.get('/info', userController.getUserInfo);
 
-module.exports = router;
+// module.exports = router;
