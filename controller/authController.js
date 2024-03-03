@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/usermodel');
 const AuthService= require('../services/authService');
+const bcryptjs = require('bcryptjs');
 const VerificationToken = require('../models/VerificationTokenModel');
 const UserDTO = require('../dto/UserDTO');
 
@@ -137,7 +138,7 @@ const login = async (req, res) => {
     }
 
     // Kiểm tra mật khẩu
-    const isPasswordValid = await bcrypt.compare(password,String(user.password).trim());
+    const isPasswordValid = await bcryptjs.compare(password,String(user.password).trim());
     console.log(isPasswordValid)
     if (!isPasswordValid) {
       // Nếu mật khẩu không đúng, tăng số lần đăng nhập sai
