@@ -10,7 +10,7 @@ const getUserInfo = async (req, res) => {
 const updatedUserInfo = async (req, res) => {
   try {
     const authenticatedUser = req.user;
-    let inputProfileDTO = ProfileDTO.fromRequest(req.body);
+    const inputProfileDTO = ProfileDTO.fromRequest(req.body);
     console.log(inputProfileDTO);
     const userUpdate= await userService.updateUserInfo(authenticatedUser, inputProfileDTO,res)
   } catch (error) {
