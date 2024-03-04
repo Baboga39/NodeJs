@@ -54,17 +54,19 @@ const userSchema = new mongoose.Schema({
       message: 'Invalid phone number format',
     },
   },
-  status: {
+  gender: {
     type: String,
-    enum: ['completed', 'unverified', 'locked'],
-    default: 'unverified',
+    enum: ['male', 'female'],
+    default: 'male',
   },
   second_name: {
     type: String,
     trim: true,
   },
-  gender: {
+  status: {
     type: String,
+    enum: ['completed', 'unverified', 'locked'],
+    default: 'unverified',
   },
   Descriptions: {
     type: String,
@@ -74,6 +76,46 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  address:{
+    type: String,
+    trim: true,
+    default: null,
+
+  },
+  company:{
+    type: String,
+    trim: true,
+    default: null,
+  },
+  country:{
+    type: String,
+    default: null,
+    trim: true,
+  },
+  school:{
+    type: String,
+    default: null,
+    trim: true,
+  },
+  avatar: {
+    publicId: { type: String, default: null },
+    url: { type: String, default: null },
+  },
+  totalFollower: { 
+    type: Number, 
+    default:0},
+  totalFollowing: { 
+    type: Number, 
+    default:0
+  },
+  totalBlog:{
+    type: Number, 
+    default:0
+  },
+  totalSeries:{
+    type: Number, 
+    default:0
+  }
 }, { timestamps: true,  strict: false });
 userSchema.pre('save', async function (next) {
   const user = this;

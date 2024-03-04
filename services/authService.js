@@ -3,7 +3,9 @@ const mailService = require('../services/mailService');
 const VerificationToken = require('../models/VerificationTokenModel');
 class AuthService {
   static generateToken(payload) {
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1w' });
+    
   }
   static isTokenExpired = (expiryDate) => {
     const currentTime = new Date();
@@ -26,7 +28,7 @@ class AuthService {
     return OTP;
   };
   static resetPassword = async(user, password) =>{
-  user.password = password; // Đảm bảo rằng bạn đã mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+  user.password = password;
   user.status ="completed";
   await VerificationToken.findOneAndDelete({ user_id: user._id });
   await user.save();
