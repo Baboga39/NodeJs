@@ -27,8 +27,8 @@ const updatedUserInfo = async (req, res) => {
 const updateAvatar = async (req,res) => {
   try {
     const authenticatedUser = req.user;
-    const fildeData  = req.file;
-    const userUpdate= await userService.uploadAvatar(authenticatedUser, fildeData)
+    const fildData  = req.file;
+    const userUpdate= await userService.uploadAvatar(authenticatedUser, fildData)
     console.log('Updated Avatar successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     res.status(200).json({
