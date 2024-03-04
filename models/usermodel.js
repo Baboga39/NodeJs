@@ -80,22 +80,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: null,
-
-  },
-  company:{
-    type: String,
-    trim: true,
-    default: null,
-  },
-  country:{
-    type: String,
-    default: null,
-    trim: true,
-  },
-  school:{
-    type: String,
-    default: null,
-    trim: true,
   },
   avatar: {
     publicId: { type: String, default: null },

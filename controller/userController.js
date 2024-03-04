@@ -2,28 +2,21 @@
 const userService = require('../services/UserService');
 const bcryptjs = require('bcryptjs');
 const User = require('../models/usermodel');
-const profileDTO = require('../dto/ProfileUserDTO');
 const AuthService = require('../services/authService');
+const ProfileDTO = require('../dto/ProfileUserDTO')
 const getUserInfo = async (req, res) => {
     res.send('User Info');
 };
 const updatedUserInfo = async (req, res) => {
   try {
     const authenticatedUser = req.user;
-    let inputProfileDTO = req.body;
+    let inputProfileDTO = ProfileDTO.fromRequest(req.body);
+    console.log(inputProfileDTO);
     const userUpdate= await userService.updateUserInfo(authenticatedUser, inputProfileDTO,res)
-    console.log('Updated user info successfully')
-    console.log('--------------------------------------------------------------------------------------------------------------------')
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'User information updated successfully',
-      result: userUpdate,
-    });
   } catch (error) {
     console.log('Error updating user')
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       statusCode: 500,
       message: 'Internal server error',
