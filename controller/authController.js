@@ -142,7 +142,8 @@ const login = async (req, res) => {
     // Kiểm tra trạng thái người dùng
     if (user.status === 'unverified') {
       console.log('Account not verified. Please check your email for verification.')
-      console.log('--------------------------------------------------------------------------------------------------------------------')
+      console.log('--------------------------------------------------------------------------------------------------------------------');
+      await AuthService.generateOTP(user);
       return res.status(401).json({
         success: false,
         statusCode: 401,

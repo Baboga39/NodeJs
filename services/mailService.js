@@ -230,6 +230,7 @@ const sendVerificationEmail = async (email, otp) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log('--------------------------------------------------------------------------------------------------------------------')
     console.log('Verification email sent successfully');
   } catch (error) {
     console.error('Error sending verification email:', error);
