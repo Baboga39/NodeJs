@@ -12,18 +12,18 @@ const categorySchema = new mongoose.Schema({
 
 categorySchema.plugin(autopopulate);
 
-categorySchema.methods.addTags = async function (tagIds) {
-  // Lọc ra các tagId chưa tồn tại trong mảng tags
-  const newTagIds = tagIds.filter(tagId => !this.tags.includes(tagId));
-
+categorySchema.methods.addTags = async function (newTagIds) {
   // Tìm và thêm các tag mới vào mảng tags
   for (const tagId of newTagIds) {
-    const existingTag = await Tag.findById(tagId);
-    if (existingTag) {
-      this.tags.push(existingTag);
-    }
+     const existingTag = await Tag.findById(tagId);
+     if (existingTag) {
+      console.log('Found existing');
+      const duplicate = this.tags.some(existingTagId => existingTagId.equals(tagId));
+        if (!duplicate) { // chỉ thêm tag nếu nó chưa tồn tại 
+           this.tags.push(existingTag);
+        }
+     }
   }
-
   // Lưu thay đổi
   await this.save();
 };
