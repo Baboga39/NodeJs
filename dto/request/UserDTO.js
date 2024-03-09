@@ -1,4 +1,4 @@
-const ValidatorUtils = require('../config/ValidatorUtlis');
+const ValidatorUtils = require('../../config/ValidatorUtlis');
 
 class UserDTO {
   constructor(name, username, email, password, roles, createDate, updateDate, phone, status, second_name, gender, Descriptions) {

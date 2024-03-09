@@ -3,7 +3,7 @@ const User = require('../models/usermodel');
 const AuthService= require('../services/authService');
 const bcryptjs = require('bcryptjs');
 const VerificationToken = require('../models/VerificationTokenModel');
-const UserDTO = require('../dto/UserDTO');
+const UserDTO = require('../dto/request/UserDTO');
 
 // Register function
 const register = async (req, res) => {

@@ -3,9 +3,41 @@ const userService = require('../services/UserService');
 const bcryptjs = require('bcryptjs');
 const User = require('../models/usermodel');
 const AuthService = require('../services/authService');
-const ProfileDTO = require('../dto/ProfileUserDTO')
+const ProfileDTO = require('../dto/request/ProfileUserDTO')
 const getUserInfo = async (req, res) => {
-    res.send('User Info');
+  try {
+    const userId = req.query.userId;
+    if (!userId){
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'User not found',
+        result: null,
+      });
+    }
+    const user = await userService.getUserInfo(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'User not found',
+        result: null,
+      });
+    }
+    return res.status(200).json({
+      success: false,
+      statusCode: 200,
+      message: 'User information',
+      result: user,
+    });
+  } catch (error) {
+     return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal server error',
+      result: error.message,
+    });
+  }
 };
 const updatedUserInfo = async (req, res) => {
   try {
@@ -28,8 +60,9 @@ const updateAvatar = async (req,res) => {
   try {
     const authenticatedUser = req.user;
     const fileData  = req.file;
-
+    console.log(fileData);
     const userUpdate= await userService.uploadAvatar(authenticatedUser, fileData)
+    
     console.log('Updated Avatar successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     res.status(200).json({

@@ -3,7 +3,11 @@ const UserModel = require('../models/usermodel')
 const cloudinary = require('cloudinary').v2;
 class UserService {
 static getUserInfo = async (userId) => {
-  // Implement get user info logic here
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    return null;
+  }
+  return user;
 };
 static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
 

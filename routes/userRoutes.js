@@ -5,7 +5,7 @@ const userController = require('../controller/userController');
 const uploadCloud = require('../middlewares/uploadCloudinary');
 const router = express.Router();
 
-router.get('/info', userController.getUserInfo);
+router.get('/', userController.getUserInfo);
 router.put('/removeAvatar',auth.authenticateToken,userController.removeAvatar)
 router.patch('/resetPassword',auth.authenticateToken,userController.newPassword)
 router.put('/changeAvatar',auth.authenticateToken,uploadCloud.single('image'),userController.updateAvatar)
