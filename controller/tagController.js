@@ -38,7 +38,7 @@ const getAllTags = async (req, res) =>{
     const tags = await Service.tagService.getAllTags();
         console.log('Get All tags')
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             statusCode: 200,
             message: 'All tags',
@@ -51,7 +51,7 @@ const getTagById = async (req, res) =>{
     const tag = await Service.tagService.getTagById(id);
         console.log('Get Tag By Id')
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             statusCode: 200,
             message: 'Tag By Id',
@@ -64,7 +64,7 @@ const deleteTagById = async (req, res) =>{
     await Service.tagService.deleteTag(id);
         console.log('Delete Tag Successfully')
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             statusCode: 200,
             message: 'Delete Tag Successfully',
