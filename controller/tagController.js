@@ -12,7 +12,7 @@ const addTAg = async (req, res) => {
                 success: false,
                 statusCode: 400,
                 message: 'Exits Tag',
-                result: error
+                result: null
             })
         }
         console.log('Add tag successfully')
@@ -20,17 +20,17 @@ const addTAg = async (req, res) => {
         return res.status(200).json({
             success: true,
             statusCode: 200,
-            message: 'Added tag successfully',
+            message: 'Add tag successfully',
             result: tag
         })
     } catch (error) {
         console.log('Internal Server Error '+ error.message)
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        return  res.status(500).json({
+        return res.status(500).json({
             success: false,
             statusCode: 500,
             message: 'Internal Server Error',
-            result: error
+            result: error.message
         })
     }
 }
