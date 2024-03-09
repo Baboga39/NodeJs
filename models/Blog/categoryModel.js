@@ -13,17 +13,20 @@ const categorySchema = new mongoose.Schema({
 categorySchema.plugin(autopopulate);
 
 categorySchema.methods.addTags = async function (tagIds) {
- 
-  for (const tagId of tagIds) {
+  // Lọc ra các tagId chưa tồn tại trong mảng tags
+  const newTagIds = tagIds.filter(tagId => !this.tags.includes(tagId));
+
+  // Tìm và thêm các tag mới vào mảng tags
+  for (const tagId of newTagIds) {
     const existingTag = await Tag.findById(tagId);
     if (existingTag) {
       this.tags.push(existingTag);
     }
   }
 
+  // Lưu thay đổi
   await this.save();
 };
-
 categorySchema.pre('findOneAndDelete', async function (next) {
 
   const Blog = require('../Blog/blogModel');

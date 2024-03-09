@@ -106,12 +106,12 @@ const uploadImage = async (req,res) => {
       });
     }
   }
-  const uploadAvatar = async (req,res) => {
-    try {
-      const fileData  = req.file;
-      console.log('Upload Image successfully')
-      console.log('--------------------------------------------------------------------------------------------------------------------')
-      res.status(200).json({
+    const uploadAvatar = async (req,res) => {
+      try {
+        const fileData  = req.file;
+        console.log('Upload Image successfully')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        res.status(200).json({
         success: true,
         statusCode: 200,
         message: 'Upload Image successfully',
