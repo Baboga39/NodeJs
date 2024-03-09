@@ -10,7 +10,7 @@ const createBlog = async (req, res) => {
         const blog = await Service.blogService.createBlog(blogDTO,authenticatedUser);
         console.log('Create Blog successfully')
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             statusCode: 200,
             message: 'Create Blog Success',
@@ -19,7 +19,7 @@ const createBlog = async (req, res) => {
         
     }
     catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             statusCode: 500,
             message: 'Internal Server Error',
@@ -36,7 +36,7 @@ const createBlogDraft = async (req, res) => {
       const blog = await Service.blogService.createBlogDraft(blogDTO,authenticatedUser);
       console.log('Create Blog Draft successfully')
       console.log('--------------------------------------------------------------------------------------------------------------------')
-      res.status(200).json({
+       return res.status(200).json({
           success: true,
           statusCode: 200,
           message: 'Create Blog Draft Success',
@@ -45,7 +45,7 @@ const createBlogDraft = async (req, res) => {
       
   }
   catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
           success: false,
           statusCode: 500,
           message: 'Internal Server Error',
@@ -73,7 +73,7 @@ const getBlogById = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             statusCode: 500,
             message: 'Internal Server Error',
@@ -91,14 +91,14 @@ const uploadImage = async (req,res) => {
       
       console.log('Upload Image successfully')
       console.log('--------------------------------------------------------------------------------------------------------------------')
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         statusCode: 200,
         message: 'Upload Image successfully',
         result: fileData.path,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         statusCode: 500,
         message: 'Internal server error',
@@ -111,14 +111,14 @@ const uploadImage = async (req,res) => {
         const fileData  = req.file;
         console.log('Upload Image successfully')
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        res.status(200).json({
+        return res.status(200).json({
         success: true,
         statusCode: 200,
         message: 'Upload Image successfully',
         result: fileData.path,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         statusCode: 500,
         message: 'Internal server error',
@@ -142,7 +142,7 @@ const uploadImage = async (req,res) => {
       });
     }
     catch (error) {
-      res.status(500).json({
+     return  res.status(500).json({
         success: false,
         statusCode: 500,
         message: 'Internal server error',
@@ -164,7 +164,7 @@ const uploadImage = async (req,res) => {
       });
     }
     catch (error) {
-      res.status(500).json({
+     return res.status(500).json({
         success: false,
         statusCode: 500,
         message: 'Internal server error',
