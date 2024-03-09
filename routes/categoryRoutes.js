@@ -12,4 +12,6 @@ router.post('/addTagToCategory', controller.categoryController.addTagsToCategory
 
 router.delete('/:categoryId', controller.categoryController.deleteCategoryById);
 
+router.patch('/removeTag', controller.categoryController.removeTags)
+
 module.exports = router;

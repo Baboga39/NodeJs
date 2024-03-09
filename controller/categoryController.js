@@ -123,10 +123,32 @@ const deleteCategoryById = async (req, res) => {
         result: null,
     })
 }
+const removeTags = async (req, res) => {
+    const {tagIds, categoryId} = req.body;
+
+    const category = await Service.categoryService.removeTagsFromCategory(tagIds, categoryId);
+    if (category==null) {
+        console.log('Not found category')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: 'Not found category',
+            result: null,
+        })
+    }
+    return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Remove Tag From Category Success',
+        result: category,
+    })
+}
 module.exports = {
     addCategory,
     addTagsToCategory,
     getCategoryById,
     getAllCategory,
     deleteCategoryById,
+    removeTags,
 }

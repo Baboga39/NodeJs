@@ -48,6 +48,14 @@ class CategoryService {
         await Category.findOneAndDelete(categoryId)
         return 1;
     }
+    static async removeTagsFromCategory(tagIds,categoryId) {
+        const category = await categoryModel.findById(categoryId);
+        if (!category) {
+            return null;
+        }
+        await category.removeTags(tagIds);
+        return category;
+    }
 }
 
 module.exports = CategoryService

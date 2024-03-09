@@ -35,5 +35,20 @@ categorySchema.pre('findOneAndDelete', async function (next) {
 
   next();
 });
+categorySchema.methods.removeTags = async function (tagIdsToRemove) {
+  const updatedTags = [];
 
+  this.tags.forEach(tagId => {
+    if (!tagIdsToRemove.includes(tagId._id.toString())) {
+      console.log(tagIdsToRemove)
+      console.log(tagId.toString())
+      updatedTags.push(tagId);
+    }
+  });
+
+  this.tags = updatedTags;
+
+  // Lưu thay đổi
+  await this.save();
+};
 module.exports = mongoose.model('Category', categorySchema);;
