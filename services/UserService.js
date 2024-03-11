@@ -127,5 +127,9 @@ static newPassword = async(req, res) =>{
     result: null,
   });
 } 
+
+
+//////////////////////////////// Interaction with Categories //////////////////////////////////////////////////////////////////
+
 }
 module.exports = UserService

@@ -10,8 +10,8 @@ const blogSchema = new mongoose.Schema({
   content: String,
   description: String,
   avatar: {
-    type: String,
-    default: null
+    publicId: { type: String, default: null },
+    url: { type: String, default: null },
   },
   status: {
     type: String,
@@ -27,7 +27,7 @@ const blogSchema = new mongoose.Schema({
     default:0
   },
   user: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' ,autopopulate: true},
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' ,autopopulate: false},
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate : true }],
   
 }, { timestamps: true, strict: false });

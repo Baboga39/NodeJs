@@ -11,11 +11,17 @@ const categorySchema = new mongoose.Schema({
     enum: ['Publish', 'Private'],
     default: 'Publish',
   },
-  isAdmin: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
-  users: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true}],
-  avatar: String,
-  banner: String,
-  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate: true }],
+  isAdmin: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false},
+  users: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false}],
+  avatar: {
+    publicId: { type: String, default: null },
+    url: { type: String, default: null },
+  },
+  banner: {
+    publicId: { type: String, default: null },
+    url: { type: String, default: null },
+  },
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate: false }],
 }, { timestamps: true, strict: false });
 
 categorySchema.plugin(autopopulate);

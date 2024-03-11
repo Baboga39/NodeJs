@@ -65,14 +65,14 @@ const updateAvatar = async (req,res) => {
     
     console.log('Updated Avatar successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'Change avatar updated successfully',
       result: userUpdate,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       statusCode: 500,
       message: 'Internal server error',
@@ -86,14 +86,14 @@ const removeAvatar= async(req,res) =>{
     const userUpdate= await userService.removeAvatar(authenticatedUser)
     console.log('Remove Avatar successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'Remove avatar updated successfully',
       result: null,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       statusCode: 500,
       message: 'Internal server error',
