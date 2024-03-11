@@ -14,7 +14,8 @@ router.post('/uploadAvatar',middleware.authenticateToken ,uploadCloud.single('im
 router.put('/edit/:blogId',middleware.authenticateToken,controller.blogController.editBlog);
 
 
-router.get('/:blogId',middleware.authenticateToken,controller.blogController.getBlogById);
+router.get('/getBlogById/:blogId',middleware.authenticateToken,controller.blogController.getBlogById);
+router.get('/allBlog',middleware.authenticateToken,controller.blogController.getAllBlogByUserId);
 
 router.delete('/:blogId',controller.blogController.deleteBlogById);
 

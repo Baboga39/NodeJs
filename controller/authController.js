@@ -14,7 +14,6 @@ const register = async (req, res) => {
     const user = new User({
       ...userData,
     });
-
     // Save user to database
     await user.save();
 

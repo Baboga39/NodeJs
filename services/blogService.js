@@ -75,6 +75,14 @@ class BlogService{
     static deleteBlogById(blogId){
         return Blog.findByIdAndDelete(blogId);
     }
+    static getAllBlogByUserId = async (authenticatedUsers)=> {
+        const user = await User.findById(authenticatedUsers.user._id);
+        if (!user) {
+            return null;
+          }
+        const blog = await Blog.find({user: user._id});
+        return blog;
+    }
 }
 
 module.exports = BlogService;

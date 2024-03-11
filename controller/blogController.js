@@ -172,4 +172,37 @@ const uploadImage = async (req,res) => {
       });
     }
   }
-module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById};
+  const getAllBlogByUserId = async (req, res) => {
+    try {
+        const user = req.user;
+        const blogs = await Service.blogService.getAllBlogByUserId(user);
+
+        if(!blogs) {
+          console.log('Not Found User');
+          console.log('--------------------------------------------------------------------------------------------------------------------')
+          return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Not found User',
+                result: null,
+            });
+        }
+        console.log('Get All Blog Success')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Get All Blog Success',
+            result: blogs
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            statusCode: 500,
+            message: 'Internal Server Error',
+            result: error.message,
+        });
+    }
+  }
+module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId};
