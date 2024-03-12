@@ -299,12 +299,12 @@ const updateAvatar = async (req,res) => {
     const categoryId = req.params.categoryId;
     const categoryUpdate= await Service.categoryService.uploadAvatar(authenticatedUser.user,categoryId, fileData)
     if (categoryUpdate==1) {
-        console.log('User do not have permission to remove tags');
+        console.log('User do not have permission to edit this category');
         console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(400).json({
             success: false,
             statusCode: 401,
-            message: 'User do not have permission to remove tags',
+            message: 'User do not have permission to edit this category',
             result: null,
         })
     }
@@ -342,12 +342,12 @@ const updateBanner = async (req,res) => {
     const categoryId = req.params.categoryId;
     const categoryUpdate= await Service.categoryService.uploadAvatar(authenticatedUser.user,categoryId, fileData)
     if (categoryUpdate==1) {
-        console.log('User do not have permission to remove tags');
+        console.log('User do not have permission to edit this category');
         console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(400).json({
             success: false,
             statusCode: 401,
-            message: 'User do not have permission to remove tags',
+            message: 'User do not have permission to edit this category',
             result: null,
         })
     }
