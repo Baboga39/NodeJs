@@ -8,7 +8,13 @@ const routes = require('./routes');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// const corsOptions = {
+//   origin: 'http://your-allowed-origin.com',
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true, // cho phép sử dụng cookie, token,...
+// };
+
+// app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 routes(app);
