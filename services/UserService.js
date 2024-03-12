@@ -1,6 +1,8 @@
 // services/userService.js
 const UserModel = require('../models/usermodel')
 const cloudinary = require('cloudinary').v2;
+const Category = require('../models/Blog/categoryModel')
+const Blog = require('../models/Blog/blogModel')
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -130,6 +132,39 @@ static newPassword = async(req, res) =>{
 
 
 //////////////////////////////// Interaction with Categories //////////////////////////////////////////////////////////////////
+static joinCategory = async (authenticatedUser, categoryId) => {
+  const category = await Category.findById(categoryId);
+  if(!category)
+  {
+    return null;
+  }
+  await category.addUsers(authenticatedUser._id);
+  const userCount = await UserModel.countDocuments({ _id: { $in: category.users } });
+  category.sumUser = userCount;
+  return category;
+}
+
+
+
+
+
+
+
+
+//////////////////////////////// Interaction with blog //////////////////////////////////////////////////////////////////
+static likeBlog = async (authenticatedUser, blogId) => {
+  const blog = await Blog.findById(blogId);
+  if(!blog)
+  {
+    return null;
+  }
+  blog.likes++;
+  await blog.save();
+  return blog;
+}
+
+
+
 
 }
 module.exports = UserService

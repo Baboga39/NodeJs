@@ -1,7 +1,7 @@
 // models/Category.js
 const mongoose = require('mongoose');
 const autopopulate = require('mongoose-autopopulate');
-const Tag = mongoose.model('Tag');
+const Tag = require('./tagModel')
 const User = mongoose.model('User');
 const categorySchema = new mongoose.Schema({
   name: String,

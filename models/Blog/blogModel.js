@@ -18,7 +18,7 @@ const blogSchema = new mongoose.Schema({
     enum: ['Published', 'Draft'],
     default: 'Published',
   },
-  like:{
+  likes:{
     type:Number,
     default:0
   },
@@ -29,7 +29,8 @@ const blogSchema = new mongoose.Schema({
   user: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' ,autopopulate: false},
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate : true }],
-  
+  // listUserLike: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false}],
+
 }, { timestamps: true, strict: false });
 blogSchema.plugin(autopopulate)
 
