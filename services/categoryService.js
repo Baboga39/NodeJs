@@ -185,7 +185,7 @@ class CategoryService {
     }
     static getCategoryFromUser = async (userId) => {
         try {
-        const Categories = Category.find({ users: userId }).populate('users')
+        const Categories = await Category.find({ users: userId }).populate('users')
         .populate('tags')
         .populate('isAdmin');
         if ((await Categories).length===0) {

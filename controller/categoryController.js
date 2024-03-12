@@ -381,7 +381,8 @@ const updateBanner = async (req,res) => {
 const getCategoryByUser = async (req, res) => {
     try {
     const authenticatedUser = req.user;
-    console.log(authenticatedUser);
+    console.log(authenticatedUser.user._id);
+
     const category = await Service.categoryService.getCategoryFromUser(authenticatedUser.user._id);
     if (category==null) {
         console.log('Get Category Success')
