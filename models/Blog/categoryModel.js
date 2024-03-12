@@ -11,6 +11,12 @@ const categorySchema = new mongoose.Schema({
     enum: ['Publish', 'Private'],
     default: 'Publish',
   },
+  sumUser: {
+    type: Number,
+    default: function () {
+      return this.users.length;
+    },
+  },
   isAdmin: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false},
   users: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false}],
   avatar: {

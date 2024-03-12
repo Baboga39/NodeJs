@@ -5,6 +5,7 @@ const cloudinary = require('cloudinary').v2;
 
 class CategoryService {
     static async getAllCategories() {
+        this.updateSumUserForAllCategories()
         const categories = await categoryModel.find();
         return categories
     }
@@ -41,6 +42,7 @@ class CategoryService {
             categoryToEdit.description = newDescription || categoryToEdit.description;
             categoryToEdit.status = newStatus || categoryToEdit.status;
             await categoryToEdit.save();
+            this.updateSumUserForAllCategories()
             return categoryToEdit;
         }
         return 1;
@@ -72,11 +74,13 @@ class CategoryService {
         const categories = await Category.find();
         return categories;
     }
+
     static async deleteCategoryById(categoryId, authenticationUser) {
         const category = await Category.findById(categoryId);
         if (!category) {
             return null;
         }
+        
         if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles[0] == 'admin' ) {
             await Category.findOneAndDelete(categoryId)
             return category;
@@ -108,6 +112,8 @@ class CategoryService {
         }
         if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
             await category.addUsers(userIds);
+            const userCount = await User.countDocuments({ _id: { $in: category.users } });
+            category.sumUser = userCount;
             return category;
         }
         if (!category) {
@@ -124,6 +130,8 @@ class CategoryService {
         }
         if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
             await category.removeUsers(userIds);
+            const userCount = await User.countDocuments({ _id: { $in: category.users } });
+            category.sumUser = userCount;
             return category;
         }
         if (!category) {
@@ -176,7 +184,8 @@ class CategoryService {
         }
     }
     static getCategoryFromUser = async (userId) => {
-        try {const Categories = Category.find({ users: userId }).populate('users')
+        try {
+        const Categories = Category.find({ users: userId }).populate('users')
         .populate('tags')
         .populate('isAdmin');
         if ((await Categories).length===0) {
