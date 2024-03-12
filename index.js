@@ -14,7 +14,7 @@ const app = express();
 //   credentials: true, // cho phép sử dụng cookie, token,...
 // };
 
-// app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(bodyParser.json());
 routes(app);
