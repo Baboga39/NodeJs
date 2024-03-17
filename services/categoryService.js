@@ -94,15 +94,21 @@ class CategoryService {
         }
         return 1;
     }
-    static async getCategoryById(categoryId) {
+    static async getCategoryById(categoryId, user_id) {
         const category = await categoryModel.findById(categoryId).populate('users')
         .populate('tags')
         .populate('isAdmin');;
+        const user = await User.findById(user_id);
+        if (!user) {
+            console.log('------------------------------------------------------------------------------------------------')
+            console.log('Not found user');
+            return 1;
+        }
+        const statusUser = await this.getUserStatusInCategory(category, user._id); 
         if (!category) {
             return null;
         }
-        return category;
-    }
+        return { ...category.toObject(), statusUser };    }
     static async deleteCategoryById(categoryId, authenticationUser) {
         const category = await Category.findById(categoryId);
         if (!category) {

@@ -155,8 +155,9 @@ const addTagsToCategory = async (req, res) => {
 }
 const getCategoryById = async (req, res) => {
     const categoryId = req.query.categoryId;
+    const authenticatedUser = req.user;
     console.log(categoryId);
-    const category = await Service.categoryService.getCategoryById(categoryId);
+    const category = await Service.categoryService.getCategoryById(categoryId, authenticatedUser.user._id);
     if (category==null) {
         console.log('Not found category')
         console.log('--------------------------------------------------------------------------------------------------------------------')
