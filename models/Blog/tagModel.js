@@ -1,12 +1,21 @@
 // models/Tag.js
 const mongoose = require('mongoose');
+const autopopulate = require('mongoose-autopopulate');
 
 if (mongoose.models.Tag) {
     delete mongoose.models.Tag;
   }
 const tagSchema = new mongoose.Schema({
   name: String,
+  sumBlog: {
+    type: Number,
+    default: 0
+  },
+  user: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
+
 }, { timestamps: true, strict: false });
+tagSchema.plugin(autopopulate)
+
 
 tagSchema.pre('findByIdAndDelete', async function (next) {
   const tagId = this._id;
@@ -21,5 +30,4 @@ tagSchema.pre('findByIdAndDelete', async function (next) {
 
   next();
 });
-
 module.exports = mongoose.model('Tag', tagSchema);;

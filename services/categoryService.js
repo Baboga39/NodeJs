@@ -1,14 +1,43 @@
 const categoryModel = require('../models/Blog/categoryModel')
 const Category = require('../models/Blog/categoryModel')
 const User = require('../models/usermodel')
+const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
+const UserRequest = require('../models/Blog/userRequestModel')
+
 
 class CategoryService {
-    static async getAllCategories() {
-        this.updateSumUserForAllCategories()
-        const categories = await categoryModel.find();
-        return categories
+    static async getAllCategories(user_id) {
+        const categories = await categoryModel.find().populate('users');
+        const user = await User.findById(user_id);
+        if (!user) {
+            console.log('------------------------------------------------------------------------------------------------')
+            console.log('Not found user');
+            return 1;
+        }
+        const categoriesWithUserStatusPromises = categories.map(async category => {
+            const statusUser = await this.getUserStatusInCategory(category, user._id);  
+            return { ...category.toObject(), statusUser };
+        });
+        
+        // Sử dụng Promise.all để chờ tất cả các lời hứa hoàn thành
+        const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+        return categoriesWithUserStatus
     }
+    static getUserStatusInCategory = async (category, userId) => {
+        if (category.users.some(user => user.equals(userId))) {
+            return 'Join';
+        } else {
+            
+            const request = await UserRequest.findOne({ Category: category._id });
+            console.log(request)
+            if (request) {
+                return 'Pending';
+            } else {
+                return 'UnJoin';
+            }
+        }
+     };
     static async addCategory(name, description,tagIds, status, userIds, authenticationUser) {
     const user = await User.findById(authenticationUser._id);
     
@@ -24,6 +53,10 @@ class CategoryService {
     });
     await newCategory.addTags(tagIds);
     await newCategory.addUsers(userIds);
+    await newCategory.addUsers(user._id);
+    const userCount = await User.countDocuments({ _id: { $in: newCategory.users } });
+    newCategory.sumUser = userCount;
+    await newCategory.save();
     const populatedCategory = await categoryModel.findById(newCategory._id)
         .populate('users')
         .populate('tags');
@@ -70,19 +103,14 @@ class CategoryService {
         }
         return category;
     }
-    static async getAllCategories() {
-        const categories = await Category.find();
-        return categories;
-    }
-
     static async deleteCategoryById(categoryId, authenticationUser) {
         const category = await Category.findById(categoryId);
         if (!category) {
             return null;
         }
         
-        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles[0] == 'admin' ) {
-            await Category.findOneAndDelete(categoryId)
+        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+            await Category.findOneAndDelete({ _id: categoryId });
             return category;
         }
         return 1;
@@ -104,17 +132,31 @@ class CategoryService {
         return 1;
     }
     static async addUsersToCategory(categoryId,userIds,authenticationUser) {
+
+        const UserAdd = await User.findById(userIds);
         const category = await categoryModel.findById(categoryId).populate('users')
         .populate('tags')
         .populate('isAdmin');;
         if (!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+        if(!authenticationUser){
+            await category.addUsers(UserAdd._id);
+            const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
+            const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
+            categoryUpdate.sumUser = userCount;
+            await categoryUpdate.save();
+            const categoryUpdate2 = await categoryModel.findById(categoryId).populate('users')
+            return categoryUpdate2;
+        }
+        else if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
             await category.addUsers(userIds);
-            const userCount = await User.countDocuments({ _id: { $in: category.users } });
-            category.sumUser = userCount;
-            return category;
+            const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
+            const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
+            categoryUpdate.sumUser = userCount;
+            await categoryUpdate.save();
+            const categoryUpdate2 = await categoryModel.findById(categoryId).populate('users')
+            return categoryUpdate2;
         }
         if (!category) {
             return null;
@@ -196,6 +238,49 @@ class CategoryService {
         catch (error) {
             console.error(error);
             throw error;
+        }
+    }
+    static checkInvitationCode = async (authenticatedUser, invitationCode) =>{
+        try {
+        const category = await Category.findOne({ invitationCode: invitationCode });
+        if (!category) {
+            return null;
+        }
+        return category;
+        } catch (error) {
+        console.error(error);
+        throw error;
+        }
+    }
+    static evaluateRequest = async (categoryId, user_id, authenticatedUser, status)=>{
+        try {
+        const category = await categoryModel.findById(categoryId);
+        const user = await User.findById(user_id);
+        if (!category) {
+            return 1;
+        }
+        if(!user) {
+            return 2;
+        }
+        if(status === 0)
+        {
+            await request.removeUsers(user._id);
+            return 4;
+        }
+        const request = await UserRequest.findOne({ Category: category._id });  
+        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'admin' ) {
+            await category.addUsers(user._id)
+            await request.removeUsers(user._id)
+            const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
+            const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
+            categoryUpdate.sumUser = userCount;
+            await categoryUpdate.save();
+            return 4;
+        }
+        return 3;
+        } catch (error) {
+        console.error(error);
+        throw error;
         }
     }
 }

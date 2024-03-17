@@ -10,4 +10,5 @@ router.put('/removeAvatar',auth.authenticateToken,userController.removeAvatar)
 router.patch('/resetPassword',auth.authenticateToken,userController.newPassword)
 router.put('/changeAvatar',auth.authenticateToken,uploadCloud.single('image'),userController.updateAvatar)
 router.patch('/changeInfo',auth.authenticateToken,userController.updatedUserInfo);
+
 module.exports = router;

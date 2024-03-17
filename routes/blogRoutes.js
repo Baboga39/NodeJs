@@ -16,6 +16,9 @@ router.put('/edit/:blogId',middleware.authenticateToken,controller.blogControlle
 
 router.get('/getBlogById/:blogId',middleware.authenticateToken,controller.blogController.getBlogById);
 router.get('/allBlog',middleware.authenticateToken,controller.blogController.getAllBlogByUserId);
+router.get('/listBlogNew',middleware.authenticateToken,controller.blogController.listBlogNew);
+router.get('/listBlogPopularity',middleware.authenticateToken,controller.blogController.listBlogPopularity);
+router.get('/getAllByCategory',middleware.authenticateToken,controller.blogController.listBlogByCategory)
 
 router.delete('/:blogId',controller.blogController.deleteBlogById);
 

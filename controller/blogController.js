@@ -1,13 +1,54 @@
 const BlogDTO = require('../dto/request/BlogDTO');
 const BlogModel = require('../models/Blog/blogModel');
 const Service = require('../services');
+const { Types } = require('mongoose');
+
+
+function isValidObjectId(id) {
+  return Types.ObjectId.isValid(id);
+}
+
 const createBlog = async (req, res) => {
     try {
         const authenticatedUser = req.user;
-        console.log(authenticatedUser);
         const blogDTO = BlogDTO.fromRequest(req.body);
-
         const blog = await Service.blogService.createBlog(blogDTO,authenticatedUser);
+        if(!blogDTO.title)
+        {
+          return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: 'Title is required',
+              result: null
+          });
+        }
+        if(!BlogDTO.content){
+          return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: 'Content is required',
+              result: null
+          });
+        }
+        if(!blogDTO.avatar){
+          return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: 'Avatar is required',
+              result: null
+          });
+        }
+        if(blog === 1)
+        {
+        console.log('Not found Category')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: true,
+            statusCode: 400,
+            message: 'Not found Category',
+            result: null
+        });
+        }
         console.log('Create Blog successfully')
         console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(200).json({
@@ -53,6 +94,7 @@ const createBlogDraft = async (req, res) => {
       });
   }
 };
+
 const getBlogById = async (req, res) => {
     try {
         const blogId = req.params.blogId;
@@ -176,7 +218,7 @@ const uploadImage = async (req,res) => {
     try {
         const user = req.user;
         const blogs = await Service.blogService.getAllBlogByUserId(user);
-
+      
         if(!blogs) {
           console.log('Not Found User');
           console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -197,6 +239,8 @@ const uploadImage = async (req,res) => {
         });
     }
     catch (error) {
+      console.log('Internal Server Error', error);
+      console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(500).json({
             success: false,
             statusCode: 500,
@@ -205,4 +249,117 @@ const uploadImage = async (req,res) => {
         });
     }
   }
-module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId};
+const listBlogNew = async (req, res) => {
+  try {
+    const { index } = req.query; 
+    const blogs = await Service.blogService.listBlogNew(req.user, index);
+    console.log('Get Blogs New Success');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Get Blogs New Success',
+      result: blogs
+    });
+  } catch (error) {
+    console.log('Internal Server Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error',
+      result: error.message,
+    });
+  }
+}
+const listBlogPopularity = async (req, res) => {
+  try {
+    const { index } = req.query; 
+    const blogs = await Service.blogService.listBlogPopularity(req.user, index);
+    console.log('Get All Blog Popularity Success');
+    console.log('---------------------------------------------- ----------------------------------------------------------------------')
+    if(blogs==null){
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Get All Blog Success',
+        result: null
+      });
+    }
+    console.log('Get All Blog Popularity Success');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Get All Blog Success',
+      result: blogs
+    });
+  } catch (error) {
+    console.log('Internal Server Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error',
+      result: error.message,
+    });
+  }
+}
+const listBlogByCategory = async (req, res) => {
+  try {
+    const { index,categoryId } = req.query; 
+    if (!isValidObjectId(categoryId)) {
+      console.log('Invalid category ID');
+      console.log('--------------------------------------------------------------------------------------------------------------------');
+      return res.status(400).json({
+          success: false,
+          statusCode: 400,
+          message: 'Invalid category ID',
+          result: null,
+      });
+    }
+    const blogs = await Service.blogService.getAllBlogByCategory(categoryId,req.user, index);
+    console.log('Not found category');
+    console.log('---------------------------------------------- ----------------------------------------------------------------------')
+    if(blogs===1){
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Not found category',
+        result: null
+      });
+    }
+    console.log('Get All Blog By Category Success');
+    console.log('---------------------------------------------- ----------------------------------------------------------------------')
+    if(blogs==null){
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Get All Blog By Category Success',
+        result: null
+      });
+    }
+    console.log('Get All Blog By Category Success');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Get All Blog By Category Success',
+      result: blogs
+    });
+  } catch (error) {
+    console.log('Internal Server Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error',
+      result: error.message,
+    });
+  }
+}
+module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
+
+  ,listBlogNew,listBlogPopularity,listBlogByCategory
+
+};

@@ -96,10 +96,6 @@ const userSchema = new mongoose.Schema({
   totalBlog:{
     type: Number, 
     default:0
-  },
-  totalSeries:{
-    type: Number, 
-    default:0
   }
 }, { timestamps: true,  strict: false });
 userSchema.pre('save', async function (next) {

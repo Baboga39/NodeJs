@@ -3,8 +3,9 @@ const Service = require('../services/index')
 
 const addTAg = async (req, res) => {
     try {
+        const authenticatedUser = req.user;
         const {name,categoryId} = req.body;
-        const tag = await Service.tagService.addTag(name,categoryId);
+        const tag = await Service.tagService.addTag(name,categoryId,authenticatedUser);
         if (tag==null) {
             console.log('Exits Tag')
             console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -44,7 +45,6 @@ const getAllTags = async (req, res) =>{
             message: 'All tags',
             result: tags,
         })
-    
 }
 const getTagById = async (req, res) =>{
     const id = req.params.tagId;

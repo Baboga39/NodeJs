@@ -3,6 +3,7 @@ const UserModel = require('../models/usermodel')
 const cloudinary = require('cloudinary').v2;
 const Category = require('../models/Blog/categoryModel')
 const Blog = require('../models/Blog/blogModel')
+const UserRequest = require('../models/Blog/userRequestModel')
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -143,8 +144,60 @@ static joinCategory = async (authenticatedUser, categoryId) => {
   category.sumUser = userCount;
   return category;
 }
-
-
+static leaveCategory = async (authenticatedUser, categoryId) => { 
+  const category = await Category.findById(categoryId);
+  if(!category)
+  {
+    return null;
+  }
+  console.log(authenticatedUser._id)
+  await category.removeUsers(authenticatedUser._id);
+  const userCount = await UserModel.countDocuments({ _id: { $in: category.users } });
+  category.sumUser = userCount;
+  return await category.save();
+}
+static requestJoin = async (userId, categoryId) =>{
+  const user = await UserModel.findById(userId);
+  const category = await Category.findById(categoryId);
+  const userRequestFind = await UserRequest.findOne({Category: category})
+  if (!user || !category) {
+    console.log('-------------------------------------------------------------------------------------------------');
+    console.log('Not found user');
+    return 1;
+  }
+  if (!category) {
+    console.log('-------------------------------------------------------------------------------------------------');
+    console.log('Not found category');
+    return 2;
+  }
+  if(userRequestFind){
+    if (!userRequestFind.Users.includes(user._id)) {
+      userRequestFind.Users.push(user._id);
+      await userRequestFind.save();
+    }
+    console.log(userRequestFind);
+    return userRequestFind;
+  }
+  const userRequest = new UserRequest({
+      Users: [user._id],
+      Category: category._id
+  });
+  await userRequest.save();
+  return userRequest;
+}
+static listUserRequest = async(categoryId) =>{
+  const category = await Category.findById(categoryId);
+  if (!category) {
+    console.log('Not found category');
+    return 1;
+  }
+  const userRequest = await UserRequest.findOne({Category: category});
+  if(!userRequest){
+    console.log('This category do not have any users request');
+    return 2;
+  }
+  return userRequest;
+}
 
 
 
@@ -159,12 +212,25 @@ static likeBlog = async (authenticatedUser, blogId) => {
     return null;
   }
   blog.likes++;
+  blog.listUserLikes.push(authenticatedUser._id);
   await blog.save();
   return blog;
 }
 
-
-
+static saveBlog = async (authenticatedUser, blogId) => {
+  const blog = await Blog.findById(blogId);
+  if(!blog)
+  {
+    return null;
+  }
+  blog.savedBy.push(authenticatedUser._id);
+  await blog.save();
+  return blog;
+}
+static listBlogSaveByUser(authenticatedUser) {
+  return Blog.find({savedBy: authenticatedUser._id}).select('savedBy')
+  .populate('savedBy');;
+}
 
 }
 module.exports = UserService

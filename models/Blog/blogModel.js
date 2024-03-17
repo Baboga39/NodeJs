@@ -22,14 +22,26 @@ const blogSchema = new mongoose.Schema({
     type:Number,
     default:0
   },
+  views:{
+    type:Number,
+    default:0
+  },
   sumComment :{
     type:Number,
     default:0
   },
+  isSave: { 
+    type: Boolean,
+    default:false},
+  isLiked: {
+    type: Boolean,
+    default:false
+  },
   user: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' ,autopopulate: false},
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate : true }],
-  // listUserLike: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false}],
+  listUserLikes: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false}],
+  savedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate : false}],
 
 }, { timestamps: true, strict: false });
 blogSchema.plugin(autopopulate)
@@ -50,4 +62,10 @@ blogSchema.methods.addTags = async function (tagIds) {
 
   await this.save();
 };
+blogSchema.post('save', async function () {
+
+  const count = await this.model('Blog').countDocuments({ tags: { $in: this.tags } });
+
+  await Tag.updateMany({ _id: { $in: this.tags } }, { sumBlog: count });
+});
 module.exports = mongoose.model('Blog', blogSchema);;

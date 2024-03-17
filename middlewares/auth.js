@@ -12,17 +12,25 @@ const authenticateToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      console.log('No token provided');
-      return res.status(403).json({
-        success: false,
-        statusCode: 403,
-        message: 'Invalid token',
-        result: err.message,
-      });
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          success: false,
+          statusCode: 401,
+          message: 'Token expired',
+          result: null,
+        });
+      } else {
+        return res.status(403).json({
+          success: false,
+          statusCode: 403,
+          message: 'Invalid token',
+          result: err.message,
+        });
+      }
     }
-    req.user = user;
+    req.user = decoded;
     next();
   });
 };
