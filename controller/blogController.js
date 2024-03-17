@@ -22,7 +22,8 @@ const createBlog = async (req, res) => {
               result: null
           });
         }
-        if(!BlogDTO.content){
+        console.log(blogDTO.content)
+        if(!blogDTO.content){
           return res.status(400).json({
               success: false,
               statusCode: 400,

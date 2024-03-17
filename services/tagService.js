@@ -32,6 +32,7 @@ class TagService {
         return null;
     }
     if (tag.user._id == authenticatedUser._id  || authenticatedUser.roles == 'admin' ) {
+        console.log('Have permison')
        await tag.deleteOne();
        return 0;
     }
