@@ -60,10 +60,21 @@ const getTagById = async (req, res) =>{
 }
 const deleteTagById = async (req, res) =>{
     const id = req.params.tagId;
-
-    await Service.tagService.deleteTag(id);
-        console.log('Delete Tag Successfully')
+    const authenticatedUser = req.user;
+    const result = await Service.tagService.deleteTag(id,authenticatedUser.user);
+    if(result==1)
+    {
+        console.log('User do not have permission')
         console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: false,
+            statusCode: 401,
+            message: 'User do not have permission',
+            result: null,
+        });
+    }
+    console.log('Delete Tag Successfully')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(200).json({
             success: true,
             statusCode: 200,
