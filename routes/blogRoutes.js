@@ -20,6 +20,6 @@ router.get('/listBlogNew',middleware.authenticateToken,controller.blogController
 router.get('/listBlogPopularity',middleware.authenticateToken,controller.blogController.listBlogPopularity);
 router.get('/getAllByCategory',middleware.authenticateToken,controller.blogController.listBlogByCategory)
 
-router.delete('/:blogId',controller.blogController.deleteBlogById);
+router.delete('/:blogId',middleware.authenticateToken,controller.blogController.deleteBlogById);
 
 module.exports = router;

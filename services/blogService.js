@@ -85,13 +85,10 @@ class BlogService{
         blog.save();
         return Blog.findById(blogId);
     }
-    static deleteBlogById = async (blogId) => {
+    static deleteBlogById = async (blogId,authenticatedUser) => {
         try {
             const blog = await Blog.findById(blogId);
-    
-            if (!blog) {
-                throw new Error('Blog not found');
-            }
+            if(blog.user._id == authenticatedUser._id || authenticatedUser.roles === 'Admin'){
             const tagIds = blog.tags;
 
             await Tag.updateMany(
@@ -100,7 +97,10 @@ class BlogService{
             );
                 const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
             
-            return deletedBlog;
+            return deletedBlog;}
+            else{
+                return 1;
+            }
         } catch (error) {
             throw new Error(error.message);
         }

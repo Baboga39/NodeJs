@@ -205,7 +205,18 @@ const uploadImage = async (req,res) => {
   const deleteBlogById = async (req, res) => {
     try {
       const blogId = req.params.blogId;
-      await Service.blogService.deleteBlogById(blogId);
+      const authenticatedUser = req.user;
+      const result =await Service.blogService.deleteBlogById(blogId,authenticatedUser.user);
+      if (result===1){
+        console.log('User do not have permission to delete')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: 'User do not have permission to delete',
+            result: null,
+        });
+      }
       console.log('Delete Blog successfully')
       console.log('--------------------------------------------------------------------------------------------------------------------')
       return res.status(200).json({
