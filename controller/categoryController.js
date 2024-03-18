@@ -3,7 +3,7 @@ const Service = require('../services/')
 const addCategory = async (req, res) => {
     try {
         const authenticationUser = req.user;
-        const { name, description, tagIds, status, userIds } = req.body;
+        const { name, description, tagIds, status, userIds,banner } = req.body;
 
         if (!name && !status) {
             console.log('Not found name or status');
@@ -34,7 +34,7 @@ const addCategory = async (req, res) => {
             });
         }
 
-        const category = await Service.categoryService.addCategory(name, description, tagIds, status, userIds, authenticationUser.user);
+        const category = await Service.categoryService.addCategory(name, description, tagIds, status, userIds, authenticationUser.user,banner);
         if (category == null) {
             console.log('Exits category');
             console.log('--------------------------------------------------------------------------------------------------------------------');

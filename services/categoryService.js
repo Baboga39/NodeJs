@@ -44,7 +44,7 @@ class CategoryService {
             }
         }
      };
-    static async addCategory(name, description,tagIds, status, userIds, authenticationUser) {
+    static async addCategory(name, description,tagIds, status, userIds, authenticationUser,banner) {
     const user = await User.findById(authenticationUser._id);
     
     const exitsCategory = await categoryModel.findOne({ name });
@@ -55,6 +55,7 @@ class CategoryService {
         name,
         description,
         status,
+        banner,
         isAdmin: user._id,
     });
     await newCategory.addTags(tagIds);
