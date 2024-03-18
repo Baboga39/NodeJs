@@ -160,7 +160,7 @@ static requestJoin = async (userId, categoryId) =>{
   const user = await UserModel.findById(userId);
   const category = await Category.findById(categoryId);
   const userRequestFind = await UserRequest.findOne({Category: category})
-  if (!user || !category) {
+  if (!user) {
     console.log('-------------------------------------------------------------------------------------------------');
     console.log('Not found user');
     return 1;
@@ -186,13 +186,14 @@ static requestJoin = async (userId, categoryId) =>{
   return userRequest;
 }
 static listUserRequest = async(categoryId) =>{
+  console.log(categoryId);
   const category = await Category.findById(categoryId);
   if (!category) {
     console.log('Not found category');
     return 1;
   }
   const userRequest = await UserRequest.findOne({Category: category});
-  if(!userRequest){
+  if(userRequest.Users==null){
     console.log('This category do not have any users request');
     return 2;
   }

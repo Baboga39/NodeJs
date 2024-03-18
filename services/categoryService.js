@@ -7,8 +7,16 @@ const UserRequest = require('../models/Blog/userRequestModel')
 
 
 class CategoryService {
-    static async getAllCategories(user_id) {
-        const categories = await categoryModel.find().populate('users');
+    static async getAllCategories(user_id,index) {
+        const pageSize = 6;
+        const skip = (index - 1) * pageSize; 
+        const categories = await categoryModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize)
+        .populate('tags')
+        .populate('users')
+        .exec();
         const user = await User.findById(user_id);
         if (!user) {
             console.log('------------------------------------------------------------------------------------------------')
@@ -28,9 +36,7 @@ class CategoryService {
         if (category.users.some(user => user.equals(userId))) {
             return 'Join';
         } else {
-            
             const request = await UserRequest.findOne({ Category: category._id });
-            console.log(request)
             if (request) {
                 return 'Pending';
             } else {
@@ -268,12 +274,12 @@ class CategoryService {
         if(!user) {
             return 2;
         }
+        const request = await UserRequest.findOne({ Category: category._id });  
         if(status === 0)
         {
             await request.removeUsers(user._id);
             return 4;
         }
-        const request = await UserRequest.findOne({ Category: category._id });  
         if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'admin' ) {
             await category.addUsers(user._id)
             await request.removeUsers(user._id)
@@ -281,6 +287,7 @@ class CategoryService {
             const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
             categoryUpdate.sumUser = userCount;
             await categoryUpdate.save();
+            
             return 4;
         }
         return 3;

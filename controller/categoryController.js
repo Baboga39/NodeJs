@@ -179,7 +179,8 @@ const getCategoryById = async (req, res) => {
 }
 const getAllCategory = async (req, res) => {
     const authenticationUser = req.user;
-    const categories = await Service.categoryService.getAllCategories(authenticationUser.user._id);
+    const index = req.params.index;
+    const categories = await Service.categoryService.getAllCategories(authenticationUser.user._id,index);
     return res.status(200).json({
         success: true,
         statusCode: 200,
@@ -296,6 +297,34 @@ const joinCategoryByUser = async (req, res) => {
     try {
     const authenticationUser = req.user;
     const { categoryId } = req.params;
+    const categoryCheck = await Service.categoryService.getCategoryById(categoryId,authenticationUser.user._id);
+    console.log(categoryCheck.status);
+    if(categoryCheck.status ==='Private'){
+        const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
+        if(userRequest ===1)
+        {
+            return res.status(400).json({
+                success: false,
+                statusCode: 401,
+                message: 'Not found User',
+                result: null,
+            });
+        }
+        if(userRequest ===2){
+            return res.status(400).json({
+                success: false,
+                statusCode: 401,
+                message: 'Not found Category',
+                result: null,
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Request Join Category Success',
+            result: userRequest,
+        })
+    }
     const category = await  Service.categoryService.addUsersToCategory(categoryId, authenticationUser.user._id);
     if (category==null) {
         console.log('Not found category')
@@ -535,31 +564,7 @@ const sendRequestJoinCategory = async (req, res) => {
     try {
         const authenticatedUser = req.user;
         const { categoryId } = req.params;
-        const userRequest = await Service.userService.requestJoin(authenticatedUser.user._id, categoryId)
-        console.log(userRequest)
-        if(userRequest ===1)
-        {
-            return res.status(400).json({
-                success: false,
-                statusCode: 401,
-                message: 'Not found User',
-                result: null,
-            });
-        }
-        if(userRequest ===2){
-            return res.status(400).json({
-                success: false,
-                statusCode: 401,
-                message: 'Not found Category',
-                result: null,
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: 'Request Join Category Success',
-            result: userRequest,
-        })
+     
     } catch (error) {
         return res.status(500).json({
             success: false,
