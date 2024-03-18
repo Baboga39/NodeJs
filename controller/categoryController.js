@@ -70,6 +70,28 @@ const editCategory = async (req,res) =>{
         const authenticationUser = req.user;
         const {name, description, status, categoryId } = req.body;
         let category = await Service.categoryService.editCategory(name, description, status,authenticationUser.user,categoryId);
+        if (!name)
+        {
+            console.log('Not found field name');
+            console.log('--------------------------------------------------------------------------------------------------------------------')
+            return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Not found field name',
+                result: null,
+            })
+        }
+        if(!status)
+        {
+            console.log('Not found field status');
+            console.log('--------------------------------------------------------------------------------------------------------------------')
+            return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Not found field status',
+                result: null,
+            })
+        }
         if (category==null) {
             console.log('Exits category')
             console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -95,7 +117,7 @@ const editCategory = async (req,res) =>{
         return res.status(200).json({
                 success: true,
                 statusCode: 200,
-                message: 'Add Category Success',
+                message: 'Edit Category Success',
                 result: category
             })
     } catch (error) {

@@ -81,7 +81,6 @@ class CategoryService {
             categoryToEdit.description = newDescription || categoryToEdit.description;
             categoryToEdit.status = newStatus || categoryToEdit.status;
             await categoryToEdit.save();
-            this.updateSumUserForAllCategories()
             return categoryToEdit;
         }
         return 1;
