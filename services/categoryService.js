@@ -185,6 +185,7 @@ class CategoryService {
             await category.removeUsers(userIds);
             const userCount = await User.countDocuments({ _id: { $in: category.users } });
             category.sumUser = userCount;
+            category.save();
             return category;
         }
         if (!category) {

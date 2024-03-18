@@ -26,10 +26,7 @@ const categorySchema = new mongoose.Schema({
     publicId: { type: String, default: null },
     url: { type: String, default: null },
   },
-  banner: {
-    publicId: { type: String, default: null },
-    url: { type: String, default: null },
-  },
+  banner: String,
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate: false }],
   invitationCode: { type: String, unique: true } 
 }, { timestamps: true, strict: false });
