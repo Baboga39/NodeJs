@@ -47,9 +47,10 @@ class BlogService{
         await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
         return blog;
     }
-    static editBlog =  async (blogDTO, authenticatedUser,blogId) =>{
+    static editBlog =  async (blogDTO, authenticatedUser,blogId) =>{    
         const blog = await Blog.findById(blogId);
-        blog.title = blogDTO.title;
+        if(!blog) return null;
+        blog.title = blogDTO.title|| blogDTO.title;
         blog.content = blogDTO.content;
         blog.category = blogDTO.categoryIds;
         blog.description = blogDTO.description;
@@ -86,25 +87,18 @@ class BlogService{
     }
     static deleteBlogById = async (blogId) => {
         try {
-            // Tìm blog dựa trên ID
             const blog = await Blog.findById(blogId);
     
-            // Kiểm tra xem blog có tồn tại không
             if (!blog) {
                 throw new Error('Blog not found');
             }
-    
-            // Lấy danh sách các tag của blog
             const tagIds = blog.tags;
-    
-            // Giảm sumBlog của các tag đi 1
+
             await Tag.updateMany(
                 { _id: { $in: tagIds } },
                 { $inc: { sumBlog: -1 } }
             );
-    
-            // Xóa blog
-            const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
+                const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
             
             return deletedBlog;
         } catch (error) {

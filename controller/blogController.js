@@ -174,6 +174,16 @@ const uploadImage = async (req,res) => {
       const blogId = req.params.blogId;
       const blogDTO = BlogDTO.fromRequest(req.body);
       const blog = await Service.blogService.editBlog(blogDTO,authenticatedUser,blogId);
+      if (blog==null) {
+      console.log('Not found Blog')
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: 'Not found blog',
+            result: null,
+        });
+      }
       console.log('Edit Blog successfully')
       console.log('--------------------------------------------------------------------------------------------------------------------')
       return res.status(200).json({
