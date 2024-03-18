@@ -263,7 +263,7 @@ class CategoryService {
     }
     static checkInvitationCode = async (authenticatedUser, invitationCode) =>{
         try {
-        const category = await Category.findOne({ invitationCode: invitationCode });
+        const category = await Category.findOne({ invitationCode: invitationCode }).populate('users').populate('tags');
         if (!category) {
             return null;
         }
@@ -296,7 +296,6 @@ class CategoryService {
             const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
             categoryUpdate.sumUser = userCount;
             await categoryUpdate.save();
-            
             return 4;
         }
         return 3;
