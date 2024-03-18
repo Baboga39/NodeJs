@@ -77,7 +77,7 @@ class CategoryService {
             return null;
         }
     
-        if (categoryToEdit.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+        if (categoryToEdit.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
             categoryToEdit.name = newName || categoryToEdit.name;
             categoryToEdit.description = newDescription || categoryToEdit.description;
             categoryToEdit.status = newStatus || categoryToEdit.status;
@@ -93,7 +93,7 @@ class CategoryService {
         if (!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticationUser._id || authenticationUser.roles == 'admin') {
+        if (category.isAdmin._id == authenticationUser._id || authenticationUser.roles == 'Admin') {
             await category.addTags(tagIds);
             category.save();
             return category;
@@ -120,8 +120,8 @@ class CategoryService {
         if (!category) {
             return null;
         }
-        
-        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+        console.log( authenticationUser.roles)
+        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
             await Category.findOneAndDelete({ _id: categoryId });
             return category;
         }
@@ -134,7 +134,7 @@ class CategoryService {
         if (!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
             await category.removeTags(tagIds);
             return category;
         }
@@ -161,7 +161,7 @@ class CategoryService {
             const categoryUpdate2 = await categoryModel.findById(categoryId).populate('users')
             return categoryUpdate2;
         }
-        else if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+        else if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
             await category.addUsers(userIds);
             const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
             const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
@@ -182,7 +182,7 @@ class CategoryService {
         if (!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'admin' ) {
+        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
             await category.removeUsers(userIds);
             const userCount = await User.countDocuments({ _id: { $in: category.users } });
             category.sumUser = userCount;
@@ -200,7 +200,7 @@ class CategoryService {
         if(!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'admin' ) {
+        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'Admin' ) {
             if (category.avatar!=null)
             {
                 cloudinary.uploader.destroy(category.avatar.publicId);
@@ -224,7 +224,7 @@ class CategoryService {
         if(!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'admin' ) {
+        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'Admin' ) {
             if (category.avatar!=null)
             {
                 cloudinary.uploader.destroy(category.avatar.publicId);
@@ -289,7 +289,7 @@ class CategoryService {
             await request.removeUsers(user._id);
             return 4;
         }
-        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'admin' ) {
+        if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'Admin' ) {
             await category.addUsers(user._id)
             await request.removeUsers(user._id)
             const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
