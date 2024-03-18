@@ -208,6 +208,8 @@ class CategoryService {
             await category.save();
             return category.avatar; 
         }
+        console.log('User do not have permission to edit this category');
+        console.log('--------------------------------------------------------------------------------------------------------------------')
         return 1;
         } catch (error) {
         console.error(error);
