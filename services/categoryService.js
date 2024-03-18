@@ -110,10 +110,10 @@ class CategoryService {
             console.log('Not found user');
             return 1;
         }
-        const statusUser = await this.getUserStatusInCategory(category, user._id); 
         if (!category) {
             return null;
         }
+        const statusUser = await this.getUserStatusInCategory(category, user._id); 
         return { ...category.toObject(), statusUser };    }
     static async deleteCategoryById(categoryId, authenticationUser) {
         const category = await Category.findById(categoryId);
