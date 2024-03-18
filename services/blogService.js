@@ -9,8 +9,8 @@ const cloudinary = require('cloudinary').v2;
 class BlogService{
     static createBlog =  async (blogDTO, authenticatedUser) =>{
         const user = await User.findById(authenticatedUser.user._id)
-        if(blogDTO.categoryId){
-        const category = await Category.findById(blogDTO.categoryId);
+        if(blogDTO.categoryIds){
+        const category = await Category.findById(blogDTO.categoryIds);
         if(!category)
         {
             return 1;
@@ -18,7 +18,7 @@ class BlogService{
         const blog = new Blog({
             title: blogDTO.title,
             content: blogDTO.content,
-            category: blogDTO.categoryIds,
+            category: blogDTO.categoryIds || null,
             description: blogDTO.description,
             avatar: blogDTO.avatar,
             user: user,
