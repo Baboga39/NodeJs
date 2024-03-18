@@ -58,7 +58,10 @@ class CategoryService {
         banner,
         isAdmin: user._id,
     });
-    await newCategory.addTags(tagIds);
+    if(tagIds!=null)
+    {
+        await newCategory.addTags(tagIds);
+    }
     await newCategory.addUsers(userIds);
     await newCategory.addUsers(user._id);
     const userCount = await User.countDocuments({ _id: { $in: newCategory.users } });
