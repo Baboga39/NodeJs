@@ -71,7 +71,7 @@ class CategoryService {
     }
     static async editCategory(newName, newDescription, newStatus, authenticationUser,categoryId) {
         
-        let categoryToEdit = await categoryModel.findById(categoryId);
+        let categoryToEdit = await categoryModel.findById(categoryId).populate('users').populate('tags');
 
         if (!categoryToEdit) {
             return null;
