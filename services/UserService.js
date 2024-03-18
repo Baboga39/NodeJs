@@ -193,6 +193,9 @@ static listUserRequest = async(categoryId) =>{
     return 1;
   }
   const userRequest = await UserRequest.findOne({Category: category});
+  if(userRequest==null) {
+    return 2;
+  }
   if(userRequest.Users==null){
     console.log('This category do not have any users request');
     return 2;
