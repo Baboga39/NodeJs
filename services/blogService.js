@@ -24,8 +24,9 @@ class BlogService{
             user: user,
         });
         await blog.save();
+        if(blogDTO.tagIds!=null){
         await blog.addTags(blogDTO.tagIds);
-
+        }
         await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
         return blog;
     }
