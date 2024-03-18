@@ -237,15 +237,21 @@ class CategoryService {
         throw error;
         }
     }
-    static getCategoryFromUser = async (userId) => {
+    static getCategoryFromUser = async (userId, index) => {
         try {
-        const Categories = await Category.find({ users: userId }).populate('users')
+        const pageSize = 6;
+        const skip = (index - 1) * pageSize; 
+        const categories = await Category.find({ users: userId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize)
         .populate('tags')
-        .populate('isAdmin');
-        if ((await Categories).length===0) {
+        .populate('users')
+        .exec();
+        if ((await categories).length===0) {
             return null;
         }
-        return Categories;
+        return categories;
     }
         catch (error) {
             console.error(error);
