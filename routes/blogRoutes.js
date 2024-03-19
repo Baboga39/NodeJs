@@ -19,6 +19,7 @@ router.get('/allBlog',middleware.authenticateToken,controller.blogController.get
 router.get('/listBlogNew',middleware.authenticateToken,controller.blogController.listBlogNew);
 router.get('/listBlogPopularity',middleware.authenticateToken,controller.blogController.listBlogPopularity);
 router.get('/getAllByCategory',middleware.authenticateToken,controller.blogController.listBlogByCategory)
+router.get('/sizeAllBlogByCategory/:categoryId',controller.blogController.sizeAllBlogByCategory)
 
 router.delete('/:blogId',middleware.authenticateToken,controller.blogController.deleteBlogById);
 

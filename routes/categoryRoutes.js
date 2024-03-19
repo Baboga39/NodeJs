@@ -11,6 +11,8 @@ router.get('/allCategories/:index',auth.authenticateToken,controller.categoryCon
 router.get('/userCategories/:index',auth.authenticateToken,controller.categoryController.getCategoryByUser)
 router.get('/categoryByInvitationCode/:invitationCode',auth.authenticateToken,controller.categoryController.checkInvitationCode)
 router.get('/userRequest/:categoryId',auth.authenticateToken,controller.categoryController.listUserRequest)
+router.get('/sizeAll',controller.categoryController.sizeAllCategory)
+router.get('/sizeAllCategoryByUser',auth.authenticateToken,controller.categoryController.sizeAllCategoryByUser)
 
 router.post('/addCategory',auth.authenticateToken, controller.categoryController.addCategory);
 router.post('/requestJoin/:categoryId',auth.authenticateToken, controller.categoryController.sendRequestJoinCategory);

@@ -188,6 +188,15 @@ const getAllCategory = async (req, res) => {
         result: categories
     })
 }
+const sizeAllCategory = async (req, res) => {
+    const size = await Service.categoryService.countDocumentsCategory();
+    return res.status(200).json({
+        success: true,
+        statusCode: true,
+        message: 'Size All category',
+        result: size,
+    })
+}
 const deleteCategoryById = async (req, res) => {
     const authenticationUser = req.user;
     const categoryId = req.params.categoryId;
@@ -298,9 +307,18 @@ const joinCategoryByUser = async (req, res) => {
     const authenticationUser = req.user;
     const { categoryId } = req.params;
     const categoryCheck = await Service.categoryService.getCategoryById(categoryId,authenticationUser.user._id);
-    console.log(categoryCheck.status);
-    if(categoryCheck.status ==='Private'){
+    const checkRequest = await Service.categoryService.getUserStatusInCategory(categoryCheck,authenticationUser.user._id);
+    if(categoryCheck.status ==='Private' || checkRequest === 'Pending') {
         const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
+        if(userRequest ===5)
+        {
+            return res.status(200).json({
+                success: true,
+                statusCode: 200,
+                message: 'Cancle Request Successfully',
+                result: null,
+            });
+        }
         if(userRequest ===1)
         {
             return res.status(400).json({
@@ -529,6 +547,16 @@ const getCategoryByUser = async (req, res) => {
         });
     }
 }
+const sizeAllCategoryByUser = async (req,res)=>{
+    const authenticatedUser = req.user;
+    const size  = await Service.categoryService.sizeGetALlByUser(authenticatedUser.user._id)
+    return res.status(200).json({
+        success: true,
+        statusCode: true,
+        message: 'Size All category by user',
+        result: size,
+    })
+}
 //Invitation request
 const checkInvitationCode = async (req, res) => {
     try {
@@ -654,5 +682,7 @@ module.exports = {
     leaveCategory,
     sendRequestJoinCategory,
     listUserRequest,
-    evaluateRequest
+    evaluateRequest,
+    sizeAllCategory,
+    sizeAllCategoryByUser
 }

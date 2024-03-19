@@ -4,6 +4,7 @@ const bcryptjs = require('bcryptjs');
 const User = require('../models/usermodel');
 const AuthService = require('../services/authService');
 const ProfileDTO = require('../dto/request/ProfileUserDTO')
+const Service = require('../services/index')
 const getUserInfo = async (req, res) => {
   try {
     const userId = req.query.userId;
@@ -159,10 +160,123 @@ const newPassword = async (req, res) => {
     result: null,
   });
 } 
+
+//--------------------------------------------------------INTERACT WITH BLOG --------------------------------------------------------
+
+const likeBlog = async (req, res) => {
+  const authenticatedUser = req.user;
+  const blogId = req.params.blogId;
+  if (blogId==':blogId') {
+    console.log('BlogId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'BlogId is missing',
+      result: null,
+    });
+  }
+  try {
+    const blog = await Service.userService.likeBlog(authenticatedUser.user, blogId);
+    if (!blog) {
+      console.log('Blog not found');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'Blog not found',
+        result: null,
+      });
+    }
+    if(!blog.isLiked)
+    {
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      console.log('Dislike Blog successfully');
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Dislike Blog successfully',
+        result: blog,
+      });
+    }
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    console.log('Like Blog successfully');
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Like Blog successfully',
+      result: blog,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'MongoDB Error: ' + error.message,
+      result: null,
+    });
+  }
+};
+const saveBlog = async (req, res) => {
+  const authenticatedUser = req.user;
+  const blogId = req.params.blogId;
+  if (blogId==':blogId') {
+    console.log('BlogId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'BlogId is missing',
+      result: null,
+    });
+  }
+  try {
+    const blog = await Service.userService.saveBlog(authenticatedUser.user, blogId);
+    if (!blog) {
+      console.log('Blog not found');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'Blog not found',
+        result: null,
+      });
+    }
+    if(!blog.isSave)
+    {
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      console.log('Unsave Blog successfully');
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Unsave Blog successfully',
+        result: blog,
+      });
+    }
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    console.log('Save Blog successfully');
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Save Blog successfully',
+      result: blog,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'MongoDB Error: ' + error.message,
+      result: null,
+    });
+  }
+};
+
+
 module.exports = {
   getUserInfo,
   updatedUserInfo,
   updateAvatar,
   removeAvatar,
   newPassword,
+  likeBlog,
+  saveBlog,
 }

@@ -24,15 +24,31 @@ class CategoryService {
             return 1;
         }
         const categoriesWithUserStatusPromises = categories.map(async category => {
-            const statusUser = await this.getUserStatusInCategory(category, user._id);  
+            const statusUser = await this.getUserStatusInCategory1(category, user._id);  
             return { ...category.toObject(), statusUser };
         });
-        
-        // Sử dụng Promise.all để chờ tất cả các lời hứa hoàn thành
         const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
         return categoriesWithUserStatus
     }
+    static async countDocumentsCategory() {
+        const count = await Category.countDocuments();
+        const totalPages = Math.ceil(count / 6); // Tính số lượng trang
+        return totalPages;
+    }
     static getUserStatusInCategory = async (category, userId) => {
+        if (category.users.some(user => user._id === userId)) {
+            return 'Join';
+        } else {
+            const request = await UserRequest.findOne({ Category: category._id });
+            if (request) {
+                return 'Pending';
+            } else {
+                return 'UnJoin';
+            }
+        }
+    };
+    static getUserStatusInCategory1 = async (category, userId) => {
+    
         if (category.users.some(user => user.equals(userId))) {
             return 'Join';
         } else {
@@ -44,6 +60,7 @@ class CategoryService {
             }
         }
      };
+    
     static async addCategory(name, description,tagIds, status, userIds, authenticationUser,banner) {
     const user = await User.findById(authenticationUser._id);
     
@@ -118,7 +135,7 @@ class CategoryService {
         if (!category) {
             return null;
         }
-        const statusUser = await this.getUserStatusInCategory(category, user._id); 
+        const statusUser = await this.getUserStatusInCategory1(category, user._id); 
         return { ...category.toObject(), statusUser };    }
     static async deleteCategoryById(categoryId, authenticationUser) {
         const category = await Category.findById(categoryId);
@@ -247,6 +264,7 @@ class CategoryService {
     }
     static getCategoryFromUser = async (userId, index) => {
         try {
+        const user = await User.findById(userId);
         const pageSize = 6;
         const skip = (index - 1) * pageSize; 
         const categories = await Category.find({ users: userId })
@@ -259,12 +277,24 @@ class CategoryService {
         if ((await categories).length===0) {
             return null;
         }
-        return categories;
+        const categoriesWithUserStatusPromises = categories.map(async category => {
+            const statusUser = await this.getUserStatusInCategory1(category, user._id);  
+            return { ...category.toObject(), statusUser };
+        });
+        
+        // Sử dụng Promise.all để chờ tất cả các lời hứa hoàn thành
+        const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+        return categoriesWithUserStatus
     }
         catch (error) {
             console.error(error);
             throw error;
         }
+    }
+    static sizeGetALlByUser = async (user_id) =>{
+        const countDocuments = await Category.countDocuments({ users: user_id });
+        const totalPages = Math.ceil(countDocuments / 6); // Tính số lượng trang
+        return totalPages;
     }
     static checkInvitationCode = async (authenticatedUser, invitationCode) =>{
         try {

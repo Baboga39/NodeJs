@@ -133,17 +133,6 @@ static newPassword = async(req, res) =>{
 
 
 //////////////////////////////// Interaction with Categories //////////////////////////////////////////////////////////////////
-static joinCategory = async (authenticatedUser, categoryId) => {
-  const category = await Category.findById(categoryId);
-  if(!category)
-  {
-    return null;
-  }
-  await category.addUsers(authenticatedUser._id);
-  const userCount = await UserModel.countDocuments({ _id: { $in: category.users } });
-  category.sumUser = userCount;
-  return category;
-}
 static leaveCategory = async (authenticatedUser, categoryId) => { 
   const category = await Category.findById(categoryId);
   if(!category)
@@ -171,11 +160,17 @@ static requestJoin = async (userId, categoryId) =>{
     return 2;
   }
   if(userRequestFind){
-    if (!userRequestFind.Users.includes(user._id)) {
+    if (!userRequestFind.Users.some(userId => userId.equals(user._id))) {
       userRequestFind.Users.push(user._id);
       await userRequestFind.save();
-    }
-    console.log(userRequestFind);
+  } else {
+      const userIndex = userRequestFind.Users.findIndex(userId => userId.equals(user._id));
+      if (userIndex !== -1) {
+          userRequestFind.Users.splice(userIndex, 1);
+          await userRequestFind.save();
+          return 5;
+      }
+  }
     return userRequestFind;
   }
   const userRequest = new UserRequest({
@@ -211,24 +206,43 @@ static listUserRequest = async(categoryId) =>{
 //////////////////////////////// Interaction with blog //////////////////////////////////////////////////////////////////
 static likeBlog = async (authenticatedUser, blogId) => {
   const blog = await Blog.findById(blogId);
-  if(!blog)
-  {
+  const user = await UserModel.findById(authenticatedUser._id);
+  
+  if (!blog || !user) {
     return null;
   }
-  blog.likes++;
-  blog.listUserLikes.push(authenticatedUser._id);
+  const isLikedBefore = blog.listUserLikes.some(likedUser => likedUser.equals(user._id));
+  if (!isLikedBefore) {
+    blog.listUserLikes.push(user);
+    blog.likes += 1;
+    blog.isLiked = true;
+  } else {
+    blog.listUserLikes = blog.listUserLikes.filter(likedUser => !likedUser.equals(user._id));
+    blog.isLiked = false;
+    blog.likes -= 1;
+  }
   await blog.save();
+
   return blog;
 }
-
 static saveBlog = async (authenticatedUser, blogId) => {
   const blog = await Blog.findById(blogId);
-  if(!blog)
-  {
+  const user = await UserModel.findById(authenticatedUser._id);
+  
+  if (!blog || !user) {
     return null;
   }
-  blog.savedBy.push(authenticatedUser._id);
+
+  const isSavedBefore = blog.savedBy.some(savedUser => savedUser.equals(user._id));
+  if (!isSavedBefore) {
+    blog.savedBy.push(user);
+    blog.isSave = true;
+  } else {
+    blog.savedBy = blog.savedBy.filter(savedUser => !savedUser.equals(user._id));
+    blog.isSave = false;
+  }
   await blog.save();
+
   return blog;
 }
 static listBlogSaveByUser(authenticatedUser) {

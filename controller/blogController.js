@@ -379,8 +379,19 @@ const listBlogByCategory = async (req, res) => {
     });
   }
 }
+const sizeAllBlogByCategory = async (req, res) => {
+  const categoryId = req.params.categoryId;
+  const sizeAllBlogByCategory = await Service.blogService.sizeGetAllBlogByCategory(categoryId);
+  return res.status(200).json({
+    success: true,
+    statusCode: true,
+    message: 'Size All Blog By Category',
+    result: sizeAllBlogByCategory,
+})
+}
 module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
 
   ,listBlogNew,listBlogPopularity,listBlogByCategory
+  ,sizeAllBlogByCategory
 
 };

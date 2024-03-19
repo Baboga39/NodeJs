@@ -138,26 +138,28 @@ class BlogService{
 
         static findAndUpdateLikeAndSave = async (listBlog, userId) => {
             try {
-                for (let i = 0; i < listBlog.length; i++) {
-                    const blog = listBlog[i];
-                    const isUserInSavedBy = Array.isArray(blog.savedBy) && blog.savedBy.some(user => user._id.equals(userId));
-                    const isUserInListUserLikes = Array.isArray(blog.listUserLikes) && blog.listUserLikes.some(user => user._id.equals(userId));
-        
+                const promises = listBlog.map(async (blog, index) => {
+                    const isUserInSavedBy = blog.savedBy.some(user => user._id.equals(userId));
+                    console.log("Thứ tự thứ " + index + ": " + isUserInSavedBy);
+                    const isUserInListUserLikes = blog.listUserLikes.some(user => user._id.equals(userId));
+                    console.log("Thứ tự thứ " + index + ": " + isUserInListUserLikes);
                     const updateFields = {
                         isSave: isUserInSavedBy || false,
                         isLiked: isUserInListUserLikes || false
                     };
-        
                     await Blog.findByIdAndUpdate(blog._id, updateFields);
-                }
+                });
+                await Promise.all(promises);
                 return listBlog;
             } catch (error) {
                 console.error("Error updating blogs:", error);
+                throw error;
             }
         }
+        
         static listBlogNew = async (authenticatedUser, index) => {
             const pageSize = 6;
-            const skip = (index - 1) * pageSize; // Số bài viết sẽ bỏ qua
+            const skip = (index - 1) * pageSize;
             try {
               const query = await Blog.find({ status: 'Published' }) // Tạo query
                 .sort({ createdAt: -1 })
@@ -219,6 +221,11 @@ class BlogService{
             console.error("Error fetching most active posts:", error);
             return null;
             }
+        }
+        static sizeGetAllBlogByCategory = async(categoryId) =>{
+            const countDocuments = await Blog.countDocuments({ category: categoryId });
+            const totalPages = Math.ceil(countDocuments / 6); // Tính số lượng trang
+            return totalPages;
         }
 }
 
