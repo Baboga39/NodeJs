@@ -31,6 +31,5 @@ router.put('/addTagToCategory',auth.authenticateToken, controller.categoryContro
 router.put('/joinCategory/:categoryId',auth.authenticateToken, controller.categoryController.joinCategoryByUser);
 router.put('/leaveCategory/:categoryId',auth.authenticateToken, controller.categoryController.leaveCategory);
 router.put('/changeAvatar/:categoryId',auth.authenticateToken,uploadCloud.single('image'), controller.categoryController.updateAvatar)
-router.put('/changeBanner/:categoryId',auth.authenticateToken,uploadCloud.single('image'), controller.categoryController.updateAvatar)
 
 module.exports = router;

@@ -450,9 +450,9 @@ const updateAvatar = async (req,res) => {
     if(!categoryUpdate){
     console.log('Not found category')
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    return res.status(200).json({
+    return res.status(400).json({
         success: true,
-        statusCode: 200,
+        statusCode: 400,
         message: 'Not found category',
         result: categoryUpdate,
     });
