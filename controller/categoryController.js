@@ -237,7 +237,7 @@ const removeTags = async (req, res) => {
     if (category==1) {
         console.log('User do not have permission to remove tags');
         console.log('--------------------------------------------------------------------------------------------------------------------')
-        return res.status(400).json({
+        return res.status(401).json({
             success: false,
             statusCode: 401,
             message: 'User do not have permission to remove tags',
