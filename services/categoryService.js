@@ -41,20 +41,28 @@ class CategoryService {
         } else {
             const request = await UserRequest.findOne({ Category: category._id });
             if (request) {
-                return 'Pending';
+                if (!request.Users || !request.Users.some(user =>  user._id === userId)) {
+                    return 'UnJoin';
+                } else {
+                    return 'Pending';
+                }
             } else {
                 return 'UnJoin';
             }
         }
     };
     static getUserStatusInCategory1 = async (category, userId) => {
-    
+        
         if (category.users.some(user => user.equals(userId))) {
             return 'Join';
         } else {
             const request = await UserRequest.findOne({ Category: category._id });
             if (request) {
-                return 'Pending';
+                if (!request.Users || !request.Users.some(user => user.equals(userId))) {
+                    return 'UnJoin';
+                } else {
+                    return 'Pending';
+                }
             } else {
                 return 'UnJoin';
             }
