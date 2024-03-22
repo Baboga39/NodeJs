@@ -140,9 +140,7 @@ class BlogService{
             try {
                 const promises = listBlog.map(async (blog, index) => {
                     const isUserInSavedBy = blog.savedBy.some(user => user._id.equals(userId));
-                    console.log("Thứ tự thứ " + index + ": " + isUserInSavedBy);
                     const isUserInListUserLikes = blog.listUserLikes.some(user => user._id.equals(userId));
-                    console.log("Thứ tự thứ " + index + ": " + isUserInListUserLikes);
                     const updateFields = {
                         isSave: isUserInSavedBy || false,
                         isLiked: isUserInListUserLikes || false
@@ -206,6 +204,8 @@ class BlogService{
             }
             const pageSize = 6;
             const skip = (index - 1) * pageSize; // Số bài viết sẽ bỏ qua
+            const size = await this.sizeGetAllBlogByCategory(categoryId);
+            console.log(size);
             try {
             const query = await Blog.find({ category: categoryId })
             .sort({ createdAt: -1 })
@@ -216,7 +216,7 @@ class BlogService{
             .populate('category')
             .exec();
             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
-            return posts;
+            return {posts : posts, size: size};
             } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
@@ -224,7 +224,7 @@ class BlogService{
         }
         static sizeGetAllBlogByCategory = async(categoryId) =>{
             const countDocuments = await Blog.countDocuments({ category: categoryId });
-            const totalPages = Math.ceil(countDocuments / 6); // Tính số lượng trang
+            const totalPages = Math.ceil(countDocuments / 6);
             return totalPages;
         }
 }

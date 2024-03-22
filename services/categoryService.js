@@ -23,12 +23,14 @@ class CategoryService {
             console.log('Not found user');
             return 1;
         }
+        const size = await this.countDocumentsCategory();
+        console.log(size)
         const categoriesWithUserStatusPromises = categories.map(async category => {
             const statusUser = await this.getUserStatusInCategory1(category, user._id);  
             return { ...category.toObject(), statusUser };
         });
         const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
-        return categoriesWithUserStatus
+        return { categories: categoriesWithUserStatus, size: size}
     }
     static async countDocumentsCategory() {
         const count = await Category.countDocuments();
@@ -272,29 +274,31 @@ class CategoryService {
     }
     static getCategoryFromUser = async (userId, index) => {
         try {
-        const user = await User.findById(userId);
-        const pageSize = 6;
-        const skip = (index - 1) * pageSize; 
-        const categories = await Category.find({ users: userId })
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(pageSize)
-        .populate('tags')
-        .populate('users')
-        .exec();
-        if ((await categories).length===0) {
-            return null;
-        }
-        const categoriesWithUserStatusPromises = categories.map(async category => {
-            const statusUser = await this.getUserStatusInCategory1(category, user._id);  
-            return { ...category.toObject(), statusUser };
-        });
-        
-        // Sử dụng Promise.all để chờ tất cả các lời hứa hoàn thành
-        const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
-        return categoriesWithUserStatus
-    }
-        catch (error) {
+            const user = await User.findById(userId);
+            const pageSize = 6;
+            const skip = (index - 1) * pageSize; 
+            const categories = await Category.find({ users: userId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(pageSize)
+                .populate('tags')
+                .populate('users')
+                .exec();
+            
+            if (categories.length === 0) {
+                return null;
+            }
+            
+            const categoriesWithUserStatusPromises = categories.map(async category => {
+                const statusUser = await this.getUserStatusInCategory1(category, user._id);  
+                return { ...category.toObject(), statusUser };
+            });
+    
+            const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+            const size = await this.sizeGetALlByUser(userId);
+    
+            return { categories: categoriesWithUserStatus, size: size };
+        } catch (error) {
             console.error(error);
             throw error;
         }
