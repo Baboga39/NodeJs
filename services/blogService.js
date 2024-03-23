@@ -36,15 +36,16 @@ class BlogService{
         const blog = new Blog({
             title: blogDTO.title,
             content: blogDTO.content,
-            category: blogDTO.categoryIds,
+            category: blogDTO.categoryIds|| null,
             description: blogDTO.description,
             avatar: blogDTO.avatar,
             status: 'Draft',
             user: user,
         });
         await blog.save();
-        await blog.addTags(blogDTO.tagIds);
-
+        if(blogDTO.tagIds!=null){
+            await blog.addTags(blogDTO.tagIds);
+            }
         await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
         return blog;
     }
@@ -58,7 +59,9 @@ class BlogService{
         blog.avatar = blogDTO.avatar;
         blog.status = blogDTO.status;
         await blog.save();
-        await blog.addTags(blogDTO.tagIds);
+        if(blogDTO.tagIds!=null){
+            await blog.addTags(blogDTO.tagIds);
+            }
         if(blogDTO.status == 'published'){
         await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
         }
