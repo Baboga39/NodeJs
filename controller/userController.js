@@ -294,6 +294,16 @@ const addComment = async (req, res) => {
     });
   }
   const comment = await Service.commentService.addComment(blogId,authenticatedUser.user_id,content,replyToCommentId);
+  if(comment ==null){
+    console.log('Not found Parent Category ID');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'Not found Parent Category ID',
+      result: null,
+    });
+  }
   console.log('Add Comment Success');
   console.log('--------------------------------------------------------------------------------------------------------------------')
   return res.status(200).json({

@@ -17,7 +17,7 @@ class CategoryService {
     if (replyToCommentId) {
     const parentComment = await Comment.findById(replyToCommentId);
     if (!parentComment) {
-        throw new Error('ID comment không hợp lệ để reply');
+        return null;
     }
     parentComment.replies.push(newComment._id);
     await parentComment.save();
