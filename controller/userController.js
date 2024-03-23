@@ -282,6 +282,16 @@ const addComment = (req, res) => {
       result: null,
     });
   }
+  if(!content) {
+    console.log('Content is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'Content is missing',
+      result: null,
+    });
+  }
   const comment = Service.userService.addComment(blogId,authenticatedUser.user_id,replyToCommentId,content);
   console.log('Add Comment Success');
   console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -301,4 +311,5 @@ module.exports = {
   newPassword,
   likeBlog,
   saveBlog,
+  addComment,
 }

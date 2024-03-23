@@ -1,5 +1,5 @@
-const Blog = mongoose.model('Blog');
-const Comment = mongoose.model('Comment');
+const Blog = require('../models/Blog/blogModel')
+const Comment = require('../models/Blog/commentModel')
 
 const addComment = async (blogId, userId, content, replyToCommentId = null) => {
     const newComment = new Comment({
