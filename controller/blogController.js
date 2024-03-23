@@ -371,7 +371,7 @@ const sizeAllBlogByCategory = async (req, res) => {
 const listBlogSaveByUser = async (req, res) => {
   try {
     const user = req.user;
-    const listBlog  = await Service.blogService.listBlogSaveByUser(user._id);
+    const listBlog  = await Service.blogService.listBlogSaveByUser(user.user);
     console.log('List Blog By User successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({

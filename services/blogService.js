@@ -246,7 +246,7 @@ class BlogService{
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,u)
+                const posts = await this.findAndUpdateLikeAndSave(query,userId)
                 return posts;
             } catch (error) {
                 console.error("Error fetching most active posts:", error);

@@ -41,7 +41,7 @@ const blogSchema = new mongoose.Schema({
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' ,autopopulate: false},
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate : true }],
   listUserLikes: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true}],
-  savedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate : false}],
+  savedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate : true}],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true }],
 }, { timestamps: true, strict: false });
 blogSchema.plugin(autopopulate)
