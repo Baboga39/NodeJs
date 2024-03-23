@@ -8,6 +8,7 @@ class CategoryService {
     {
         newComment.content = content;
         newComment.user = userId;
+        newComment.replyToCommentId = null;
     }
     else{
         newComment.content = content;
