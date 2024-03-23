@@ -227,6 +227,21 @@ class BlogService{
             const totalPages = Math.ceil(countDocuments / 6);
             return totalPages;
         }
+        static listBlogSaveByUser = async (userId)=>{
+            try {
+                const query = await Blog.find({ savedBy: userId })
+                    .sort({ createdAt: -1 })
+                    .populate('tags')
+                    .populate('user')
+                    .populate('category')
+                    .exec();
+                const posts = await this.findAndUpdateLikeAndSave(query,u)
+                return posts;
+            } catch (error) {
+                console.error("Error fetching most active posts:", error);
+                return null;
+            }
+        }
 }
 
 module.exports = BlogService;

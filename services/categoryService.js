@@ -24,7 +24,6 @@ class CategoryService {
             return 1;
         }
         const size = await this.countDocumentsCategory();
-        console.log(size)
         const categoriesWithUserStatusPromises = categories.map(async category => {
             const statusUser = await this.getUserStatusInCategory1(category, user._id);  
             return { ...category.toObject(), statusUser };
@@ -43,7 +42,7 @@ class CategoryService {
         } else {
             const request = await UserRequest.findOne({ Category: category._id });
             if (request) {
-                if (!request.Users || !request.Users.some(user =>  user._id === userId)) {
+                if (!request.Users || !request.Users.some(user =>  user.equals(userId))) {
                     return 'UnJoin';
                 } else {
                     return 'Pending';

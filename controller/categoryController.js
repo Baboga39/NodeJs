@@ -307,7 +307,6 @@ const joinCategoryByUser = async (req, res) => {
     const authenticationUser = req.user;
     const { categoryId } = req.params;
     const categoryCheck = await Service.categoryService.getCategoryById(categoryId,authenticationUser.user._id);
-    const checkRequest = await Service.categoryService.getUserStatusInCategory(categoryCheck,authenticationUser.user._id);
     if(categoryCheck.status ==='Private' || checkRequest === 'Pending') {
         const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
         if(userRequest ===5)
@@ -415,6 +414,30 @@ const leaveCategory = async (req,res) => {
                 message: 'Not found category',
                 result: null,
             })
+        }
+        const checkRequest = await Service.categoryService.getUserStatusInCategory(category,authenticationUser.user._id);
+        if(checkRequest === 'Pending') {
+        const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
+        if(userRequest ===5)
+        {
+            console.log('Cancle Request Successfully')
+            console.log('--------------------------------------------------------------------------------------------------------------------')
+            return res.status(200).json({
+                success: true,
+                statusCode: 200,
+                message: 'Cancle Request Successfully',
+                result: null,
+            });
+        }
+        if(userRequest ===1)
+        {
+            return res.status(400).json({
+                success: false,
+                statusCode: 401,
+                message: 'Not found User',
+                result: null,
+            });
+        }
         }
         return res.status(200).json({
             success: true,

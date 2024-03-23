@@ -138,7 +138,6 @@ static leaveCategory = async (authenticatedUser, categoryId) => {
   {
     return null;
   }
-  console.log(authenticatedUser._id)
   await category.removeUsers(authenticatedUser._id);
   const userCount = await UserModel.countDocuments({ _id: { $in: category.users } });
   category.sumUser = userCount;

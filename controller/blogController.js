@@ -227,7 +227,7 @@ const uploadImage = async (req,res) => {
       });
     }
     catch (error) {
-     return res.status(500).json({
+    return res.status(500).json({
         success: false,
         statusCode: 500,
         message: 'Internal server error',
@@ -389,9 +389,30 @@ const sizeAllBlogByCategory = async (req, res) => {
     result: sizeAllBlogByCategory,
 })
 }
+const listBlogSaveByUser = async (req, res) => {
+  try {
+    const user = req.user;
+    const listBlog  = await Service.blogService.listBlogSaveByUser(user._id);
+    console.log('List Blog By User successfully')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'List Blog By User successfully',
+      result: listBlog,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal server error',
+      result: error.message,
+    });
+  }  
+}
 module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
 
   ,listBlogNew,listBlogPopularity,listBlogByCategory
-  ,sizeAllBlogByCategory
-
+  ,sizeAllBlogByCategory,
+  listBlogSaveByUser
 };
