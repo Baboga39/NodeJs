@@ -307,7 +307,7 @@ const joinCategoryByUser = async (req, res) => {
     const authenticationUser = req.user;
     const { categoryId } = req.params;
     const categoryCheck = await Service.categoryService.getCategoryById(categoryId,authenticationUser.user._id);
-    if(categoryCheck.status ==='Private' || checkRequest === 'Pending') {
+    if(categoryCheck.status ==='Private') {
         const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
         if(userRequest ===5)
         {

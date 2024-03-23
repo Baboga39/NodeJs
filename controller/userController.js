@@ -269,7 +269,29 @@ const saveBlog = async (req, res) => {
     });
   }
 };
-
+const addComment = (req, res) => {
+  const authenticatedUser = req.user;
+  const {blogId,replyToCommentId,content} = req.body
+  if (blogId==':blogId') {
+    console.log('BlogId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'BlogId is missing',
+      result: null,
+    });
+  }
+  const comment = Service.userService.addComment(blogId,authenticatedUser.user_id,replyToCommentId,content);
+  console.log('Add Comment Success');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'BlogId is missing',
+    result: comment,
+  });
+};
 
 module.exports = {
   getUserInfo,

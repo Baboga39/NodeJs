@@ -247,6 +247,5 @@ static listBlogSaveByUser(authenticatedUser) {
   return Blog.find({savedBy: authenticatedUser._id}).select('savedBy')
   .populate('savedBy');;
 }
-
 }
 module.exports = UserService
