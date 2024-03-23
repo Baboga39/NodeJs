@@ -338,7 +338,7 @@ const addComment = async (req, res) => {
 const deleteComment = async (req, res) => {
   try {
     const authenticatedUser = req.user;
-    const {commentId,blogId} = req.params.commentId;
+    const {commentId,blogId} = req.body;
     const comment = await Service.commentService.deleteComment(commentId,authenticatedUser.user._id,blogId);
     if(comment===1)
     {
