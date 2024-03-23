@@ -14,11 +14,13 @@ class CategoryService {
         newComment.content = content;
         newComment.user = userId;
         newComment.replyToCommentId = null;
+        console.log(newComment.user);
     }
     else{
         newComment.content = content;
         newComment.user = userId;
         newComment.replyToCommentId = replyToCommentId;
+
     }
     if (replyToCommentId) {
     const parentComment = await Comment.findById(replyToCommentId);
@@ -40,53 +42,17 @@ class CategoryService {
             if (!comment) {
                 return 1; 
             }
-    
-            const blog = await Blog.findById(blogId);
-            if (!blog) {
-                return 2; 
-            }
-    
-            if (
-                blog.user.equals(userId) ||
-                comment.user.equals(userId) || 
-                req.user.role ==="Admin"){
-                await this.deleteChildComments(commentId);
-                const index = blog.comments.indexOf(commentId);
-                if (index > -1) {
-                    blog.comments.splice(index, 1);
-                    blog.sumComment--;
-                    await blog.save();
-                }
-    
-                await Comment.findByIdAndDelete(commentId);
-                return comment;
-            } else {
-                return null; 
-            }
-        } catch (error) {
-            console.error('Error deleting comment:', error);
-            throw error;
-        }
-    };
-    
-    // Helper function to delete child comments recursively
-    static deleteComment = async (commentId, userId, blogId) => {
-        try {
-            const comment = await Comment.findById(commentId);
-            if (!comment) {
-                return 1; 
-            }
             const blog = await Blog.findById(blogId);
             if (!blog) {
                 return 2;
             }
-    
             if (
                 blog.user.equals(userId) ||
                 comment.user.equals(userId) ||
-                req.user.roles==="Admin"){
-                await deleteChildComments(commentId);
-                    const index = blog.comments.indexOf(commentId);
+                req.user.roles==="Admin"
+            ){
+                await CategoryService.deleteChildComments(commentId, blog); // Thay đổi dòng này
+                const index = blog.comments.indexOf(commentId);
                 if (index > -1) {
                     blog.comments.splice(index, 1);
                     blog.sumComment--;
@@ -98,22 +64,27 @@ class CategoryService {
                 return 3; 
             }
         } catch (error) {
-            console.error('Error deleting comment:', error);
+            console.error('Lỗi khi xóa bình luận:', error);
             throw error;
         }
     };
     
-    static deleteChildComments = async (commentId) => {
+    static deleteChildComments = async (commentId, blog = null) => {
         const comment = await Comment.findById(commentId).populate('replies');
         if (!comment) return;
-    
+        if (blog) {
+            blog.sumComment -= comment.replies.length; 
+            await blog.save();
+        }
         for (const reply of comment.replies) {
-            await deleteChildComments(reply._id);
+            await CategoryService.deleteChildComments(reply._id, blog); 
             await Comment.findByIdAndDelete(reply._id);
         }
-    };
-    
-    
+        if (blog) {
+            blog.sumComment -= comment.replies.length; 
+            await blog.save();
+        }
+    }
 }
 
 module.exports = CategoryService;

@@ -289,13 +289,11 @@ const addComment = async (req, res) => {
     return res.status(400).json({
       success: false,
       statusCode: 400,
-     
-     
-      message: 'Content is missing',
+      message: 'Content is missing',  
       result: null,
     });
   }
-  const comment = await Service.commentService.addComment(blogId,authenticatedUser.user_id,content,replyToCommentId);
+  const comment = await Service.commentService.addComment(blogId,authenticatedUser.user._id,content,replyToCommentId);
   if(comment == null){
     console.log('Not found Parent Category ID');
     console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -342,7 +340,6 @@ const deleteComment = async (req, res) => {
     const comment = await Service.commentService.deleteComment(commentId,authenticatedUser.user._id,blogId);
     if(comment===1)
     {
-     
       console.log('Not found comment');
       console.log('--------------------------------------------------------------------------------------------------------------------')
       return res.status(400).json({
@@ -373,6 +370,14 @@ const deleteComment = async (req, res) => {
         result: null,
       });
     }
+    console.log('Delete comment successfully');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:false,
+      statusCode: 200,
+      message: 'Delete comment successfully',
+      result: null,
+    });
   } catch (error) {
     console.log('Server Internal Error');
     console.log('--------------------------------------------------------------------------------------------------------------------')

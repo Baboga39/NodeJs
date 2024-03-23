@@ -12,6 +12,7 @@ const commentSchema = new mongoose.Schema({
   replyToCommentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true },
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true }], // Mảng ID các reply
 });
+commentSchema.plugin(autopopulate)
 
 commentSchema.pre('save', async function (next) {
   this.updatedAt = Date.now();
