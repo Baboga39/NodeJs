@@ -306,6 +306,16 @@ const addComment = async (req, res) => {
       result: null,
     });
   }
+  if(comment == 1){
+    console.log('Not found blog');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'Not found blog',
+      result: null,
+    });
+  }
   console.log('Add Comment Success');
   console.log('--------------------------------------------------------------------------------------------------------------------')
   return res.status(200).json({
@@ -325,7 +335,54 @@ const addComment = async (req, res) => {
   });
  }
 };
-
+const deleteComment = async (req, res) => {
+  try {
+    const authenticatedUser = req.user;
+    const {commentId,blogId} = req.params.commentId;
+    const comment = await Service.commentService.deleteComment(commentId,authenticatedUser.user._id,blogId);
+    if(comment===1)
+    {
+      console.log('Not found comment');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success:false,
+        statusCode: 400,
+        message: 'Not found comment',
+        result: null,
+      });
+    }
+    if(comment===2)
+    {
+      console.log('Not found blog');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success:false,
+        statusCode: 400,
+        message: 'Not found blog',
+        result: null,
+      });
+    }
+    if(comment===3){
+      console.log('User do not have permission');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(401).json({
+        success:false,
+        statusCode: 401,
+        message: 'User do not have permission',
+        result: null,
+      });
+    }
+  } catch (error) {
+    console.log('Server Internal Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: true,
+      statusCode: 500,
+      message: 'Server Internal Error',
+      result: error.message,
+    });
+  }
+};
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -335,4 +392,5 @@ module.exports = {
   likeBlog,
   saveBlog,
   addComment,
+  deleteComment,
 }

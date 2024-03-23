@@ -16,6 +16,8 @@ router.post('/likeBlog/:blogId',auth.authenticateToken,userController.likeBlog)
 router.post('/saveBlog/:blogId',auth.authenticateToken,userController.saveBlog)
 router.post('/comment',auth.authenticateToken,userController.addComment)
 
+router.delete('/comment',auth.authenticateToken,userController.deleteComment)
+
 
 router.patch('/changeInfo',auth.authenticateToken,userController.updatedUserInfo);
 router.patch('/resetPassword',auth.authenticateToken,userController.newPassword)
