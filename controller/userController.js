@@ -342,6 +342,7 @@ const deleteComment = async (req, res) => {
     const comment = await Service.commentService.deleteComment(commentId,authenticatedUser.user._id,blogId);
     if(comment===1)
     {
+     
       console.log('Not found comment');
       console.log('--------------------------------------------------------------------------------------------------------------------')
       return res.status(400).json({
