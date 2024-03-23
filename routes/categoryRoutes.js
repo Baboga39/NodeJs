@@ -13,6 +13,7 @@ router.get('/categoryByInvitationCode/:invitationCode',auth.authenticateToken,co
 router.get('/userRequest/:categoryId',auth.authenticateToken,controller.categoryController.listUserRequest)
 router.get('/sizeAll',controller.categoryController.sizeAllCategory)
 router.get('/sizeAllCategoryByUser',auth.authenticateToken,controller.categoryController.sizeAllCategoryByUser)
+router.get('/categoryByUserNotPaging',auth.authenticateToken,controller.categoryController.getCategoryByUserNotPaging)
 
 router.post('/addCategory',auth.authenticateToken, controller.categoryController.addCategory);
 router.post('/requestJoin/:categoryId',auth.authenticateToken, controller.categoryController.sendRequestJoinCategory);

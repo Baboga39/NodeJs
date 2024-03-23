@@ -302,6 +302,31 @@ class CategoryService {
             throw error;
         }
     }
+    static getCategoryFromUserNotPaging = async (userId) => {
+        try {
+            const user = await User.findById(userId);
+            const categories = await Category.find({ users: userId })
+                .populate('tags')
+                .sort({ createdAt: -1 })
+                .exec();
+            
+            if (categories.length === 0) {
+                return null;
+            }
+            
+            const categoriesWithUserStatusPromises = categories.map(async category => {
+                const statusUser = await this.getUserStatusInCategory1(category, user._id);  
+                return { ...category.toObject(), statusUser };
+            });
+    
+            const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+    
+            return  categoriesWithUserStatus;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
     static sizeGetALlByUser = async (user_id) =>{
         const countDocuments = await Category.countDocuments({ users: user_id });
         const totalPages = Math.ceil(countDocuments / 6); // Tính số lượng trang
