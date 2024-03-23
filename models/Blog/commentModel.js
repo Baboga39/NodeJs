@@ -7,13 +7,8 @@ const commentSchema = new mongoose.Schema({
     required: true,
   },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true }, // Tham chiếu người dùng
-  likes: {
-    type: Number,
-    default: 0,
-  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  listUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users', autopopulate: true }], 
   replyToCommentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true },
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true }], // Mảng ID các reply
 });

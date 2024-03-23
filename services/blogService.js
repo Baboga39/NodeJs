@@ -109,17 +109,25 @@ class BlogService{
             throw new Error(error.message);
         }
     }
-    
-      
     static getAllBlogByUserId = async (authenticatedUsers)=> {
-        const result = await Blog.updateMany({ isSave: { $exists: false } }, { $set: { isSave: false } });
-
         const user = await User.findById(authenticatedUsers.user._id);
         if (!user) {
             return null;
-          }
+        }
         const blog = await Blog.find({user: user._id});
         return blog;
+    }
+    static getBlogDraftByUser = async (authenticatedUser) =>{
+        try {
+        const draftBlogs = await Blog.find({ user: authenticatedUser._id, status: 'Draft' }).populate('tags')
+        .populate('user')
+        .populate('category').exec();;
+        const posts = await this.findAndUpdateLikeAndSave(draftBlogs,authenticatedUser._id)
+        return posts;
+        } catch (error) {
+        console.error("Error fetching most active posts:", error);
+        return null;
+        }
     }
 
     //////////////////////////////// Interaction with blog //////////////////////////////////////////////////////////////////

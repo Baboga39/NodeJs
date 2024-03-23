@@ -73,7 +73,6 @@ const createBlogDraft = async (req, res) => {
       const authenticatedUser = req.user;
       console.log(authenticatedUser);
       const blogDTO = BlogDTO.fromRequest(req.body);
-
       const blog = await Service.blogService.createBlogDraft(blogDTO,authenticatedUser);
       console.log('Create Blog Draft successfully')
       console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -390,9 +389,33 @@ const listBlogSaveByUser = async (req, res) => {
     });
   }  
 }
+const listBlogDraftByUser = async (req, res) => {
+  try {
+    const authenticatedUser = req.user;
+    const listBlog  = await Service.blogService.getBlogDraftByUser(authenticatedUser.user);
+    console.log('List Blog Draft by User')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'List Blog Draft by User',
+      result: listBlog,
+    });
+  } catch (error) {
+    console.log('Internal server error')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal server error',
+      result: error.message,
+    });
+  }
+}
 module.exports = {createBlog,getBlogById,uploadImage, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
 
   ,listBlogNew,listBlogPopularity,listBlogByCategory
   ,sizeAllBlogByCategory,
-  listBlogSaveByUser
+  listBlogSaveByUser,
+  listBlogDraftByUser
 };

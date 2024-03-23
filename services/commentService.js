@@ -14,8 +14,6 @@ class CategoryService {
         newComment.user = userId;
         newComment.replyToCommentId = replyToCommentId;
     }
-
-    console.log(replyToCommentId)
     if (replyToCommentId) {
     const parentComment = await Comment.findById(replyToCommentId);
     if (!parentComment) {
@@ -29,12 +27,8 @@ class CategoryService {
     blog.comments.push(newComment._id);
     blog.sumComment++;
     await blog.save();
-
     return newComment;
     };
-    static likeComment = async (commentId, userId) =>{
-        
-    }
 }
 
 module.exports = CategoryService;
