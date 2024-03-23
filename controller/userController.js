@@ -269,10 +269,11 @@ const saveBlog = async (req, res) => {
     });
   }
 };
-const addComment = (req, res) => {
+const addComment = async (req, res) => {
+ try {
   const authenticatedUser = req.user;
   const {blogId,replyToCommentId,content} = req.body
-  if (blogId==':blogId') {
+  if (!blogId) {
     console.log('BlogId is missing');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(400).json({
@@ -292,17 +293,26 @@ const addComment = (req, res) => {
       result: null,
     });
   }
-  const comment = Service.userService.addComment(blogId,authenticatedUser.user_id,replyToCommentId,content);
+  const comment = await Service.commentService.addComment(blogId,authenticatedUser.user_id,content,replyToCommentId);
   console.log('Add Comment Success');
   console.log('--------------------------------------------------------------------------------------------------------------------')
   return res.status(200).json({
     success: true,
     statusCode: 200,
-    message: 'BlogId is missing',
+    message: 'Add Comment Success',
     result: comment,
   });
+ } catch (error) {
+  console.log('Server Internal Error');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(500).json({
+    success: true,
+    statusCode: 500,
+    message: 'Server Internal Error',
+    result: error.message,
+  });
+ }
 };
-
 module.exports = {
   getUserInfo,
   updatedUserInfo,

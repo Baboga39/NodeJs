@@ -148,26 +148,6 @@ const uploadImage = async (req,res) => {
       });
     }
   }
-  const uploadAvatar = async (req,res) => {
-      try {
-        const fileData  = req.file;
-        console.log('Upload Image successfully')
-        console.log('--------------------------------------------------------------------------------------------------------------------')
-        return res.status(200).json({
-        success: true,
-        statusCode: 200,
-        message: 'Upload Image successfully',
-        result: fileData.path,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        statusCode: 500,
-        message: 'Internal server error',
-        result: error.message,
-      });
-    }
-  }
   const editBlog = async (req,res) => {
     try {
       const authenticatedUser = req.user;
@@ -410,7 +390,7 @@ const listBlogSaveByUser = async (req, res) => {
     });
   }  
 }
-module.exports = {createBlog,getBlogById,uploadImage,uploadAvatar, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
+module.exports = {createBlog,getBlogById,uploadImage, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
 
   ,listBlogNew,listBlogPopularity,listBlogByCategory
   ,sizeAllBlogByCategory,

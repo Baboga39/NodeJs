@@ -13,7 +13,7 @@ const commentSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  replyToCommentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: false },
+  replyToCommentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true },
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true }], // Mảng ID các reply
 });
 
