@@ -313,6 +313,7 @@ const addComment = async (req, res) => {
   });
  }
 };
+
 module.exports = {
   getUserInfo,
   updatedUserInfo,

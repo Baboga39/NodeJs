@@ -32,6 +32,9 @@ class CategoryService {
 
     return newComment;
     };
+    static likeComment = async (commentId, userId) =>{
+        
+    }
 }
 
 module.exports = CategoryService;
