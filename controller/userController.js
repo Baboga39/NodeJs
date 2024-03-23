@@ -289,12 +289,14 @@ const addComment = async (req, res) => {
     return res.status(400).json({
       success: false,
       statusCode: 400,
+     
+     
       message: 'Content is missing',
       result: null,
     });
   }
   const comment = await Service.commentService.addComment(blogId,authenticatedUser.user_id,content,replyToCommentId);
-  if(comment ==null){
+  if(comment == null){
     console.log('Not found Parent Category ID');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(400).json({
