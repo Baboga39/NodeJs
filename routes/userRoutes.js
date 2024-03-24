@@ -15,6 +15,7 @@ router.put('/changeAvatar',auth.authenticateToken,uploadCloud.single('image'),us
 router.post('/likeBlog/:blogId',auth.authenticateToken,userController.likeBlog)
 router.post('/saveBlog/:blogId',auth.authenticateToken,userController.saveBlog)
 router.post('/comment',auth.authenticateToken,userController.addComment)
+router.patch('/editComment',auth.authenticateToken,userController.editComment)
 
 router.delete('/comment',auth.authenticateToken,userController.deleteComment)
 

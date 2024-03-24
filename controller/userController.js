@@ -389,6 +389,51 @@ const deleteComment = async (req, res) => {
     });
   }
 };
+const editComment = async (req, res) => {
+  try {
+    const authenticatedUser = req.user;
+    const {commentId,content} = req.body;
+    const comment = await Service.commentService.editComment(commentId,authenticatedUser.user._id,content);
+    if(comment===1)
+    {
+      console.log('Not found comment');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success:false,
+        statusCode: 400,
+        message: 'Not found comment',
+        result: null,
+      });
+    }
+    if(comment===3){
+      console.log('User do not have permission');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(401).json({
+        success:false,
+        statusCode: 401,
+        message: 'User do not have permission',
+        result: null,
+      });
+    }
+    console.log('Edit comment successfully');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:false,
+      statusCode: 200,
+      message: 'Edit comment successfully',
+      result: comment,
+    });
+  } catch (error) {
+    console.log('Server Internal Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: true,
+      statusCode: 500,
+      message: 'Server Internal Error',
+      result: error.message,
+    });
+  }
+};
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -398,5 +443,6 @@ module.exports = {
   likeBlog,
   saveBlog,
   addComment,
+  editComment,
   deleteComment,
 }

@@ -85,6 +85,26 @@ class CategoryService {
             await blog.save();
         }
     }
+    static editComment = async (commentId, userId,content) => {
+        try {
+            const comment = await Comment.findById(commentId);
+            if (!comment) {
+                return 1; 
+            }
+            if (
+                comment.user.equals(userId)
+            ){
+             comment.content = content;
+             comment.save();
+             return comment;
+            } else {
+                return 3; 
+            }
+        } catch (error) {
+            console.error('Lỗi khi xóa bình luận:', error);
+            throw error;
+        }
+    };
 }
 
 module.exports = CategoryService;
