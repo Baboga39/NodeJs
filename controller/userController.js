@@ -434,6 +434,124 @@ const editComment = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+//--------------------------------------------------------INTERACT WITH USER --------------------------------------------------------
+const followUser = async (req, res) => {
+  const authenticatedUser =req.user;
+  const userId = req.params.userId;
+  if (userId==':userId') {
+    console.log('UserId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'UserId is missing',
+      result: null,
+    });
+  }
+  const follow = await Service.userService.followUser(userId,authenticatedUser.user)
+
+  if(follow===1){
+    console.log('Not found User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found User',
+      result: null,
+    });
+  }
+  if(follow ===2)
+  {
+    console.log('Unfollow User Successfully');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'Unfollow User Successfully',
+      result: null,
+    });
+  }
+    console.log('Follow User Successfully');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'Follow User Successfully',
+      result: follow,
+  })
+}
+const listUserFollower = async (req,res) => {
+  const authenticatedUser = req.user;
+  const userId = req.params.userId;
+  if (userId==':userId') {
+    console.log('UserId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'UserId is missing',
+      result: null,
+    });
+  }
+  const listUserFollower = await Service.userService.listUserFollower(userId,authenticatedUser.user);
+  if(listUserFollower===1){
+    console.log('Not found Entity User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found Entity User',
+      result: null,
+    });
+  }
+  console.log('List User Follower');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'List User Follower',
+    result: listUserFollower,
+  });
+}
+const listUserFollowing = async (req,res) => {
+  const authenticatedUser = req.user;
+  const userId = req.params.userId;
+  if (userId==':userId') {
+    console.log('UserId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'UserId is missing',
+      result: null,
+    });
+  }
+  const listUserFollower = await Service.userService.listUserFollowing(userId,authenticatedUser.user);
+  if(listUserFollower===1){
+    console.log('Not found Entity User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found Entity User',
+      result: null,
+    });
+  }
+  console.log('List User Following');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'List User Following',
+    result: listUserFollower,
+  });
+}
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -445,4 +563,7 @@ module.exports = {
   addComment,
   editComment,
   deleteComment,
+  followUser,
+  listUserFollower,
+  listUserFollowing
 }

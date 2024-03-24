@@ -6,6 +6,8 @@ const uploadCloud = require('../middlewares/uploadCloudinary');
 const router = express.Router();
 
 router.get('/', userController.getUserInfo);
+router.get('/userFollower/:userId',auth.authenticateToken, userController.listUserFollower);
+router.get('/userFollowing/:userId',auth.authenticateToken, userController.listUserFollowing);
 
 
 
@@ -15,6 +17,9 @@ router.put('/changeAvatar',auth.authenticateToken,uploadCloud.single('image'),us
 router.post('/likeBlog/:blogId',auth.authenticateToken,userController.likeBlog)
 router.post('/saveBlog/:blogId',auth.authenticateToken,userController.saveBlog)
 router.post('/comment',auth.authenticateToken,userController.addComment)
+router.post('/follow/:userId',auth.authenticateToken,userController.followUser)
+
+
 router.patch('/editComment',auth.authenticateToken,userController.editComment)
 
 router.delete('/comment',auth.authenticateToken,userController.deleteComment)

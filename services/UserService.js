@@ -4,6 +4,8 @@ const cloudinary = require('cloudinary').v2;
 const Category = require('../models/Blog/categoryModel')
 const Blog = require('../models/Blog/blogModel')
 const UserRequest = require('../models/Blog/userRequestModel')
+const Follow = require('../models/followModel');
+const usermodel = require('../models/usermodel');
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -246,6 +248,104 @@ static saveBlog = async (authenticatedUser, blogId) => {
 static listBlogSaveByUser(authenticatedUser) {
   return Blog.find({savedBy: authenticatedUser._id}).select('savedBy')
   .populate('savedBy');;
+}
+
+
+//////////////////////////////// Interaction with User //////////////////////////////////////////////////////////////////
+static followUser = async (user_id, authenticatedUser) => {
+  try {
+    const userToFollow = await usermodel.findById(user_id);
+    if (!userToFollow) {
+        return 1;
+    }
+      let follow = await Follow.findOne({ user: authenticatedUser._id });
+      let following = await Follow.findOne({ user: user_id});
+      if(!following)
+      {
+        following = new Follow({ 
+          user: user_id, 
+          follower: [],
+          following: [] 
+      });
+      }
+      if (!follow) {          
+        follow = new Follow({ 
+              user: authenticatedUser._id, 
+              follower: [],
+              following: [] 
+          });
+      }
+      const alreadyFollowing = follow.following.some(userId => userId.equals(userToFollow._id));
+      if (alreadyFollowing) {
+          follow.following.pull(user_id);
+          following.follower.pull(authenticatedUser._id)
+          await following.save();
+          await follow.save();
+          return 2;
+      } else {
+          follow.following.push(user_id);
+          following.follower.push(authenticatedUser._id)
+          await follow.save();
+          await following.save();
+          return follow;
+      }
+  } catch (error) {
+      throw new Error(error.message);
+  }
+}
+static isUserFollowedByAuthenticatedUser = async (user_id, authenticatedUser_id) => {
+  try {
+      const follow = await Follow.findOne({ user: authenticatedUser_id }); 
+      if (!follow) {
+          return false;
+      }
+      const isFollowed = follow.following.some(userId => userId.equals(user_id));
+      return isFollowed;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+}
+static listUserFollower = async (user_id, authenticatedUser) => {
+  try {
+      const follow = await Follow.findOne({ user: user_id });
+      if (!follow) {
+          return 1;
+      }
+      const followers = follow.follower;
+      for (let i = 0; i < followers.length; i++) {
+          const followerId = followers[i];
+          const user = await usermodel.findById(followerId);
+          if (!user) {
+              throw new Error(`User with id ${followerId} not found`);
+          }
+          const isFollowed = await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
+          user.isfollow = isFollowed;
+      }
+      return followers;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+}
+static listUserFollowing = async (user_id, authenticatedUser) => {
+  try {
+      const follow = await Follow.findOne({ user: user_id });
+      if (!follow) {
+          return 1;
+      }
+      const followers = follow.following;
+      for (let i = 0; i < followers.length; i++) {
+          const followerId = followers[i];
+          const user = await usermodel.findById(followerId);
+          if (!user) {
+              throw new Error(`User with id ${followerId} not found`);
+          }
+          const isFollowed = await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
+          user.isfollow = isFollowed;
+      }
+      return followers;
+  } catch (error) {
+      throw new Error(error.message);
+  }
 }
 }
 module.exports = UserService

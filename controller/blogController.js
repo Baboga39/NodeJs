@@ -282,16 +282,49 @@ const listBlogPopularity = async (req, res) => {
       return res.status(200).json({
         success: true,
         statusCode: 200,
-        message: 'Get All Blog Success',
+        message: 'Get All Blog Popularity Success',
         result: null
       });
     }
-    console.log('Get All Blog Popularity Success');
+    console.log('Get All Blog Popularity Popularity Success');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'Get All Blog Success',
+      result: blogs
+    });
+  } catch (error) {
+    console.log('Internal Server Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error',
+      result: error.message,
+    });
+  }
+}
+const listBlogDiscussions = async (req, res) => {
+  try {
+    const { index } = req.query; 
+    const blogs = await Service.blogService.listBlogDiscussions(req.user, index);
+    console.log('Get All Blog Popularity Success');
+    console.log('---------------------------------------------- ----------------------------------------------------------------------')
+    if(blogs==null){
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Get All Blog Discussions Success',
+        result: null
+      });
+    }
+    console.log('Get All Blog Discussions Success');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Get All Blog Discussions Success',
       result: blogs
     });
   } catch (error) {
@@ -417,5 +450,6 @@ module.exports = {createBlog,getBlogById,uploadImage, createBlogDraft, editBlog,
   ,listBlogNew,listBlogPopularity,listBlogByCategory
   ,sizeAllBlogByCategory,
   listBlogSaveByUser,
-  listBlogDraftByUser
+  listBlogDraftByUser,
+  listBlogDiscussions
 };

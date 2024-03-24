@@ -207,6 +207,24 @@ class BlogService{
             return null;
             }
         };
+        static listBlogDiscussions = async (authenticatedUser, index) => {
+            const pageSize = 6;
+            const skip = (index - 1) * pageSize;
+            try {
+            const query = await Blog.find({ status: 'Published' })
+                .sort({ sumComment: -1, views: -1, updatedAt: -1 }) 
+                .skip(skip)   
+                .limit(pageSize) 
+                .populate('tags') 
+                .populate('category') 
+                .exec();
+            const posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser.user._id)
+            return posts;
+            } catch (error) {
+            console.error("Error fetching most active posts:", error);
+            return null;
+            }
+        };
         static getAllBlogByCategory = async (categoryId, authenticatedUser,index) =>{
             const category = Category.findById(categoryId);
             if(!category){

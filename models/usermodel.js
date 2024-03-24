@@ -96,6 +96,10 @@ const userSchema = new mongoose.Schema({
   totalBlog:{
     type: Number, 
     default:0
+  },
+  isfollow:{
+    type:Boolean,
+    default:false
   }
 }, { timestamps: true,  strict: false });
 userSchema.pre('save', async function (next) {
