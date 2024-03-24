@@ -181,9 +181,9 @@ const likeBlog = async (req, res) => {
     if (!blog) {
       console.log('Blog not found');
       console.log('--------------------------------------------------------------------------------------------------------------------')
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        statusCode: 404,
+        statusCode: 400,
         message: 'Blog not found',
         result: null,
       });
@@ -234,9 +234,9 @@ const saveBlog = async (req, res) => {
     if (!blog) {
       console.log('Blog not found');
       console.log('--------------------------------------------------------------------------------------------------------------------')
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        statusCode: 404,
+        statusCode: 400,
         message: 'Blog not found',
         result: null,
       });
