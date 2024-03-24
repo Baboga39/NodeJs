@@ -373,7 +373,7 @@ const deleteComment = async (req, res) => {
     console.log('Delete comment successfully');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
-      success:false,
+      success:true,
       statusCode: 200,
       message: 'Delete comment successfully',
       result: null,
@@ -418,7 +418,7 @@ const editComment = async (req, res) => {
     console.log('Edit comment successfully');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
-      success:false,
+      success:true,
       statusCode: 200,
       message: 'Edit comment successfully',
       result: comment,
