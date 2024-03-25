@@ -585,6 +585,29 @@ const getWallUsers = async (req, res) => {
     result: wallUsers,
   });
 }
+const listBlogByUserId = async (req, res) => {
+  const userId = req.params.userId;
+  const authenticatedUser = req.user;
+  const listBlogByUserId = await Service.blogService.listBlogByUserId(userId, authenticatedUser.user);
+  if(!listBlogByUserId || listBlogByUserId.length === 0) {
+    console.log('Get Blog By Users Successfully');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'Get Blog By Users Successfully',
+      result: null,
+    });
+  }
+  console.log('Get Blog By Users Successfully');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'Get Blog By Users Successfully',
+    result: listBlogByUserId,
+  });
+}
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -600,4 +623,5 @@ module.exports = {
   listUserFollower,
   listUserFollowing,
   getWallUsers,
+  listBlogByUserId
 }

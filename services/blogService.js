@@ -271,6 +271,21 @@ class BlogService{
                 return null;
             }
         }
+        static listBlogByUserId = async (userId,authenticatedUser)=>{
+            try {
+                const query = await Blog.find({ user: userId })
+                    .sort({ createdAt: -1 })
+                    .populate('tags')
+                    .populate('user')
+                    .populate('category')
+                    .exec();
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+                return posts;
+            } catch (error) {
+                console.error("Error fetching most active posts:", error);
+                return null;
+            }
+        }
 }
 
 module.exports = BlogService;

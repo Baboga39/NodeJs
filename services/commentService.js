@@ -14,13 +14,11 @@ class CategoryService {
         newComment.content = content;
         newComment.user = userId;
         newComment.replyToCommentId = null;
-        console.log(newComment.user);
     }
     else{
         newComment.content = content;
         newComment.user = userId;
         newComment.replyToCommentId = replyToCommentId;
-
     }
     if (replyToCommentId) {
     const parentComment = await Comment.findById(replyToCommentId);

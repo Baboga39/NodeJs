@@ -9,6 +9,7 @@ router.get('/', userController.getUserInfo);
 router.get('/userFollower/:userId',auth.authenticateToken, userController.listUserFollower);
 router.get('/userFollowing/:userId',auth.authenticateToken, userController.listUserFollowing);
 router.get('/wallUser/:userId',auth.authenticateToken, userController.getWallUsers);
+router.get('/listBlog/:userId',auth.authenticateToken, userController.listBlogByUserId);
 
 
 
