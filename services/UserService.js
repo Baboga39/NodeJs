@@ -255,6 +255,8 @@ static listBlogSaveByUser(authenticatedUser) {
 static followUser = async (user_id, authenticatedUser) => {
   try {
     const userToFollow = await usermodel.findById(user_id);
+    const user = await UserModel.findById(user_id);
+    const userAuthentication = await UserModel.findById(authenticatedUser._id)
     if (!userToFollow) {
         return 1;
     }
@@ -279,12 +281,20 @@ static followUser = async (user_id, authenticatedUser) => {
       if (alreadyFollowing) {
           follow.following.pull(user_id);
           following.follower.pull(authenticatedUser._id)
+          user.totalFollower -= 1;
+          userAuthentication.totalFollowing-=1;
+          await user.save();
+          await userAuthentication.save();
           await following.save();
           await follow.save();
           return 2;
       } else {
           follow.following.push(user_id);
           following.follower.push(authenticatedUser._id)
+          user.totalFollower += 1;
+          userAuthentication.totalFollowing +=1;
+          await user.save();
+          await userAuthentication.save();
           await follow.save();
           await following.save();
           return follow;
@@ -346,6 +356,15 @@ static listUserFollowing = async (user_id, authenticatedUser) => {
   } catch (error) {
       throw new Error(error.message);
   }
+}
+static getWallUser = async (userId, authenticatedUser)=>{
+  const user = await UserModel.findById(userId);  
+  if(!user)
+  {
+    return 1;
+  }
+  user.isfollow =  await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
+  return user;
 }
 }
 module.exports = UserService

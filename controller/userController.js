@@ -552,6 +552,39 @@ const listUserFollowing = async (req,res) => {
     result: listUserFollower,
   });
 }
+const getWallUsers = async (req, res) => {
+  const userId = req.params.userId;
+  const authenticatedUser = req.user;
+  if (userId==':userId') {
+    console.log('UserId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'UserId is missing',
+      result: null,
+    });
+  }
+  const wallUsers = await Service.userService.getWallUser(userId, authenticatedUser.user);
+  if(wallUsers===1){
+    console.log('Not found User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found  User',
+      result: null,
+    });
+  }
+  console.log('Get Wall Users');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'Get Wall Users',
+    result: wallUsers,
+  });
+}
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -565,5 +598,6 @@ module.exports = {
   deleteComment,
   followUser,
   listUserFollower,
-  listUserFollowing
+  listUserFollowing,
+  getWallUsers,
 }
