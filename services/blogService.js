@@ -150,8 +150,10 @@ class BlogService{
         static findAndUpdateLikeAndSave = async (listBlog, userId) => {
             try {
                 const promises = listBlog.map(async (blog, index) => {
-                    const isUserInSavedBy = blog.savedBy.some(user => user._id.equals(userId));
-                    const isUserInListUserLikes = blog.listUserLikes.some(user => user._id.equals(userId));
+                    const isUserInSavedBy = await blog.savedBy.some(user => user._id.equals(userId));
+                    const isUserInListUserLikes = await blog.listUserLikes.some(user => user._id.equals(userId));
+                    console.log(userId)
+                    console.log(isUserInListUserLikes)
                     const updateFields = {
                         isSave: isUserInSavedBy || false,
                         isLiked: isUserInListUserLikes || false
