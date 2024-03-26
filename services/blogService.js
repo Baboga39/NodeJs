@@ -121,9 +121,13 @@ class BlogService{
         try {
         const draftBlogs = await Blog.find({ user: authenticatedUser._id, status: 'Draft' }).populate('tags')
         .populate('user')
-        .populate('category').exec();;
+        .populate('category').exec();
         const posts = await this.findAndUpdateLikeAndSave(draftBlogs,authenticatedUser._id)
-        return posts;
+        const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+        if (posts2.length === 0) {
+            return null;
+        }
+        return posts2;
         } catch (error) {
         console.error("Error fetching most active posts:", error);
         return null;
@@ -172,8 +176,6 @@ class BlogService{
                     let updateFields;
                     if(category!=null){
                         const isPermission = await category.users.some(user => user._id.equals(userId));
-                        console.log(isPermission)
-                        console.log(category.status)
                         if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
                         updateFields = {
                             isPermission: true
@@ -305,8 +307,8 @@ class BlogService{
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,userId)
-                const posts2 = await this.findAndUpdatePermissions(posts,userId)
+                const posts = await this.findAndUpdateLikeAndSave(query,userId._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,userId._id)
                 if (posts2.length === 0) {
                     return null;
                 }
