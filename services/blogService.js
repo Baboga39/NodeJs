@@ -324,8 +324,8 @@ class BlogService{
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
-                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
                 if (posts2.length === 0) {
                     return null;
                 }
