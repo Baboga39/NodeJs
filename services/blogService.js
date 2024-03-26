@@ -152,8 +152,6 @@ class BlogService{
                 const promises = listBlog.map(async (blog, index) => {
                     const isUserInSavedBy = await blog.savedBy.some(user => user._id.equals(userId));
                     const isUserInListUserLikes = await blog.listUserLikes.some(user => user._id.equals(userId));
-                    console.log(userId)
-                    console.log(isUserInListUserLikes)
                     const updateFields = {
                         isSave: isUserInSavedBy || false,
                         isLiked: isUserInListUserLikes || false
@@ -167,7 +165,39 @@ class BlogService{
                 throw error;
             }
         }
-        
+        static findAndUpdatePermissions = async (listBlog, userId) =>{
+            try {
+                const promises = listBlog.map(async (blog, index) => {
+                    const category = await blog.category;                        
+                    let updateFields;
+                    if(category!=null){
+                        const isPermission = await category.users.some(user => user._id.equals(userId));
+                        console.log(isPermission)
+                        console.log(category.status)
+                        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
+                        updateFields = {
+                            isPermission: true
+                        }
+                        if(category.status === 'Private' && !isPermission)
+                        {
+                            updateFields = {
+                                isPermission: false
+                            };
+                        }
+                    }else{  
+                    updateFields = {
+                        isPermission: true
+                    };}
+                    console.log(updateFields);
+                    await Blog.findByIdAndUpdate(blog._id, updateFields);
+                });
+                await Promise.all(promises);
+                return listBlog;
+            } catch (error) {
+                console.error("Error updating blogs:", error);
+                throw error;
+            }
+        }
         static listBlogNew = async (authenticatedUser, index) => {
             const pageSize = 6;
             const skip = (index - 1) * pageSize;
@@ -182,11 +212,11 @@ class BlogService{
                 .exec();
         
             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
-
-            if (posts.length === 0) {
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+            if (posts2.length === 0) {
                 return null;
             }
-            return posts;
+            return posts2;
             } catch (error) {
             return null;
             }
@@ -202,8 +232,12 @@ class BlogService{
                 .populate('tags') 
                 .populate('category') 
                 .exec();
-            const posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser.user._id)
-            return posts;
+            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+            if (posts2.length === 0) {
+                    return null;
+            }
+            return posts2;
             } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
@@ -220,8 +254,12 @@ class BlogService{
                 .populate('tags') 
                 .populate('category') 
                 .exec();
-            const posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser.user._id)
-            return posts;
+            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+            if (posts2.length === 0) {
+                return null;
+            }
+            return posts2;
             } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
@@ -247,7 +285,8 @@ class BlogService{
             .populate('category')
             .exec();
             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
-            return {posts : posts, size: size};
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+            return {posts : posts2, size: size};
             } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
@@ -266,8 +305,12 @@ class BlogService{
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,userId._id)
-                return posts;
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+                if (posts2.length === 0) {
+                    return null;
+                }
+                return posts2;            
             } catch (error) {
                 console.error("Error fetching most active posts:", error);
                 return null;
@@ -281,8 +324,12 @@ class BlogService{
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
-                return posts;
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
+                if (posts2.length === 0) {
+                    return null;
+                }
+                return posts2;
             } catch (error) {
                 console.error("Error fetching most active posts:", error);
                 return null;
