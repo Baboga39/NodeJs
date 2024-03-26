@@ -152,6 +152,54 @@ const uploadImage = async (req,res) => {
       const authenticatedUser = req.user;
       const blogId = req.params.blogId;
       const blogDTO = BlogDTO.fromRequest(req.body);
+      if(blogDTO.status === "Published")
+      {
+        if(!blogDTO.title)
+        {
+          return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: 'Title is required',
+              result: null
+          });
+        }
+        if(!blogDTO.content){
+          return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: 'Content is required',
+              result: null
+          });
+        }
+        if(!blogDTO.avatar){
+          return res.status(400).json({
+              success: false,
+              statusCode: 400,
+              message: 'Avatar is required',
+              result: null
+          });
+        }
+        const blog = await Service.blogService.editBlog(blogDTO,authenticatedUser,blogId);
+        if(blog === 1)
+        {
+        console.log('Not found Category')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: true,
+            statusCode: 400,
+            message: 'Not found Category',
+            result: null
+        });
+        }
+        console.log('Edit Blog successfully')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Edit Blog Success',
+            result: blog
+        });
+      }
       const blog = await Service.blogService.editBlog(blogDTO,authenticatedUser,blogId);
       if (blog==null) {
       console.log('Not found Blog')
