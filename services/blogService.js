@@ -258,13 +258,13 @@ class BlogService{
         }
         static listBlogSaveByUser = async (userId)=>{
             try {
-                const query = await Blog.find({ savedBy: userId })
+                const query = await Blog.find({ savedBy: userId._id })
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,userId)
+                const posts = await this.findAndUpdateLikeAndSave(query,userId._id)
                 return posts;
             } catch (error) {
                 console.error("Error fetching most active posts:", error);

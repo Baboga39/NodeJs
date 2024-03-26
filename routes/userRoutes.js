@@ -11,6 +11,10 @@ router.get('/userFollowing/:userId',auth.authenticateToken, userController.listU
 router.get('/wallUser/:userId',auth.authenticateToken, userController.getWallUsers);
 router.get('/listBlog/:userId',auth.authenticateToken, userController.listBlogByUserId);
 
+//Notify the user
+router.get('/listNotify',auth.authenticateToken, userController.listNotifyByUser);
+router.post('/checkIsRead/:notifyId',auth.authenticateToken, userController.checkIsRead);
+
 
 
 router.put('/removeAvatar',auth.authenticateToken,userController.removeAvatar)

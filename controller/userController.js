@@ -199,6 +199,7 @@ const likeBlog = async (req, res) => {
         result: blog,
       });
     }
+    await Service.notificationService.notifyLike(blog._id,authenticatedUser.user._id)
     console.log('--------------------------------------------------------------------------------------------------------------------')
     console.log('Like Blog successfully');
     return res.status(200).json({
@@ -314,6 +315,7 @@ const addComment = async (req, res) => {
       result: null,
     });
   }
+  await Service.notificationService.notifyComment(blogId,authenticatedUser.user)
   console.log('Add Comment Success');
   console.log('--------------------------------------------------------------------------------------------------------------------')
   return res.status(200).json({
@@ -477,6 +479,7 @@ const followUser = async (req, res) => {
       result: null,
     });
   }
+    await Service.notificationService.notifyFollow(userId, authenticatedUser.user._id)
     console.log('Follow User Successfully');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
@@ -608,6 +611,60 @@ const listBlogByUserId = async (req, res) => {
     result: listBlogByUserId,
   });
 }
+const listNotifyByUser = async (req, res) => {
+  const authenticatedUser = req.user;
+  const listNotifyByUser = await Service.notificationService.listNotifyByUser(authenticatedUser.user._id);
+  if(listNotifyByUser===1){
+    console.log('Not found User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found Entity User',
+      result: null,
+    });
+  }
+  if(listNotifyByUser.length===0){
+    console.log('List Notify by User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'List Notify by User',
+      result: null,
+    });
+  }
+  console.log('List Notify by User');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'List Notify by User',
+    result: listNotifyByUser,
+  });
+}
+const checkIsRead = async (req, res) => {
+  const notifyId = req.params.notifyId;
+  const notification = await Service.notificationService.checkIsRead(notifyId)
+  if(!notifyId){
+  console.log('Not found notification');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:true,
+      statusCode: 400,
+      message: 'Not found notification',
+      result: null,
+    });
+  }
+  console.log('Check is read success');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'Check is read success',
+      result: notification,
+    });
+};
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -623,5 +680,5 @@ module.exports = {
   listUserFollower,
   listUserFollowing,
   getWallUsers,
-  listBlogByUserId
+  listBlogByUserId,listNotifyByUser,checkIsRead
 }
