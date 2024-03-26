@@ -87,6 +87,26 @@ class BlogService{
         let blog = await Blog.findById(blogId);
         blog.views++;
         blog.save();
+        const category = await blog.category;                        
+        let updateFields;
+        if(category!=null){
+        const isPermission = await category.users.some(user => user._id.equals());
+        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
+                        updateFields = {
+                            isPermission: true
+                        }
+                        if(category.status === 'Private' && !isPermission)
+                        {
+                            updateFields = {
+                                isPermission: false
+                            };
+                        }
+                    }else{  
+                    updateFields = {
+                        isPermission: true
+                    };}
+                    console.log(updateFields);
+                    await Blog.findByIdAndUpdate(blog._id, updateFields);
         return Blog.findById(blogId);
     }
     static deleteBlogById = async (blogId,authenticatedUser) => {
@@ -320,7 +340,7 @@ class BlogService{
         }
         static listBlogByUserId = async (userId,authenticatedUser)=>{
             try {
-                const query = await Blog.find({ user: userId })
+                const query = await Blog.find({ user: userId , status: 'Published'})
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
