@@ -49,11 +49,12 @@ class CategoryService {
                 comment.user.equals(userId) ||
                 req.user.roles==="Admin"
             ){
-                await CategoryService.deleteChildComments(commentId, blog); // Thay đổi dòng này
-                const index = blog.comments.indexOf(commentId);
-                if (index > -1) {
+                await CategoryService.deleteChildComments(comment._id, blog); // Thay đổi dòng này
+                if (blog.comments.some(comment => comment.equals(commentId))) {
+                    const index = blog.comments.findIndex(comment => comment.equals(commentId));
                     blog.comments.splice(index, 1);
-                    blog.sumComment--;
+                    const sumComment = blog.sumComment - 1;
+                    blog.sumComment = sumComment;
                     await blog.save();
                 }
                 await Comment.findByIdAndDelete(commentId);
@@ -70,17 +71,11 @@ class CategoryService {
     static deleteChildComments = async (commentId, blog = null) => {
         const comment = await Comment.findById(commentId).populate('replies');
         if (!comment) return;
-        if (blog) {
-            blog.sumComment -= comment.replies.length; 
-            await blog.save();
-        }
         for (const reply of comment.replies) {
             await CategoryService.deleteChildComments(reply._id, blog); 
-            await Comment.findByIdAndDelete(reply._id);
-        }
-        if (blog) {
-            blog.sumComment -= comment.replies.length; 
+            blog.sumComment = blog.sumComment - 1; 
             await blog.save();
+            await Comment.findByIdAndDelete(reply._id);
         }
     }
     static editComment = async (commentId, userId,content) => {

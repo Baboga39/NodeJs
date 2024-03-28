@@ -89,7 +89,7 @@ class BlogService{
         blog.save();
         const category = await blog.category;                        
         let updateFields;
-        if(category!=null){
+        if(category!==null){
         const isPermission = await category.users.some(user => user._id.equals());
         if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
                         updateFields = {
