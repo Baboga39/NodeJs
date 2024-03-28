@@ -87,9 +87,9 @@ class CategoryService {
             if (
                 comment.user.equals(userId)
             ){
-             comment.content = content;
-             comment.save();
-             return comment;
+                comment.content = content;
+                comment.save();
+                return comment;
             } else {
                 return 3; 
             }

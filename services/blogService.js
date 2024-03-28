@@ -219,10 +219,16 @@ class BlogService{
                 throw error;
             }
         }
+        static sizeAllBlogPublish= async ()=>{
+            const countDocuments = await Blog.countDocuments({ status: 'Published' });
+            const totalPages = Math.ceil(countDocuments / 6);
+            return totalPages;
+        }
         static listBlogNew = async (authenticatedUser, index) => {
             const pageSize = 6;
             const skip = (index - 1) * pageSize;
             try {
+            const size = await this.sizeAllBlogPublish();
               const query = await Blog.find({ status: 'Published' }) // Tạo query
                 .sort({ createdAt: -1 })
                 .skip(skip)
@@ -237,7 +243,7 @@ class BlogService{
             if (posts2.length === 0) {
                 return null;
             }
-            return posts2;
+            return {posts : posts2, size: size};
             } catch (error) {
             return null;
             }
@@ -246,6 +252,7 @@ class BlogService{
             const pageSize = 6;
             const skip = (index - 1) * pageSize; // Số bài viết sẽ bỏ qua
             try {
+            const size = await this.sizeAllBlogPublish();
             const query = await Blog.find({ status: 'Published' })
                 .sort({ likes: -1, views: -1, updatedAt: -1 }) // Sắp xếp theo lượt like, views và ngày update
                 .skip(skip)   
@@ -258,7 +265,7 @@ class BlogService{
             if (posts2.length === 0) {
                     return null;
             }
-            return posts2;
+            return {posts : posts2, size: size};
             } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
@@ -268,6 +275,7 @@ class BlogService{
             const pageSize = 6;
             const skip = (index - 1) * pageSize;
             try {
+            const size = await this.sizeAllBlogPublish();
             const query = await Blog.find({ status: 'Published' })
                 .sort({ sumComment: -1, views: -1, updatedAt: -1 }) 
                 .skip(skip)   
@@ -280,7 +288,7 @@ class BlogService{
             if (posts2.length === 0) {
                 return null;
             }
-            return posts2;
+            return {posts : posts2, size: size};
             } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
