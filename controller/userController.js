@@ -57,7 +57,7 @@ const updatedUserInfo = async (req, res) => {
     });
   }
 }
-const updateAvatar = async (req,res) => {
+const updateAvatar = async (req,res) => { 
   try {
     const authenticatedUser = req.user;
     const fileData  = req.file;

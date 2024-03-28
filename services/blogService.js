@@ -28,6 +28,8 @@ class BlogService{
         await blog.addTags(blogDTO.tagIds);
         }
         await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
+        user.totalBlog = user.totalBlog + 1;
+        await user.save();
         return blog;
     }
     
@@ -50,6 +52,7 @@ class BlogService{
         return blog;
     }
     static editBlog =  async (blogDTO, authenticatedUser,blogId) =>{    
+        const user = await User.findById(authenticatedUser.user._id)
         const blog = await Blog.findById(blogId);
         if(!blog) return null;
         blog.title = blogDTO.title|| blogDTO.title;
@@ -58,12 +61,15 @@ class BlogService{
         blog.description = blogDTO.description;
         blog.avatar = blogDTO.avatar;
         blog.status = blogDTO.status;
+
         await blog.save();
         if(blogDTO.tagIds!=null){
             await blog.addTags(blogDTO.tagIds);
             }
         if(blogDTO.status == 'published'){
-        await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
+            user.totalBlog = user.totalBlog + 1;
+            await user.save();
+            await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
         }
         return blog;
     }

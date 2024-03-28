@@ -5,16 +5,33 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const routes = require('./routes');
-dotenv.config();
+const http = require('http');
+const { Server } = require('socket.io'); 
 
 const app = express();
 // const corsOptions = {
-//   origin: 'http://your-allowed-origin.com',
+//   origin: 'http://localhost:3000',
 //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true, // cho phép sử dụng cookie, token,...
+//   credentials: true, // 
 // };
+const server = http.createServer(app);
+const io = new Server(server);
 
 app.use(cors());
+
+io.on('connection', (socket) => {
+  console.log('User connected');
+
+  socket.on('New Notifycation', (comment) => {
+    console.log('New comment:', comment);
+
+    io.emit('New Notifycation', comment);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
 
 app.use(bodyParser.json());
 routes(app);
