@@ -665,6 +665,76 @@ const checkIsRead = async (req, res) => {
       result: notification,
     });
 };
+
+//--------------------------------------------------------Report  --------------------------------------------------------
+const reportUser = async (req, res) => {
+  const authenticatedUser = req.user;
+  const {userId, reason} = req.body;
+  const reportUser = await Service.reportService.reportUser(userId,authenticatedUser.user,reason);
+  if(reportUser===0){
+    console.log('Not found User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found User',
+      result: null,
+    });
+  }
+  if(reportUser===2)
+  {
+    console.log('You have been reported this user');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'You have been reported this user',
+      result: null,
+    });
+  }
+  console.log('Report User Successfully');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'Report User Successfully',
+    result: reportUser,
+  });
+}
+const reportBlog = async (req, res) => {
+  const authenticatedUser = req.user;
+  const {blogId, reason} = req.body;
+  const reportUser = await Service.reportService.reportBlog(blogId,authenticatedUser.user,reason);
+  if(reportUser===0){
+    console.log('Not found Blog');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Not found Blog',
+      result: null,
+    });
+  }
+  if(reportUser===2)
+  {
+    console.log('You have been reported this blog');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'You have been reported this blog',
+      result: null,
+    });
+  }
+  console.log('Report User');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'Report Blog Successfully',
+    result: reportUser,
+  });
+}
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -680,5 +750,5 @@ module.exports = {
   listUserFollower,
   listUserFollowing,
   getWallUsers,
-  listBlogByUserId,listNotifyByUser,checkIsRead
+  listBlogByUserId,listNotifyByUser,checkIsRead,reportUser
 }

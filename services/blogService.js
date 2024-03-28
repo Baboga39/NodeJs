@@ -298,7 +298,7 @@ class BlogService{
             const size = await this.sizeGetAllBlogByCategory(categoryId);
             console.log(size);
             try {
-            const query = await Blog.find({ category: categoryId })
+            const query = await Blog.find({ category: categoryId, status:'Published' })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(pageSize)

@@ -5,6 +5,7 @@ const categoryService = require('./categoryService');
 const blogService = require('./blogService');
 const commentService = require('./commentService');
 const notificationService = require('./notificationService');
+const reportService = require('./reportService')
 module.exports = {
   authService,
   userService,
@@ -12,5 +13,6 @@ module.exports = {
   categoryService,
   blogService,
   commentService,
-  notificationService
+  notificationService,
+  reportService
 };

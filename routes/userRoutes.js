@@ -15,6 +15,8 @@ router.get('/listBlog/:userId',auth.authenticateToken, userController.listBlogBy
 router.get('/listNotify',auth.authenticateToken, userController.listNotifyByUser);
 router.post('/checkIsRead/:notifyId',auth.authenticateToken, userController.checkIsRead);
 
+//Report the user
+router.post('/reportUser',auth.authenticateToken, userController.reportUser);
 
 
 router.put('/removeAvatar',auth.authenticateToken,userController.removeAvatar)
@@ -24,11 +26,12 @@ router.post('/likeBlog/:blogId',auth.authenticateToken,userController.likeBlog)
 router.post('/saveBlog/:blogId',auth.authenticateToken,userController.saveBlog)
 router.post('/comment',auth.authenticateToken,userController.addComment)
 router.post('/follow/:userId',auth.authenticateToken,userController.followUser)
+router.post('/deleteComment',auth.authenticateToken,userController.deleteComment)
 
 
 router.patch('/editComment',auth.authenticateToken,userController.editComment)
 
-router.delete('/comment',auth.authenticateToken,userController.deleteComment)
+router.post('/comment',auth.authenticateToken,userController.deleteComment)
 
 
 router.patch('/changeInfo',auth.authenticateToken,userController.updatedUserInfo);
