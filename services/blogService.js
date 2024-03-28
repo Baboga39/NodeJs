@@ -210,7 +210,6 @@ class BlogService{
                     updateFields = {
                         isPermission: true
                     };}
-                    console.log(updateFields);
                     await Blog.findByIdAndUpdate(blog._id, updateFields);
                 });
                 await Promise.all(promises);
