@@ -125,8 +125,10 @@ class BlogService{
                 { _id: { $in: tagIds } },
                 { $inc: { sumBlog: -1 } }
             );
-                const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
-            
+            const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
+            let user = await User.findById(blog.user._id);
+            user.totalBlog = user.totalBlog - 1;
+            await user.save();
             return deletedBlog;}
             else{
                 return 1;

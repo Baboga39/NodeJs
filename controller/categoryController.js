@@ -265,8 +265,8 @@ const addUsersToCategory = async (req, res) => {
     try {
     const authenticationUser = req.user;
     const {categoryId, userIds} = req.body;
-    const category = await  Service.categoryService.addUsersToCategory(categoryId, userIds, authenticationUser.user);
-    if (category==1) {
+    const invitation = await  Service.userService.invitationRequest(userIds,categoryId, authenticationUser.user);
+    if (invitation===5) {
         console.log('User do not have permission to add users');
         console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(400).json({
@@ -276,7 +276,7 @@ const addUsersToCategory = async (req, res) => {
             result: null,
         })
     }
-    if (category==null) {
+    if (invitation===2) {
         console.log('Not found category')
         console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(400).json({
@@ -286,11 +286,53 @@ const addUsersToCategory = async (req, res) => {
             result: null,
         })
     }
+    if (invitation===7) {
+        console.log('Add User Success category')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Add User Success category',
+            result: null,
+        })
+    }
+    if (invitation===8) {
+        console.log('User have been added')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'User have been added',
+            result: null,
+        })
+    }
+    if (invitation===1) {
+        console.log('Not found User')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: 'Not found User',
+            result: null,
+        })
+    }
+    if (invitation===6) {
+        console.log('User have been invited')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'User have been invited',
+            result: null,
+        })
+    }
+    console.log('Send request Success')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
         success: true,
         statusCode: 200,
-        message: 'Add User Success',
-        result: category,
+        message: 'Send request Success',
+        result: invitation,
     })
     } catch (error) {
         return res.status(500).json({
@@ -308,7 +350,7 @@ const joinCategoryByUser = async (req, res) => {
     const { categoryId } = req.params;
     const categoryCheck = await Service.categoryService.getCategoryById(categoryId,authenticationUser.user._id);
     if(categoryCheck.status ==='Private') {
-        const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
+    const userRequest = await Service.userService.requestJoin(authenticationUser.user._id, categoryId)
         if(userRequest ===5)
         {
             return res.status(200).json({

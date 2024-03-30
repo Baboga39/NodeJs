@@ -21,13 +21,7 @@ app.use(cors());
 
 io.on('connection', (socket) => {
   console.log('User connected');
-
-  socket.on('New Notifycation', (comment) => {
-    console.log('New comment:', comment);
-
-    io.emit('New Notifycation', comment);
-  });
-
+  
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });

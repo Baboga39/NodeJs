@@ -6,6 +6,8 @@ const Blog = require('../models/Blog/blogModel')
 const UserRequest = require('../models/Blog/userRequestModel')
 const Follow = require('../models/followModel');
 const usermodel = require('../models/usermodel');
+const Invitation = require('../models/invitationModel')
+const categoryService = require('../services/categoryService')
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -146,8 +148,10 @@ static leaveCategory = async (authenticatedUser, categoryId) => {
   return await category.save();
 }
 static requestJoin = async (userId, categoryId) =>{
+
   const user = await UserModel.findById(userId);
   const category = await Category.findById(categoryId);
+
   const userRequestFind = await UserRequest.findOne({Category: category})
   if (!user) {
     console.log('-------------------------------------------------------------------------------------------------');
@@ -197,6 +201,88 @@ static listUserRequest = async(categoryId) =>{
   }
   return userRequest;
 }
+static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
+  const authenticatedUserFind = await UserModel.findById(authenticatedUser._id);
+  const category = await Category.findById(categoryId);
+  if (category.isAdmin._id.equals(authenticatedUserFind._id)  || authenticatedUserFind.roles === 'Admin' ) {
+    if(Array.isArray(userId)) {
+      if(userId.length===0)
+      {
+        return 1;
+      }
+      for(let i = 0; i < userId.length; i++) {
+        const user = await UserModel.findById(userId[i]);
+        if (!user) {
+          console.log('-------------------------------------------------------------------------------------------------');
+          console.log('Not found user');
+          return 1;
+        }
+        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: user._id});
+        if (!category) {
+          console.log('-------------------------------------------------------------------------------------------------');
+          console.log('Not found category');
+          return 2;
+        }
+        console.log(category.users.some(userCheckCategory => userCheckCategory.equals(userId)))
+        if (category.users.some(userCheckCategory => userCheckCategory.equals(user._id))) {
+          return 8;
+        }
+        const request = await UserRequest.findOne({ Category: category._id });
+        if (request) {
+            if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
+              
+            } else {
+                await categoryService.addUsersToCategory(category._id,user._id);
+                return 7;
+            }
+          }
+        if(!userInvitationFind) {
+          const newInvitation = new Invitation({
+            Category: category,
+            userInvite:authenticatedUserFind._id,
+            userIsInvited: user._id,
+          });
+          await newInvitation.save();
+        return newInvitation;
+        }
+        return 6
+      }
+    } else {
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        console.log('-------------------------------------------------------------------------------------------------');
+        console.log('Not found user');
+        return 1;
+      }
+      const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: user._id});
+      if (!category) {
+        console.log('-------------------------------------------------------------------------------------------------');
+        console.log('Not found category');
+        return 2;
+      }
+      if(userInvitationFind) {
+        return 3;
+      }
+      const request = await UserRequest.findOne({ Category: category._id });
+      if (request) {
+          if (!request.Users || !request.Users.some(user =>  user.equals(userId))) {
+              return 'UnJoin';
+          } else {
+              return 'Pending';
+          }
+        }
+      const newInvitation = new Invitation({
+        Category: category,
+        userInvite: authenticatedUserFind._id,
+        userIsInvited: user._id,
+      });
+      await newInvitation.save();
+      return newInvitation;
+    }
+  }
+  return 5;
+}
+
 
 
 
@@ -342,7 +428,8 @@ static listUserFollowing = async (user_id, authenticatedUser) => {
       if (!follow) {
           return 1;
       }
-      const followers = follow.following;
+      let followers = follow.following;
+      const result = []
       for (let i = 0; i < followers.length; i++) {
           const followerId = followers[i];
           const user = await usermodel.findById(followerId);
@@ -350,9 +437,11 @@ static listUserFollowing = async (user_id, authenticatedUser) => {
               throw new Error(`User with id ${followerId} not found`);
           }
           const isFollowed = await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
+          console.log(isFollowed)
           user.isfollow = isFollowed;
+          result.push(user);
       }
-      return followers;
+      return result;
   } catch (error) {
       throw new Error(error.message);
   }

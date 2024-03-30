@@ -4,6 +4,7 @@ const User = require('../models/usermodel')
 const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
 const UserRequest = require('../models/Blog/userRequestModel')
+const Invitation = require('../models/invitationModel')
 
 
 class CategoryService {
@@ -37,6 +38,11 @@ class CategoryService {
         return totalPages;
     }
     static getUserStatusInCategory = async (category, userId) => {
+        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: userId});
+        if(userInvitationFind)
+        {
+            return 'Invited';
+        }
         if (category.users.some(user => user._id === userId)) {
             return 'Join';
         } else {
@@ -53,7 +59,6 @@ class CategoryService {
         }
     };
     static getUserStatusInCategory1 = async (category, userId) => {
-        
         if (category.users.some(user => user.equals(userId))) {
             return 'Join';
         } else {
@@ -165,7 +170,7 @@ class CategoryService {
         if (!category) {
             return null;
         }
-        if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
+        if (category.isAdmin._id.equals(authenticationUser._id)  || authenticationUser.roles == 'Admin' ) {
             await category.removeTags(tagIds);
             return category;
         }
@@ -175,7 +180,6 @@ class CategoryService {
         return 1;
     }
     static async addUsersToCategory(categoryId,userIds,authenticationUser) {
-
         const UserAdd = await User.findById(userIds);
         const category = await categoryModel.findById(categoryId).populate('users')
         .populate('tags')
