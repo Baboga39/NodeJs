@@ -35,6 +35,20 @@ class NotificationService{
         });
         return notification.save();
     }
+    static notifyInvite = async (userIds, userAuthentication) => {
+        const userAuthenticated = await User.findById(userAuthentication._id);
+        const notifications = userIds.map(async (userId) => {
+            const user = await User.findById(userId);
+            return new Notification({
+                sender: userAuthenticated._id,
+                target: null,
+                type: 'Invite',
+                recipient: user._id,
+            }).save();
+        });
+    
+        return Promise.all(notifications);
+    }
     static listNotifyByUser = async (userId) =>{
         const user = await User.findById(userId);
         if(!user)  return 1;

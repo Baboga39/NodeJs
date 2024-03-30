@@ -17,6 +17,9 @@ router.post('/checkIsRead/:notifyId',auth.authenticateToken, userController.chec
 
 //Report the user
 router.post('/reportUser',auth.authenticateToken, userController.reportUser);
+router.post('/reportBlog',auth.authenticateToken, userController.reportBlog);
+router.post('/reportTag',auth.authenticateToken, userController.reportTag);
+router.post('/reportComment',auth.authenticateToken, userController.reportComment);
 
 
 router.put('/removeAvatar',auth.authenticateToken,userController.removeAvatar)
