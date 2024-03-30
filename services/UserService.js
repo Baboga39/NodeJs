@@ -265,12 +265,13 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
       }
       const request = await UserRequest.findOne({ Category: category._id });
       if (request) {
-          if (!request.Users || !request.Users.some(user =>  user.equals(userId))) {
-              return 'UnJoin';
-          } else {
-              return 'Pending';
-          }
+        if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
+          
+        } else {
+            await categoryService.addUsersToCategory(category._id,user._id);
+            return 7;
         }
+      }
       const newInvitation = new Invitation({
         Category: category,
         userInvite: authenticatedUserFind._id,
@@ -282,7 +283,21 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
   }
   return 5;
 }
-
+static acceptInvitation= async (invitationId, authenticatedUser,status) =>{
+  const invitation =await  Invitation.findById(invitationId);
+  if(!invitation)
+  {
+    return null;
+  }
+  if(status ===1)
+  {
+    await categoryService.addUsersToCategory(invitation.Category._id,authenticatedUser._id);
+    await invitation.deleteOne();
+    return 1;
+  }
+  await invitation.deleteOne();
+  return 2; 
+}
 
 
 
@@ -437,7 +452,6 @@ static listUserFollowing = async (user_id, authenticatedUser) => {
               throw new Error(`User with id ${followerId} not found`);
           }
           const isFollowed = await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
-          console.log(isFollowed)
           user.isfollow = isFollowed;
           result.push(user);
       }

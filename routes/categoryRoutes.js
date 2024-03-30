@@ -18,6 +18,7 @@ router.get('/categoryByUserNotPaging',auth.authenticateToken,controller.category
 router.post('/addCategory',auth.authenticateToken, controller.categoryController.addCategory);
 router.post('/requestJoin/:categoryId',auth.authenticateToken, controller.categoryController.sendRequestJoinCategory);
 router.post('/evaluateRequest',auth.authenticateToken, controller.categoryController.evaluateRequest);
+router.post('/acceptInvitation',auth.authenticateToken, controller.categoryController.acceptInvitation);
 
 
 router.delete('/:categoryId',auth.authenticateToken, controller.categoryController.deleteCategoryById);

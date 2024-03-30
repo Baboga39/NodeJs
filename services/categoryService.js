@@ -59,6 +59,11 @@ class CategoryService {
         }
     };
     static getUserStatusInCategory1 = async (category, userId) => {
+        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: userId});
+        if(userInvitationFind)
+        {
+            return 'Invited';
+        }
         if (category.users.some(user => user.equals(userId))) {
             return 'Join';
         } else {
@@ -192,6 +197,7 @@ class CategoryService {
             const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
             const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
             categoryUpdate.sumUser = userCount;
+            console.log()
             await categoryUpdate.save();
             const categoryUpdate2 = await categoryModel.findById(categoryId).populate('users')
             return categoryUpdate2;

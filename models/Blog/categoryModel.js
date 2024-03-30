@@ -59,13 +59,12 @@ categorySchema.methods.addUsers = async function (newUsers) {
     this.users.push(this.isAdmin);
   }
 
-  // Nếu `newUsers` không phải là một mảng, chỉ một ObjectId đơn lẻ
   if (typeof newUsers === 'object' && !Array.isArray(newUsers)) {
     const userId = newUsers;
     const existingUser = await User.findById(userId);
     if (existingUser) {
       const duplicate = this.users.some(existingUserId => existingUserId.equals(userId));
-      if (!duplicate) { // chỉ thêm người dùng nếu chưa tồn tại trong danh sách
+      if (!duplicate) { 
         this.users.push(existingUser);
       }
     }
