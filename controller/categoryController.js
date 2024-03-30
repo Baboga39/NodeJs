@@ -344,10 +344,9 @@ const addUsersToCategory = async (req, res) => {
     }
 }
 const acceptInvitation = async (req, res) => {
-    const {invitationId, status} = req.body;
+    const {categoryId, status} = req.body;
     const authenticationUser = req.user;
-    const invitation = await Service.userService.acceptInvitation(invitationId,authenticationUser.user,status);
-    console.log(invitation);
+    const invitation = await Service.userService.acceptInvitation(categoryId,authenticationUser.user,status);
     if(!invitation)
     {
         console.log('Not found invitation');
@@ -374,8 +373,31 @@ const acceptInvitation = async (req, res) => {
     return res.status(200).json({
         success: true,
         statusCode: 200,
-        message: 'Decline invitation successfullyn',
+        message: 'Decline invitation successfully',
         result: null,
+    })
+}
+const listInvitations = async (req, res) => {
+    const authenticationUser = req.user;
+    const invitations = await Service.userService.listInvitations(authenticationUser.user);
+    if(invitations===3)
+    {
+        console.log('List invitations');
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'List invitations',
+            result: null,
+        })
+    }
+    console.log('List invitations');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'List invitations',
+        result: invitations,
     })
 }
 // Joint Category By User Authentication
@@ -816,5 +838,6 @@ module.exports = {
     sizeAllCategory,
     sizeAllCategoryByUser,
     getCategoryByUserNotPaging,
-    acceptInvitation
+    acceptInvitation,
+    listInvitations
 }

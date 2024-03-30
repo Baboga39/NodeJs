@@ -283,8 +283,8 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
   }
   return 5;
 }
-static acceptInvitation= async (invitationId, authenticatedUser,status) =>{
-  const invitation =await  Invitation.findById(invitationId);
+static acceptInvitation= async (categoryId, authenticatedUser,status) =>{
+  const invitation =await  Invitation.findOne({Category: categoryId, userIsInvited: authenticatedUser._id});
   if(!invitation)
   {
     return null;
@@ -298,7 +298,17 @@ static acceptInvitation= async (invitationId, authenticatedUser,status) =>{
   await invitation.deleteOne();
   return 2; 
 }
-
+static listInvitations = async (authenticatedUser) =>{
+  const authenticatedUserFind = await UserModel.findById(authenticatedUser._id);
+  const invitations = await Invitation.find({userIsInvited:authenticatedUserFind._id});
+  if(invitations==null) {
+    return 2;
+  }
+  if(invitations.length===0) {
+    return 3;
+  }
+  return invitations;
+}
 
 
 
