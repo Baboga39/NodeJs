@@ -665,7 +665,29 @@ const checkIsRead = async (req, res) => {
       result: notification,
     });
 };
+const listFriends = async (req, res) => {
+  const authenticatedUser = req.user;
+  const listFriends = await Service.userService.listFriend(authenticatedUser.user._id);
+  if(listFriends===null) {
+    console.log('List Friends');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'List Friends',
+      result: null,
+    });
+  }
 
+  console.log('List Friends');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'List Friends',
+    result: listFriends,
+  });
+}
 //--------------------------------------------------------Report  --------------------------------------------------------
 const reportUser = async (req, res) => {
   const authenticatedUser = req.user;
@@ -822,5 +844,6 @@ module.exports = {
   reportUser,
   reportBlog,
   reportTag,
-  reportComment
+  reportComment,
+  listFriends
 }

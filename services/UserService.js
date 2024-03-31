@@ -470,14 +470,39 @@ static listUserFollowing = async (user_id, authenticatedUser) => {
       throw new Error(error.message);
   }
 }
-static getWallUser = async (userId, authenticatedUser)=>{
+static listFriend = async (userId)=>{
   const user = await UserModel.findById(userId);  
-  if(!user)
-  {
-    return 1;
+  if(!user) {
+    return null;
   }
-  user.isfollow =  await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
-  return user;
+  const followUser = await Follow.findOne({user: user._id});
+  if (!followUser) {
+    return null;
+  }
+  if(followUser.follower===null ||!followUser.follower )
+  {
+    return null;
+  }
+  if(followUser.following===null ||!followUser.follower )
+  {
+    return null;
+  }
+  const listFriend = [];
+    for(const userFollowing of followUser.following) {
+      for(const userFollower of followUser.follower){
+      if(userFollower._id.equals(userFollowing._id)) 
+      {
+        const isFollowed = await this.isUserFollowedByAuthenticatedUser(user._id, user._id);
+        user.isfollow = isFollowed;
+        listFriend.push(userFollowing);
+      }
+    }
+  if (listFriend.length===0){
+    return null;
+  }
+  return listFriend;
 }
 }
+}
+
 module.exports = UserService

@@ -10,6 +10,7 @@ router.get('/userFollower/:userId',auth.authenticateToken, userController.listUs
 router.get('/userFollowing/:userId',auth.authenticateToken, userController.listUserFollowing);
 router.get('/wallUser/:userId',auth.authenticateToken, userController.getWallUsers);
 router.get('/listBlog/:userId',auth.authenticateToken, userController.listBlogByUserId);
+router.get('/listFriend',auth.authenticateToken, userController.listFriends);
 
 //Notify the user
 router.get('/listNotify',auth.authenticateToken, userController.listNotifyByUser);
