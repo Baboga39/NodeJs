@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     const recipientSocket = getUser(toUser)?.socketId;
     if (recipientSocket) {
       console.log("User receiver is online.");
-      io.to(recipientSocket).emit("notification", { toUser });
+      io.to(recipientSocket).emit("notification", {fromUser, toUser });
     }
     else{ console.log("User receiver is not online.");
   }
