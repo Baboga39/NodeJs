@@ -52,14 +52,14 @@ io.on("connection", (socket) => {
     const recipientSocket = getUser(toUser)?.socketId;
     if (recipientSocket) {
       console.log("User receiver is online.");
-      io.to(recipientSocket).emit("notification", { fromUser });
+      io.to(recipientSocket).emit("notification", { toUser });
     }
     else{ console.log("User receiver is not online.");
   }
   });
 
   socket.on("disconnect", () => {
-    console.log("a user disconnect ", socket.id);
+    console.log("User disconnect: ", socket.id);
     removeUser(socket.id);
     io.emit("getUsers", users);
   });
