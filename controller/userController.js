@@ -568,7 +568,7 @@ const getWallUsers = async (req, res) => {
       result: null,
     });
   }
-  const wallUsers = await Service.userService.getWallUser(userId, authenticatedUser.user);
+  const wallUsers = await Service.userService.getUserInfo(userId, authenticatedUser.user);
   if(wallUsers===1){
     console.log('Not found User');
     console.log('--------------------------------------------------------------------------------------------------------------------')
