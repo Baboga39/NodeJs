@@ -310,7 +310,13 @@ static listInvitations = async (authenticatedUser) =>{
   return invitations;
 }
 
-
+static getWallUsers = async (userId, authenticatedUser) =>{
+  let user = await usermodel.findById(userId);
+  const authenticatedUserFind = await usermodel.findById(authenticatedUser._id);
+  const isfollow = await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUserFind._id)
+  user.isfollow = isfollow;
+  return user;
+}
 
 
 
