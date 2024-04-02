@@ -21,6 +21,7 @@ router.get('/sizeAllBlogByCategory/:categoryId',controller.blogController.sizeAl
 router.get('/listBlogSaveByUser',middleware.authenticateToken,controller.blogController.listBlogSaveByUser)
 router.get('/listBlogDraftByUser',middleware.authenticateToken,controller.blogController.listBlogDraftByUser)
 router.get('/listBlogDiscussions',middleware.authenticateToken,controller.blogController.listBlogDiscussions)
+router.get('/:index/listBlogInFeed',middleware.authenticateToken,controller.blogController.listBlogInFeed)
 
 
 router.delete('/:blogId',middleware.authenticateToken,controller.blogController.deleteBlogById);

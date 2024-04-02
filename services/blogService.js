@@ -1,9 +1,11 @@
 const Blog = require('../models/Blog/blogModel')
 const User = require('../models/usermodel')
 const Tag = require('../models/Blog/tagModel')
+const Follow = require('../models/followModel')
 const temporaryImageModel = require('../models/Blog/temporaryImageModel');
 const mongoose = require('mongoose');
-const Category = require('../models/Blog/categoryModel')
+const Category = require('../models/Blog/categoryModel');
+const followModel = require('../models/followModel');
 const cloudinary = require('cloudinary').v2;
 
 class BlogService{
@@ -368,6 +370,67 @@ class BlogService{
                 }
                 return posts2;
             } catch (error) {
+                console.error("Error fetching most active posts:", error);
+                return null;
+            }
+        }
+        static listBlogInFeed = async (authenticatedUser,pageIndex) =>{
+        try{
+            const pageSize = 6;
+            const startIndex = (pageIndex - 1) * pageSize; 
+            const endIndex = pageIndex * pageSize; 
+            const listBlog = [];
+            const categories = await Category.find({users: authenticatedUser._id})
+            for (const category of categories) {
+                const query = await Blog.find({ category: category._id, status: 'Published'})
+                    .sort({ createdAt: -1 })
+                    .populate('tags')
+                    .populate('user')
+                    .populate('category')
+                    .exec();
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+                if (posts2.length>0) {
+                    for (const post of posts2) {
+                        listBlog.push(post);
+                    }
+            }
+        }
+        const follow = await followModel.findOne({user: authenticatedUser._id})
+        const users = follow.following;
+        for (const user of users) {
+            const query = await Blog.find({ user: user._id, status: 'Published'})
+                                    .sort({ createdAt: -1 })
+                                    .populate('tags')
+                                    .populate('user')
+                                    .populate('category')
+                                    .exec();
+            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+            if (posts2.length>0) {
+                for (const post of posts2) {
+                    listBlog.push(post);
+                }
+            }
+        }
+        const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})
+                                    .sort({ createdAt: -1 })
+                                    .populate('tags')
+                                    .populate('user')
+                                    .populate('category')
+                                    .exec();
+            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+            if (posts2.length>0) {
+                for (const post of posts2) {
+                    listBlog.push(post);
+                }
+            }
+        const size = Math.ceil(listBlog.length   / 6);
+        const paginatedPosts = listBlog.slice(startIndex, endIndex);
+        return {size: size, posts: paginatedPosts};
+    }
+        catch (error) {
                 console.error("Error fetching most active posts:", error);
                 return null;
             }

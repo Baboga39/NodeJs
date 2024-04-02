@@ -493,11 +493,47 @@ const listBlogDraftByUser = async (req, res) => {
     });
   }
 }
+const listBlogInFeed = async (req, res) => {
+  try {
+    const authenticatedUser = req.user;
+    const  index  = req.params.index;
+    if(!index)
+    {
+      console.log('Index is missing')
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Index is missing',
+        result: null,
+      });
+    }
+    const listBlog  = await Service.blogService.listBlogInFeed(authenticatedUser.user,index);
+    console.log('List Blog In Feed')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'List Blog In Feed',
+      result: listBlog,
+    });
+  } catch (error) {
+    console.log('Internal server error')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal server error',
+      result: error.message,
+    });
+  }
+}
 module.exports = {createBlog,getBlogById,uploadImage, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
 
   ,listBlogNew,listBlogPopularity,listBlogByCategory
   ,sizeAllBlogByCategory,
   listBlogSaveByUser,
   listBlogDraftByUser,
-  listBlogDiscussions
+  listBlogDiscussions,
+  listBlogInFeed
 };

@@ -7,6 +7,7 @@ const UserRequest = require('../models/Blog/userRequestModel')
 const Follow = require('../models/followModel');
 const usermodel = require('../models/usermodel');
 const Invitation = require('../models/invitationModel')
+const Share = require('../models/Blog/shareModel')
 const categoryService = require('../services/categoryService')
 class UserService {
 static getUserInfo = async (userId) => {
@@ -365,6 +366,23 @@ static saveBlog = async (authenticatedUser, blogId) => {
 static listBlogSaveByUser(authenticatedUser) {
   return Blog.find({savedBy: authenticatedUser._id}).select('savedBy')
   .populate('savedBy');;
+}
+static shareBlog = async (authenticatedUser, blogId) =>{
+  const blog = await Blog.findById(blogId);
+  const user = await UserModel.findById(authenticatedUser._id);
+  
+  if (!blog || !user) {
+    return null;
+  }
+  const isShare = Share.findOne({user: user._id})
+  if(!isShare){
+    const newShare = new Share({user: user._id,
+      listBlog: blog._id});
+      return await newShare.save();
+  }
+  isShare.listBlog.push
+
+
 }
 
 

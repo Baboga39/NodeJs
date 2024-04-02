@@ -504,12 +504,12 @@ const listUserFollower = async (req,res) => {
   }
   const listUserFollower = await Service.userService.listUserFollower(userId,authenticatedUser.user);
   if(listUserFollower===1){
-    console.log('Not found Entity User');
+    console.log('List User Follower');
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    return res.status(400).json({
-      success:false,
-      statusCode: 400,
-      message: 'Not found Entity User',
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'List User Follower',
       result: null,
     });
   }
@@ -537,12 +537,12 @@ const listUserFollowing = async (req,res) => {
   }
   const listUserFollower = await Service.userService.listUserFollowing(userId,authenticatedUser.user);
   if(listUserFollower===1){
-    console.log('Not found Entity User');
+    console.log('List user following');
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    return res.status(400).json({
-      success:false,
-      statusCode: 400,
-      message: 'Not found Entity User',
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'List user following',
       result: null,
     });
   }
