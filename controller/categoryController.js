@@ -326,7 +326,7 @@ const addUsersToCategory = async (req, res) => {
             result: null,
         })
     }
-    await Service.notificationService.notifyInvite(userIds,authenticationUser.user)
+    await Service.notificationService.notifyInvite(userIds,authenticationUser.user,categoryId)
     console.log('Send request Success')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({

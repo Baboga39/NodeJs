@@ -1,14 +1,16 @@
 const Notification = require('../models/notificationModel')
 const Blog = require('../models/Blog/blogModel')
 const User = require('../models/usermodel')
+const Category = require('../models/Blog/categoryModel')
 
 class NotificationService{
     static notifyComment = async (blogId, userAuthentication)=>{
         const blog  = await Blog.findById(blogId)
         const notification = new Notification({
             sender: userAuthentication._id,
-            target: blogId,
+            blog: blogId,
             type: 'Comment',
+            category: null,
             recipient: blog.user._id,
         });
         return notification.save();
@@ -18,7 +20,8 @@ class NotificationService{
         const userAuthenticated = await User.findById(userAuthentication);
         const notification = new Notification({
             sender: userAuthenticated._id,
-            target: null,
+            blog: null,
+            category: null,
             type: 'Follow',
             recipient: user._id,
         });
@@ -29,19 +32,22 @@ class NotificationService{
         const user = await User.findById(userId);
         const notification = new Notification({
             sender: user._id,
-            target: blogId,
-            type: 'Like',
+            blog: blogId,
+            category: null,
+            type: 'Like',   
             recipient: blog.user._id,
         });
         return notification.save();
     }
-    static notifyInvite = async (userIds, userAuthentication) => {
+    static notifyInvite = async (userIds, userAuthentication, categoryId) => {
         const userAuthenticated = await User.findById(userAuthentication._id);
+        const category = await Category.findById(categoryId);
         const notifications = userIds.map(async (userId) => {
             const user = await User.findById(userId);
             return new Notification({
                 sender: userAuthenticated._id,
-                target: null,
+                blog: null,
+                category: category._id,
                 type: 'Invite',
                 recipient: user._id,
             }).save();

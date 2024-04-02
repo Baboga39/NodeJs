@@ -224,12 +224,12 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
           console.log('Not found category');
           return 2;
         }
-        console.log(category.users.some(userCheckCategory => userCheckCategory.equals(userId)))
         if (category.users.some(userCheckCategory => userCheckCategory.equals(user._id))) {
           return 8;
         }
         const request = await UserRequest.findOne({ Category: category._id });
         if (request) {
+          
             if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
               
             } else {
@@ -380,9 +380,9 @@ static shareBlog = async (authenticatedUser, blogId) =>{
       listBlog: blog._id});
       return await newShare.save();
   }
-  isShare.listBlog.push
-
-
+  isShare.listBlog.push(blog._id)
+  await isShare.save();
+  return isShare;
 }
 
 

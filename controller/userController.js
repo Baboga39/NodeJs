@@ -436,9 +436,19 @@ const editComment = async (req, res) => {
     });
   }
 };
-
-
-
+const shareBlog = async (req, res) => {
+  const user = req.user;
+  const blogId = req.params.blogId;
+  const share = await Service.userService.shareBlog(user.user,blogId);
+  console.log('Share blog Success');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'Not found comment',
+    result: null,
+  });
+};
 
 
 

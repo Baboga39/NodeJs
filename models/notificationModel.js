@@ -1,17 +1,26 @@
 const mongoose = require('mongoose');
+const autopopulate = require('mongoose-autopopulate');
 
 const NotificationSchema = new mongoose.Schema({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        autopopulate : true
     },
     recipient: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        autopopulate : true
     },
-    target: {
+    blog: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Blog',
+        autopopulate : true 
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        autopopulate : true 
     },
     type: {
         type: String,
@@ -25,5 +34,7 @@ const NotificationSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+
 }, { timestamps: true,  strict: false });
+NotificationSchema.plugin(autopopulate)
 module.exports = mongoose.model('Notification', NotificationSchema);
