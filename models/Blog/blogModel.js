@@ -41,6 +41,8 @@ const blogSchema = new mongoose.Schema({
     type: Boolean,
     default:false
   },
+  shareBy: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
+  isShare: { type: Boolean, default:false}, 
   user: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' ,autopopulate: false},
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate : true }],

@@ -437,17 +437,60 @@ const editComment = async (req, res) => {
   }
 };
 const shareBlog = async (req, res) => {
+  try {
   const user = req.user;
   const blogId = req.params.blogId;
+  if(!blogId) {
+    console.log('BlogId is missing');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'BlogId is missing',
+      result: null,
+    });
+  }
   const share = await Service.userService.shareBlog(user.user,blogId);
+  if(share === null) {
+    console.log('Not found blog');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: 'Not found blog',
+      result: null,
+    });
+  }
+  if(share===2)
+  {
+    console.log('User have been share this blog');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'User have been share this blog',
+      result: null,
+    });
+  }
   console.log('Share blog Success');
   console.log('--------------------------------------------------------------------------------------------------------------------')
   return res.status(200).json({
     success:true,
     statusCode: 200,
-    message: 'Not found comment',
-    result: null,
+    message: 'Share blog Success',
+    result: share,
   });
+  }
+  catch (error) {
+    console.log('Server Internal Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: true,
+      statusCode: 500,
+      message: 'Server Internal Error',
+      result: error.message,
+    });
+  }
 };
 
 
@@ -955,5 +998,6 @@ module.exports = {
   reportTag,
   reportComment,
   listFriends,
-  getAllReportTypes
+  getAllReportTypes,
+  shareBlog
 }

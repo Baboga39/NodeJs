@@ -348,6 +348,7 @@ const acceptInvitation = async (req, res) => {
     const {categoryId, status} = req.body;
     const authenticationUser = req.user;
     const invitation = await Service.userService.acceptInvitation(categoryId,authenticationUser.user,status);
+    console.log(invitation)
     if(!invitation)
     {
         console.log('Not found invitation');
@@ -359,7 +360,7 @@ const acceptInvitation = async (req, res) => {
             result: null,
         })
     }
-    if (invitation==1) {
+    if (invitation===1) {
         console.log('Accept invitation successfully');
         console.log('--------------------------------------------------------------------------------------------------------------------')
         return res.status(200).json({

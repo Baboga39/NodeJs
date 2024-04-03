@@ -59,7 +59,7 @@ class CategoryService {
         }
     };
     static getUserStatusInCategory1 = async (category, userId) => {
-        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: userId});
+        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: userId});   
         if(userInvitationFind)
         {
             return 'Invited';

@@ -6,8 +6,8 @@ const temporaryImageModel = require('../models/Blog/temporaryImageModel');
 const mongoose = require('mongoose');
 const Category = require('../models/Blog/categoryModel');
 const followModel = require('../models/followModel');
-const cloudinary = require('cloudinary').v2;
-
+const Share = require('../models/Blog/shareModel');
+const { post } = require('../routes/userRoutes');
 class BlogService{
     static createBlog =  async (blogDTO, authenticatedUser) =>{
         const user = await User.findById(authenticatedUser.user._id)
@@ -202,9 +202,9 @@ class BlogService{
         static findAndUpdatePermissions = async (listBlog, userId) =>{
             try {
                 const promises = listBlog.map(async (blog, index) => {
-                    const category = await blog.category;                        
+                    const category = await blog.category;    
                     let updateFields;
-                    if(category!=null){
+                    if(category && category.users){
                         const isPermission = await category.users.some(user => user._id.equals(userId));
                         if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
                         updateFields = {
@@ -411,6 +411,27 @@ class BlogService{
                 for (const post of posts2) {
                     listBlog.push(post);
                 }
+            }
+        }   
+        
+        for (const user of users) {
+            const shareBlog = await Share.findOne({ user: user._id})
+                if(shareBlog)
+                {
+                const blogFindShare = shareBlog.listBlog;
+                if(blogFindShare){
+                const posts = await this.findAndUpdateLikeAndSave(blogFindShare,authenticatedUser._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+                if (posts2.length>0) {
+                for (const post of posts2) {
+                    console.log(post)
+                    post.isShare = true;
+                    post.sharedBy = user;
+                    listBlog.push(post);
+                            }
+                        }
+                }
+                continue;
             }
         }
         const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})

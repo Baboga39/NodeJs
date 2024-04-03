@@ -374,7 +374,11 @@ static shareBlog = async (authenticatedUser, blogId) =>{
   if (!blog || !user) {
     return null;
   }
-  const isShare = Share.findOne({user: user._id})
+  const isSharecheck = await Share.findOne({ user: user._id, listBlog: blog._id });
+  if(isSharecheck) {
+    return 2;
+  }
+  const isShare = await Share.findOne({user: user._id})
   if(!isShare){
     const newShare = new Share({user: user._id,
       listBlog: blog._id});
@@ -456,7 +460,7 @@ static listUserFollower = async (user_id, authenticatedUser) => {
       if (!follow) {
           return 1;
       }
-      const followers = follow.follower;
+      let followers = follow.follower;
       for (let i = 0; i < followers.length; i++) {
           const followerId = followers[i];
           const user = await usermodel.findById(followerId);
