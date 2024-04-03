@@ -11,6 +11,7 @@ router.get('/userFollowing/:userId',auth.authenticateToken, userController.listU
 router.get('/wallUser/:userId',auth.authenticateToken, userController.getWallUsers);
 router.get('/listBlog/:userId',auth.authenticateToken, userController.listBlogByUserId);
 router.get('/listFriend',auth.authenticateToken, userController.listFriends);
+router.get('/report',auth.authenticateToken, userController.getAllReportTypes);
 
 //Notify the user
 router.get('/listNotify',auth.authenticateToken, userController.listNotifyByUser);

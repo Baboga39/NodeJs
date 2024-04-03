@@ -923,6 +923,17 @@ const reportComment = async (req, res) => {
     result: reportTag,
   });
 }
+const getAllReportTypes = async (req, res) =>{
+  const reportTypes = await Service.reportService.getAllReportType();
+  console.log('All Report Types');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'All Report Types',
+    result: reportTypes,
+  });
+}
 module.exports = {
   getUserInfo,
   updatedUserInfo,
@@ -943,5 +954,6 @@ module.exports = {
   reportBlog,
   reportTag,
   reportComment,
-  listFriends
+  listFriends,
+  getAllReportTypes
 }

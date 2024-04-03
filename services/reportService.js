@@ -95,5 +95,9 @@ class ReportService {
         });
         return await reportComment.save();
     }
+    static getAllReportType = async ()=>{
+        const reportType = await ReportType.find();
+        return reportType;
+    }
 }
 module.exports = ReportService;
