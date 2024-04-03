@@ -15,9 +15,14 @@ const reportTagSchema = new mongoose.Schema({
         ref: 'Tag',
         required: true
     },
-    reason: {
+    message: {
         type: String,
-        required: true
+        default: null,
+        },
+    reason: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportType',
+        autopopulate : true,
     },
 });
 reportTagSchema.plugin(autopopulate)

@@ -701,8 +701,30 @@ const listFriends = async (req, res) => {
 //--------------------------------------------------------Report  --------------------------------------------------------
 const reportUser = async (req, res) => {
   const authenticatedUser = req.user;
-  const {userId, reason} = req.body;
-  const reportUser = await Service.reportService.reportUser(userId,authenticatedUser.user,reason);
+  const {userId, message, reason} = req.body;
+  if(!reason)
+  {
+    console.log('Reason is required');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason is required',
+      result: null,
+    });
+  }
+  const reportUser = await Service.reportService.reportUser(userId,authenticatedUser.user,message,reason);
+  if(reportUser===3)
+  {
+    console.log('Reason not found');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason not found',
+      result: null,
+    });
+  }
   if(reportUser===0){
     console.log('Not found User');
     console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -735,8 +757,30 @@ const reportUser = async (req, res) => {
 }
 const reportBlog = async (req, res) => {
   const authenticatedUser = req.user;
-  const {blogId, reason} = req.body;
-  const reportBlog = await Service.reportService.reportBlog(blogId,authenticatedUser.user,reason);
+  const {blogId, message,reason} = req.body;
+  if(!reason)
+  {
+    console.log('Reason is required');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason is required',
+      result: null,
+    });
+  }
+  const reportBlog = await Service.reportService.reportBlog(blogId,authenticatedUser.user,message,reason);
+  if(reportUser===3)
+  {
+    console.log('Reason not found');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason not found',
+      result: null,
+    });
+  }
   if(reportBlog===0){
     console.log('Not found Blog');
     console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -769,8 +813,30 @@ const reportBlog = async (req, res) => {
 }
 const reportTag = async (req, res) => {
   const authenticatedUser = req.user;
-  const {tagId, reason} = req.body;
-  const reportTag = await Service.reportService.reportTag(tagId,authenticatedUser.user,reason);
+  const {tagId, message,reason} = req.body;
+  if(!reason)
+  {
+    console.log('Reason is required');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason is required',
+      result: null,
+    });
+  }
+  const reportTag = await Service.reportService.reportTag(tagId,authenticatedUser.user,message,reason);
+  if(reportUser===3)
+  {
+    console.log('Reason not found');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason not found',
+      result: null,
+    });
+  }
   if(reportTag===0){
     console.log('Not found Blog');
     console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -803,8 +869,30 @@ const reportTag = async (req, res) => {
 }
 const reportComment = async (req, res) => {
   const authenticatedUser = req.user;
-  const {commentId, reason} = req.body;
-  const reportTag = await Service.reportService.reportComment(commentId,authenticatedUser.user,reason);
+  const {commentId, message,reason} = req.body;
+  if(!reason)
+  {
+    console.log('Reason is required');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason is required',
+      result: null,
+    });
+  }
+  const reportTag = await Service.reportService.reportComment(commentId,authenticatedUser.user,message,reason);
+  if(reportUser===3)
+  {
+    console.log('Reason not found');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(400).json({
+      success:false,
+      statusCode: 400,
+      message: 'Reason not found',
+      result: null,
+    });
+  }
   if(reportTag===0){
     console.log('Not found Comment');
     console.log('--------------------------------------------------------------------------------------------------------------------')

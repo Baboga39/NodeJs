@@ -15,9 +15,14 @@ const reportSchema = new mongoose.Schema({
         autopopulate : true,
         required: true
     },
-    reason: {
+    message: {
         type: String,
-        required: true
+        default: null
+    },
+    reason: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportType',
+        autopopulate : true
     },
 });
 reportSchema.plugin(autopopulate)
