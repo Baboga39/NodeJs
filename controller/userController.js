@@ -699,7 +699,7 @@ const listNotifyByUser = async (req, res) => {
 const listNotifyByType = async (req, res) => {
   try{
   const authenticatedUser = req.user;
-  const type = req.body.type;  
+  const type = req.params.type;  
   const listNotifyByUser = await Service.notificationService.listNotifyByType(type,authenticatedUser.user._id);
   if(listNotifyByUser.length===0){
     console.log('List Notify by User');
