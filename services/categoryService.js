@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
 const UserRequest = require('../models/Blog/userRequestModel')
 const Invitation = require('../models/invitationModel')
-
+const Notify = require('../services/notificationService')
 
 class CategoryService {
     static async getAllCategories(user_id,index) {
@@ -38,11 +38,6 @@ class CategoryService {
         return totalPages;
     }
     static getUserStatusInCategory = async (category, userId) => {
-        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: userId});
-        if(userInvitationFind)
-        {
-            return 'Invited';
-        }
         if (category.users.some(user => user._id === userId)) {
             return 'Join';
         } else {
@@ -59,11 +54,6 @@ class CategoryService {
         }
     };
     static getUserStatusInCategory1 = async (category, userId) => {
-        const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: userId});   
-        if(userInvitationFind)
-        {
-            return 'Invited';
-        }
         if (category.users.some(user => user.equals(userId))) {
             return 'Join';
         } else {
@@ -371,12 +361,14 @@ class CategoryService {
             return 4;
         }
         if (category.isAdmin._id == authenticatedUser._id  || authenticatedUser.roles == 'Admin' ) {
+            await Notify.notifyAccept(authenticatedUser,user_id,categoryId)
             await category.addUsers(user._id)
             await request.removeUsers(user._id)
             const categoryUpdate = await categoryModel.findById(categoryId).populate('users')
             const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
             categoryUpdate.sumUser = userCount;
             await categoryUpdate.save();
+          
             return 4;
         }
         return 3;

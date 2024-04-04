@@ -42,8 +42,8 @@ class NotificationService{
     static notifyInvite = async (userIds, userAuthentication, categoryId) => {
         const userAuthenticated = await User.findById(userAuthentication._id);
         const category = await Category.findById(categoryId);
-        const notifications = userIds.map(async (userId) => {
-            const user = await User.findById(userId);
+       
+            const user = await User.findById(userIds);
             return new Notification({
                 sender: userAuthenticated._id,
                 blog: null,
@@ -51,9 +51,7 @@ class NotificationService{
                 type: 'Invite',
                 recipient: user._id,
             }).save();
-        });
-    
-        return Promise.all(notifications);
+        ;
     }
     static listNotifyByUser = async (userId) =>{
         const user = await User.findById(userId);
@@ -61,11 +59,31 @@ class NotificationService{
         const notification = await Notification.find({recipient: user._id});
         return notification;
     }
+    static notifyAccept = async (authenticatedUser, userId, categoryId) =>{
+        const userAuthenticated = await User.findById(authenticatedUser);
+        const category = await Category.findById(categoryId);
+        const user = await User.findById(userId);
+            return new Notification({
+                sender: userAuthenticated._id,
+                blog: null,
+                category: category._id,
+                type: 'Accept',
+                recipient: user._id,
+            }).save();
+        ;
+    }
     static checkIsRead = async (notifyId) =>{
         const notification = await Notification.findById(notifyId);
         if(!notification) return null;
         notification.isRead = true;
         await notification.save();
+        return notification;
+    }
+    static listNotifyByType = async (type,user_id) =>{
+        console.log(type)
+        console.log(user_id)
+
+        const notification = await Notification.find({type: type, recipient: user_id});
         return notification;
     }
 }

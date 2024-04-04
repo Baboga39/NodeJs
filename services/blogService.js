@@ -380,6 +380,7 @@ class BlogService{
             const startIndex = (pageIndex - 1) * pageSize; 
             const endIndex = pageIndex * pageSize; 
             const listBlog = [];
+            const uniquePostIds = new Set();
             const categories = await Category.find({users: authenticatedUser._id})
             for (const category of categories) {
                 const query = await Blog.find({ category: category._id, status: 'Published'})
@@ -392,7 +393,10 @@ class BlogService{
                 const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
                 if (posts2.length>0) {
                     for (const post of posts2) {
-                        listBlog.push(post);
+                        if (!uniquePostIds.has(post._id)) { 
+                            listBlog.push(post);
+                            uniquePostIds.add(post._id);
+                        }
                     }
             }
         }
@@ -404,16 +408,18 @@ class BlogService{
                                     .populate('tags')
                                     .populate('user')
                                     .populate('category')
-                                    .exec();
+                                    .exec()
             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
             const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
             if (posts2.length>0) {
                 for (const post of posts2) {
-                    listBlog.push(post);
+                    if (!uniquePostIds.has(post._id)) {
+                        listBlog.push(post);
+                        uniquePostIds.add(post._id);
+                    }
                 }
             }
         }   
-        
         for (const user of users) {
             const shareBlog = await Share.findOne({ user: user._id})
                 if(shareBlog)
@@ -423,13 +429,13 @@ class BlogService{
                 const posts = await this.findAndUpdateLikeAndSave(blogFindShare,authenticatedUser._id)
                 const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
                 if (posts2.length>0) {
+                const UserFind = await User.findById(user._id)
                 for (const post of posts2) {
-                    console.log(post)
                     post.isShare = true;
-                    post.sharedBy = user;
+                    post.shareBy = UserFind;
                     listBlog.push(post);
-                            }
-                        }
+                    }
+                    }
                 }
                 continue;
             }
@@ -444,10 +450,28 @@ class BlogService{
             const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
             if (posts2.length>0) {
                 for (const post of posts2) {
-                    listBlog.push(post);
+                    if (!uniquePostIds.has(post._id)) {
+                        listBlog.push(post);
+                        uniquePostIds.add(post._id);
+                    }
                 }
             }
-        const size = Math.ceil(listBlog.length   / 6);
+            listBlog.sort((a, b) => {
+                if (a.createdAt > b.createdAt) {
+                    return -1; 
+                } else if (a.createdAt < b.createdAt) {
+                    return 1;
+                } else {
+                    if (a.updatedAt > b.updatedAt) {
+                        return -1;
+                    } else if (a.updatedAt < b.updatedAt) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+        const size = Math.ceil(listBlog.length / 6);
         const paginatedPosts = listBlog.slice(startIndex, endIndex);
         return {size: size, posts: paginatedPosts};
     }

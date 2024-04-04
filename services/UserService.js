@@ -224,14 +224,10 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
           console.log('Not found category');
           return 2;
         }
-        if (category.users.some(userCheckCategory => userCheckCategory.equals(user._id))) {
-          return 8;
-        }
         const request = await UserRequest.findOne({ Category: category._id });
         if (request) {
           
             if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
-              
             } else {
                 await categoryService.addUsersToCategory(category._id,user._id);
                 return 7;

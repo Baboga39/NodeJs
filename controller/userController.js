@@ -696,6 +696,40 @@ const listNotifyByUser = async (req, res) => {
     result: listNotifyByUser,
   });
 }
+const listNotifyByType = async (req, res) => {
+  try{
+  const authenticatedUser = req.user;
+  const type = req.body.type;  
+  const listNotifyByUser = await Service.notificationService.listNotifyByType(type,authenticatedUser.user._id);
+  if(listNotifyByUser.length===0){
+    console.log('List Notify by User');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'List Notify by User',
+      result: null,
+    });
+  }
+  console.log('List Notify by User');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success:true,
+    statusCode: 200,
+    message: 'List Notify by User',
+    result: listNotifyByUser,
+  });
+  }catch(error){
+    console.log('Internal Server Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success:false,
+      statusCode: 500,
+      message: 'Internal Server Error',
+      result: error.message,
+    });
+  }
+}
 const checkIsRead = async (req, res) => {
   const notifyId = req.params.notifyId;
   const notification = await Service.notificationService.checkIsRead(notifyId)
@@ -999,5 +1033,6 @@ module.exports = {
   reportComment,
   listFriends,
   getAllReportTypes,
-  shareBlog
+  shareBlog,
+  listNotifyByType
 }

@@ -15,6 +15,7 @@ router.get('/report',auth.authenticateToken, userController.getAllReportTypes);
 
 //Notify the user
 router.get('/listNotify',auth.authenticateToken, userController.listNotifyByUser);
+router.get('/listNotifyByType',auth.authenticateToken, userController.listNotifyByType);
 router.post('/checkIsRead/:notifyId',auth.authenticateToken, userController.checkIsRead);
 
 //Report the user
