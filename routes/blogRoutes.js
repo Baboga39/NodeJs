@@ -22,6 +22,7 @@ router.get('/listBlogSaveByUser',middleware.authenticateToken,controller.blogCon
 router.get('/listBlogDraftByUser',middleware.authenticateToken,controller.blogController.listBlogDraftByUser)
 router.get('/listBlogDiscussions',middleware.authenticateToken,controller.blogController.listBlogDiscussions)
 router.get('/:index/listBlogInFeed',middleware.authenticateToken,controller.blogController.listBlogInFeed)
+router.get('/:userId/listBlogShareBy',middleware.authenticateToken,controller.blogController.listBlogShareBy)
 
 
 router.delete('/:blogId',middleware.authenticateToken,controller.blogController.deleteBlogById);

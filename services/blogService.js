@@ -480,6 +480,28 @@ class BlogService{
                 return null;
             }
         }
+        static listBlogShareByUSer = async (authenticatedUser,userId)=>{
+            try {
+                const query = await Share.findOne({ user: userId})
+                let listBlog = query.listBlog;
+                let result = []
+               for (const blog of listBlog) {
+                if(blog)
+                {
+                    result.push(blog)
+                }
+               }
+                const posts = await this.findAndUpdateLikeAndSave(result,authenticatedUser._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+                if (posts2.length === 0) {
+                    return null;
+                }
+                return posts2;
+            } catch (error) {
+                console.error("Error fetching most active posts:", error);
+                return null;
+            }
+        }
 }
 
 module.exports = BlogService;

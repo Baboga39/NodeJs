@@ -528,6 +528,41 @@ const listBlogInFeed = async (req, res) => {
     });
   }
 }
+const listBlogShareBy = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const authenticatedUser = req.user;
+    const listBlog  = await Service.blogService.listBlogShareByUSer(authenticatedUser.user,userId);
+    if(listBlog.length===0){
+      console.log('List Blog Share By User')
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'List Blog Share By User',
+        result: null,
+      });
+    }
+    console.log('List Blog Share By User')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'List Blog Share By User',
+      result: listBlog,
+    });
+  }
+  catch (error) {
+    console.log('Internal server error')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal server error',
+      result: error.message,
+    });
+  }
+}
 module.exports = {createBlog,getBlogById,uploadImage, createBlogDraft, editBlog, deleteBlogById,getAllBlogByUserId
 
   ,listBlogNew,listBlogPopularity,listBlogByCategory
@@ -535,5 +570,6 @@ module.exports = {createBlog,getBlogById,uploadImage, createBlogDraft, editBlog,
   listBlogSaveByUser,
   listBlogDraftByUser,
   listBlogDiscussions,
-  listBlogInFeed
+  listBlogInFeed,
+  listBlogShareBy
 };
