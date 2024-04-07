@@ -13,6 +13,7 @@ const groupSchema = new Schema({
       },
     chatName: { type: String, default: null},
     isGroup: Boolean,
+    listLastUser:[{ type: Schema.Types.ObjectId, ref: 'User',autopopulate : true}]
 }, { timestamps: true,  strict: false  }); 
 
 groupSchema.plugin(autopopulate)

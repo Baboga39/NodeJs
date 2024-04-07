@@ -483,7 +483,10 @@ class BlogService{
         static listBlogShareByUSer = async (authenticatedUser,userId)=>{
             try {
                 const query = await Share.findOne({ user: userId})
-                let listBlog = query.listBlog;
+                if(!query){
+                    return 1;
+                }
+                let listBlog = query.listBlog;         
                 let result = []
                for (const blog of listBlog) {
                 if(blog)

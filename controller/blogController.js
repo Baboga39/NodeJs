@@ -533,6 +533,16 @@ const listBlogShareBy = async (req, res) => {
     const userId = req.params.userId;
     const authenticatedUser = req.user;
     const listBlog  = await Service.blogService.listBlogShareByUSer(authenticatedUser.user,userId);
+    if (listBlog===1){
+      console.log('List Blog Share By User')
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'List Blog Share By User',
+        result: null,
+      });
+    }
     if(listBlog.length===0){
       console.log('List Blog Share By User')
       console.log('--------------------------------------------------------------------------------------------------------------------')

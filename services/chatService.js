@@ -10,7 +10,8 @@ class ChatService {
         if(!user) return null;
         const group = await Group.findOne({
             $and: [
-                { listUser: { $all: [authenticationUser._id, userId] } }, 
+                { listUser: { $in: [authenticationUser._id, userId] } }, 
+                { listLastUser: { $in: [authenticationUser._id, userId] } }, 
                 { isGroup: false } 
             ]
         }).exec();
@@ -19,7 +20,8 @@ class ChatService {
             const newGroup = new Group({
                 createBy: authenticationUser._id,
                 listUser: [authenticationUser._id, user.id],
-                isGroup: false
+                isGroup: false,
+                listLastUser: []
             })
             await newGroup.save();
             return newGroup;
@@ -127,7 +129,10 @@ class ChatService {
         }
         else{
             const userIndex = chat.listUser.findIndex(userList => userList._id.equals(user._id));
+            const userFind = chat.listUser[userIndex];
+            console.log(userFind)
             chat.listUser.splice(userIndex, 1);
+            chat.listLastUser.push(userFind);
             await chat.save();
             return 4;
         }
