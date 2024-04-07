@@ -43,6 +43,17 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("sendMessage", ({ fromUser, toUser, text }) => {
+    console.log({ fromUser, text });
+    const user = getUser(toUser);
+    io.to(user?.socketId).emit("getMessage", {
+      fromUser,
+      toUser,
+      text,
+    });
+    console.log("Send message to socket Success");
+  });
+
   socket.on("interaction", ({ fromUser, toUser }) => {
     console.log(`User ${fromUser} interacts with user ${toUser}`);
     if (fromUser === toUser) {

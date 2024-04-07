@@ -6,6 +6,7 @@ const blogService = require('./blogService');
 const commentService = require('./commentService');
 const notificationService = require('./notificationService');
 const reportService = require('./reportService')
+const chatService = require('./chatService')
 module.exports = {
   authService,
   userService,
@@ -14,5 +15,6 @@ module.exports = {
   blogService,
   commentService,
   notificationService,
-  reportService
+  reportService,
+  chatService
 };

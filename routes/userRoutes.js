@@ -35,6 +35,24 @@ router.post('/comment',auth.authenticateToken,userController.addComment)
 router.post('/follow/:userId',auth.authenticateToken,userController.followUser)
 router.post('/deleteComment',auth.authenticateToken,userController.deleteComment)
 
+//Chat
+router.post('/singleChat',auth.authenticateToken,userController.singleChat)
+router.post('/groupChat',auth.authenticateToken,userController.groupChat)
+router.post('/addUserToGroup',auth.authenticateToken,userController.addUserToGroup)
+router.post('/removeUserToGroup',auth.authenticateToken,userController.removeUserToGroup)
+router.delete('/:chatId/deleteChatByUser',auth.authenticateToken,userController.deleteChatByUser)
+router.post('/sendMessage',auth.authenticateToken,userController.sendMessage)
+router.get('/listMessage/:chatId',auth.authenticateToken,userController.getAllMessageByChatId)
+router.delete('/deleteMessage/:messageId',auth.authenticateToken,userController.deleteMessage)
+
+
+router.get('/singleChat/:chatId',auth.authenticateToken,userController.findChatById)
+router.get('/listChat',auth.authenticateToken,userController.listChatUsers)
+
+
+
+
+
 
 router.patch('/editComment',auth.authenticateToken,userController.editComment)
 
