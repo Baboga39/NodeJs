@@ -11,7 +11,6 @@ class ChatService {
         const group = await Group.findOne({
             $and: [
                 { listUser: { $in: [authenticationUser._id, userId] } }, 
-                { listLastUser: { $in: [authenticationUser._id, userId] } }, 
                 { isGroup: false } 
             ]
         }).exec();
@@ -21,7 +20,6 @@ class ChatService {
                 createBy: authenticationUser._id,
                 listUser: [authenticationUser._id, user.id],
                 isGroup: false,
-                listLastUser: []
             })
             await newGroup.save();
             return newGroup;
@@ -49,7 +47,6 @@ class ChatService {
             createBy: authenticationUser._id,
             admins: authenticationUser._id,
             chatName: chatName,
-            listUser: [],
             isGroup: true
         })
         for(const userId of userIds)
@@ -140,24 +137,31 @@ class ChatService {
     static sendMessage = async (authenticationUser, message, chatId) => {
         const chat = await Group.findById(chatId);
         if(!chat) return null;
+        const userReceivedArray = chat.listUser.map(userId => ({
+            user: userId,
+            isDelete: false,
+            isSeen: false
+        }));
         const newMessage = new Message({
             user: authenticationUser._id,
             message: message,
-            chat: chat._id
+            chat: chat._id,
+            userReceived:userReceivedArray
         })
         await newMessage.save();
         return newMessage;
     }
-    static getAllMessageInChat = async (chatId) =>{
+    static getAllMessageInChat = async (authenticatedUser,chatId) =>{
         const chat = await Group.findById(chatId);
         if(!chat) return null;
-        const messages = await Message.find({chat: chat._id}).sort({ createdDay: 1 });;
+        const messages = await Message.find({chat: chat._id,
+            'userReceived.user': authenticatedUser._id,
+            'userReceived.isDelete': false}).sort({ createdDay: 1 });;
         return messages;
     }
     static deleteMessage = async (messageId)=>{
         const message = await Message.findById(messageId);
         if(!message) return null;
-        await message.deleteOne();
         return 1;
     }
 }

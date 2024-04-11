@@ -1407,7 +1407,8 @@ const sendMessage = async (req, res) => {
 const getAllMessageByChatId = async (req,res) =>{
   try {
     const chatId = req.params.chatId;
-    const listMessage = await Service.chatService.getAllMessageInChat(chatId);
+    const authenticatedUser = req.user;
+    const listMessage = await Service.chatService.getAllMessageInChat(authenticatedUser.user,chatId);
     console.log('List message in chat');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
