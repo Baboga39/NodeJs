@@ -3,7 +3,7 @@ const mailService = require('../services/mailService');
 const VerificationToken = require('../models/VerificationTokenModel');
 class AuthService {
   static generateToken(payload) {
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1m' });
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1w' });
   }
   static isTokenExpired = (expiryDate) => {
     const currentTime = new Date();
