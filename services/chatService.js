@@ -11,7 +11,8 @@ class ChatService {
         const group = await Group.findOne({
             $and: [
                 { listUser: { $in: [authenticationUser._id, userId] } }, 
-                { isGroup: false } 
+                { listLastUser: { $in: [authenticationUser._id, userId] } }, 
+                { isGroup: false },
             ]
         }).exec();
 
@@ -23,6 +24,19 @@ class ChatService {
             })
             await newGroup.save();
             return newGroup;
+        } else {
+            const userInListUser = group.listUser.some(id => id.equals(userId));
+            const authenticatedUserInListUser = group.listUser.some(id => id.equals(authenticationUser._id));
+            if (!authenticatedUserInListUser) {
+                group.listUser.push(authenticationUser);
+                group.listLastUser.pull(authenticationUser);
+                await group.save();
+            }
+            if (!userInListUser) {
+                group.listUser.push(user);
+                group.listLastUser.pull(user);
+                await group.save();
+            }
         }
         return group;
         }
@@ -127,9 +141,19 @@ class ChatService {
         else{
             const userIndex = chat.listUser.findIndex(userList => userList._id.equals(user._id));
             const userFind = chat.listUser[userIndex];
-            console.log(userFind)
             chat.listUser.splice(userIndex, 1);
             chat.listLastUser.push(userFind);
+            const messageList = await Message.find({chat: chat._id}) ;
+            for (const message of messageList) {
+                const userReceiveds = message.userReceived;
+                for (const userReceived of userReceiveds) {
+                    if(userReceived.user.equals(userFind._id))
+                    {
+                        userReceived.isDelete = true;
+                        await message.save();
+                    }
+                }
+            }
             await chat.save();
             return 4;
         }
@@ -152,12 +176,24 @@ class ChatService {
         return newMessage;
     }
     static getAllMessageInChat = async (authenticatedUser,chatId) =>{
+        const userFind = await User.findById(authenticatedUser._id);
         const chat = await Group.findById(chatId);
         if(!chat) return null;
-        const messages = await Message.find({chat: chat._id,
-            'userReceived.user': authenticatedUser._id,
-            'userReceived.isDelete': false}).sort({ createdDay: 1 });;
-        return messages;
+        const result = [];
+        const messageList = await Message.find({chat: chat._id}).sort({ createdDay: 1 });;
+        for (const message of messageList) {
+            const userReceiveds = message.userReceived;
+            for (const userReceived of userReceiveds) {
+                if(userReceived.user.equals(userFind._id))
+                {
+                    if(!userReceived.isDelete)
+                    {
+                        result.push(message);
+                    }
+                }
+            }
+        }
+        return result;
     }
     static deleteMessage = async (messageId)=>{
         const message = await Message.findById(messageId);
