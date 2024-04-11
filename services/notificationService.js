@@ -30,6 +30,9 @@ class NotificationService{
     static notifyLike = async (blogId, userId) =>{
         const blog = await Blog.findById(blogId);
         const user = await User.findById(userId);
+        if(blog.user._id.equals(user.id)){
+            return 3;
+        }
         const notification = new Notification({
             sender: user._id,
             blog: blogId,
