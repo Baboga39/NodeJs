@@ -6,7 +6,7 @@ const Category = require('../models/Blog/categoryModel')
 class NotificationService{
     static notifyComment = async (blogId, userAuthentication)=>{
         const blog  = await Blog.findById(blogId)
-        if(blog.user._id.equals(user.id)){
+        if(blog.user._id.equals(userAuthentication.id)){
             return 3;
         }
         const notification = new Notification({

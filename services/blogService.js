@@ -401,47 +401,49 @@ class BlogService{
             }
         }
         const follow = await followModel.findOne({user: authenticatedUser._id})
-        const users = follow.following;
-        for (const user of users) {
-            const query = await Blog.find({ user: user._id, status: 'Published'})
-                                    .sort({ createdAt: -1 })
-                                    .populate('tags')
-                                    .populate('user')
-                                    .populate('category')
-                                    .exec()
-            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
-            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-            if (posts2.length>0) {
-                for (const post of posts2) {
-                    if (!uniquePostIds.has(post._id)) {
-                        listBlog.push(post);
-                        uniquePostIds.add(post._id);
-                    }
-                }
-            }
-        }   
-        for (const user of users) {
-            const shareBlog = await Share.findOne({ user: user._id})
-                if(shareBlog)
-                {
-                const blogFindShare = shareBlog.listBlog;
-                if(blogFindShare){
-                const posts = await this.findAndUpdateLikeAndSave(blogFindShare,authenticatedUser._id)
+        if(follow){
+            const users = follow.following;
+            for (const user of users) {
+                const query = await Blog.find({ user: user._id, status: 'Published'})
+                                        .sort({ createdAt: -1 })
+                                        .populate('tags')
+                                        .populate('user')
+                                        .populate('category')
+                                        .exec()
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
                 const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
                 if (posts2.length>0) {
-                const UserFind = await User.findById(user._id)
-                for (const post of posts2) {
-                    post.isShare = true;
-                    post.shareBy = UserFind;
-                    listBlog.push(post);
-                    }
+                    for (const post of posts2) {
+                        if (!uniquePostIds.has(post._id)) {
+                            listBlog.push(post);
+                            uniquePostIds.add(post._id);
+                        }
                     }
                 }
-                continue;
+            }   
+            for (const user of users) {
+                const shareBlog = await Share.findOne({ user: user._id})
+                    if(shareBlog)
+                    {
+                    const blogFindShare = shareBlog.listBlog;
+                    if(blogFindShare){
+                    const posts = await this.findAndUpdateLikeAndSave(blogFindShare,authenticatedUser._id)
+                    const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+                    if (posts2.length>0) {
+                    const UserFind = await User.findById(user._id)
+                    for (const post of posts2) {
+                        post.isShare = true;
+                        post.shareBy = UserFind;
+                        listBlog.push(post);
+                        }
+                        }
+                    }
+                    continue;
+                }
             }
         }
         const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})
-                                    .sort({ createdAt: -1 })
+                                    .sort({ createdAt: -1 }) 
                                     .populate('tags')
                                     .populate('user')
                                     .populate('category')
