@@ -384,7 +384,7 @@ const deleteComment = async (req, res) => {
     console.log('Server Internal Error');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(500).json({
-      success: true,
+      success: false,
       statusCode: 500,
       message: 'Server Internal Error',
       result: error.message,
