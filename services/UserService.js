@@ -456,6 +456,7 @@ static listUserFollower = async (user_id, authenticatedUser) => {
       if (!follow) {
           return 1;
       }
+      const userFollowerResult = [];
       let followers = follow.follower;
       for (let i = 0; i < followers.length; i++) {
           const followerId = followers[i];
@@ -465,8 +466,9 @@ static listUserFollower = async (user_id, authenticatedUser) => {
           }
           const isFollowed = await this.isUserFollowedByAuthenticatedUser(user._id, authenticatedUser._id);
           user.isfollow = isFollowed;
+          userFollowerResult.push(user)
       }
-      return followers;
+      return userFollowerResult;
   } catch (error) {
       throw new Error(error.message);
   }
