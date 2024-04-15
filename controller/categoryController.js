@@ -264,8 +264,8 @@ const removeTags = async (req, res) => {
 const addUsersToCategory = async (req, res) => {
     try {
     const authenticationUser = req.user;
-    const {categoryId, userIds} = req.body;
-    const invitation = await  Service.userService.invitationRequest(userIds,categoryId, authenticationUser.user);
+    const {categoryId, userId} = req.body;
+    const invitation = await  Service.userService.invitationRequest(userId,categoryId, authenticationUser.user);
     if (invitation===5) {
         console.log('User do not have permission to add users');
         console.log('--------------------------------------------------------------------------------------------------------------------')
@@ -326,7 +326,7 @@ const addUsersToCategory = async (req, res) => {
             result: null,
         })
     }
-    await Service.notificationService.notifyInvite(userIds,authenticationUser.user,categoryId)
+    await Service.notificationService.notifyInvite(userId,authenticationUser.user,categoryId)
     console.log('Send request Success')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
