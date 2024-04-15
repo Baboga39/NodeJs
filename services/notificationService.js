@@ -76,6 +76,7 @@ class NotificationService{
     }
     static notifyInvite = async (userIds, userAuthentication, categoryId) => {
         const userAuthenticated = await User.findById(userAuthentication._id);
+        const user = await User.findById(userIds);
         const category = await Category.findById(categoryId);
         const notification = await Notification.findOne({
             sender: userAuthenticated._id,
@@ -87,7 +88,6 @@ class NotificationService{
         {
             await notification.deleteOne();
         }
-            const user = await User.findById(userIds);
             return new Notification({
                 sender: userAuthenticated._id,
                 blog: null,

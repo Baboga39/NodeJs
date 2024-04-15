@@ -202,20 +202,91 @@ static listUserRequest = async(categoryId) =>{
   }
   return userRequest;
 }
+// static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
+//   const authenticatedUserFind = await UserModel.findById(authenticatedUser._id);
+//   const category = await Category.findById(categoryId);
+//   if (category.isAdmin._id.equals(authenticatedUserFind._id)  || authenticatedUserFind.roles === 'Admin' ) {
+//     if(Array.isArray(userId)) {
+//       if(userId.length===0)
+//       {
+//         return 1;
+//       }
+//       for(let i = 0; i < userId.length; i++) {
+//         const user = await UserModel.findById(userId[i]);
+//         if (!user) {
+//           console.log('-------------------------------------------------------------------------------------------------');
+//           console.log('Not found user');
+//           return 1;
+//         }
+//         const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: user._id});
+//         if (!category) {
+//           console.log('-------------------------------------------------------------------------------------------------');
+//           console.log('Not found category');
+//           return 2;
+//         }
+//         const request = await UserRequest.findOne({ Category: category._id });
+//         if (request) {
+          
+//             if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
+//             } else {
+//                 await categoryService.addUsersToCategory(category._id,user._id);
+//                 return 7;
+//             }
+//           }
+//         if(!userInvitationFind) {
+//           const newInvitation = new Invitation({
+//             Category: category,
+//             userInvite:authenticatedUserFind._id,
+//             userIsInvited: user._id,
+//           });
+//           await newInvitation.save();
+//         return newInvitation;
+//         }
+//         return 6
+//       }
+//     } else {
+//       const user = await UserModel.findById(userId);
+//       if (!user) {
+//         console.log('-------------------------------------------------------------------------------------------------');
+//         console.log('Not found user');
+//         return 1;
+//       }
+//       const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: user._id});
+//       if (!category) {
+//         console.log('-------------------------------------------------------------------------------------------------');
+//         console.log('Not found category');
+//         return 2;
+//       }
+//       if(userInvitationFind) {
+//         return 3;
+//       }
+//       const request = await UserRequest.findOne({ Category: category._id });
+//       if (request) {
+//         if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
+          
+//         } else {
+//             await categoryService.addUsersToCategory(category._id,user._id);
+//             return 7;
+//         }
+//       }
+//       const newInvitation = new Invitation({
+//         Category: category,
+//         userInvite: authenticatedUserFind._id,
+//         userIsInvited: user._id,
+//       });
+//       await newInvitation.save();
+//       return newInvitation;
+//     }
+//   }
+//   return 5;
+// }
 static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
   const authenticatedUserFind = await UserModel.findById(authenticatedUser._id);
   const category = await Category.findById(categoryId);
   if (category.isAdmin._id.equals(authenticatedUserFind._id)  || authenticatedUserFind.roles === 'Admin' ) {
-    if(Array.isArray(userId)) {
-      if(userId.length===0)
-      {
-        return 1;
-      }
-      for(let i = 0; i < userId.length; i++) {
-        const user = await UserModel.findById(userId[i]);
-        if (!user) {
-          console.log('-------------------------------------------------------------------------------------------------');
-          console.log('Not found user');
+        const user = usermodel.findById(userId);
+        if(!user)
+        {
           return 1;
         }
         const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: user._id});
@@ -226,7 +297,6 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
         }
         const request = await UserRequest.findOne({ Category: category._id });
         if (request) {
-          
             if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
             } else {
                 await categoryService.addUsersToCategory(category._id,user._id);
@@ -243,40 +313,6 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
         return newInvitation;
         }
         return 6
-      }
-    } else {
-      const user = await UserModel.findById(userId);
-      if (!user) {
-        console.log('-------------------------------------------------------------------------------------------------');
-        console.log('Not found user');
-        return 1;
-      }
-      const userInvitationFind = await Invitation.findOne({Category: category, userIsInvited: user._id});
-      if (!category) {
-        console.log('-------------------------------------------------------------------------------------------------');
-        console.log('Not found category');
-        return 2;
-      }
-      if(userInvitationFind) {
-        return 3;
-      }
-      const request = await UserRequest.findOne({ Category: category._id });
-      if (request) {
-        if (!request.Users || !request.Users.some(userFind =>  userFind.equals(user._id))) {
-          
-        } else {
-            await categoryService.addUsersToCategory(category._id,user._id);
-            return 7;
-        }
-      }
-      const newInvitation = new Invitation({
-        Category: category,
-        userInvite: authenticatedUserFind._id,
-        userIsInvited: user._id,
-      });
-      await newInvitation.save();
-      return newInvitation;
-    }
   }
   return 5;
 }
