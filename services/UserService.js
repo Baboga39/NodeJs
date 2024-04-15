@@ -507,7 +507,7 @@ static listFriend = async (userId)=>{
   {
     return null;
   }
-  if(followUser.following===null ||!followUser.follower )
+  if(followUser.following===null ||!followUser.following )
   {
     return null;
   }
@@ -521,11 +521,11 @@ static listFriend = async (userId)=>{
         listFriend.push(userFollowing);
       }
     }
-  if (listFriend.length===0){
-    return null;
-  }
-  return listFriend;
 }
+if (listFriend.length===0){
+  return null;
+}
+  return listFriend;
 }
 }
 

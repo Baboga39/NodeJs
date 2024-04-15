@@ -442,22 +442,22 @@ class BlogService{
                 }
             }
         }
-        const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})
-                                    .sort({ createdAt: -1 }) 
-                                    .populate('tags')
-                                    .populate('user')
-                                    .populate('category')
-                                    .exec();
-            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
-            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-            if (posts2.length>0) {
-                for (const post of posts2) {
-                    if (!uniquePostIds.has(post._id)) {
-                        listBlog.push(post);
-                        uniquePostIds.add(post._id);
-                    }
-                }
-            }
+        // const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})
+        //                             .sort({ createdAt: -1 }) 
+        //                             .populate('tags')
+        //                             .populate('user')
+        //                             .populate('category')
+        //                             .exec();
+        //     const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+        //     const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+        //     if (posts2.length>0) {
+        //         for (const post of posts2) {
+        //             if (!uniquePostIds.has(post._id)) {
+        //                 listBlog.push(post);
+        //                 uniquePostIds.add(post._id);
+        //             }
+        //         }
+        //     }
             listBlog.sort((a, b) => {
                 if (a.createdAt > b.createdAt) {
                     return -1; 
