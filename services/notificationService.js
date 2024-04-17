@@ -6,7 +6,8 @@ const Category = require('../models/Blog/categoryModel')
 class NotificationService{
     static notifyComment = async (blogId, userAuthentication)=>{
         const blog  = await Blog.findById(blogId)
-        if(blog.user._id.equals(userAuthentication.id)){
+        const user = await User.findById(userAuthentication._id)
+        if(blog.user._id.equals(user._id)){
             return 3;
         }
         const notificationFind = await Notification.findOne({
@@ -30,7 +31,7 @@ class NotificationService{
     static notifyFollow = async (userId, userAuthentication)=>{
         const user = await User.findById(userId);
         const userAuthenticated = await User.findById(userAuthentication);
-        if(user._id.equals(userAuthenticated.id)){
+        if(user._id.equals(userAuthenticated._id)){
             return 3;
         }
         const notificationFind = await Notification.findOne({
@@ -53,7 +54,7 @@ class NotificationService{
     static notifyLike = async (blogId, userId) =>{
         const blog = await Blog.findById(blogId);
         const user = await User.findById(userId);
-        if(blog.user._id.equals(user.id)){
+        if(blog.user._id.equals(user._id)){
             return 3;
         }
         const notificationFind = await Notification.findOne({
