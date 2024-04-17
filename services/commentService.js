@@ -52,7 +52,7 @@ class CategoryService {
                 await CategoryService.deleteChildComments(comment._id, blog); // Thay đổi dòng này
                 if (blog.comments.some(comment => comment.equals(commentId))) {
                     const index = blog.comments.findIndex(comment => comment.equals(commentId));
-                    blog.comments.splice(index, 1);
+                    blog.comments= [];
                     const sumComment = blog.sumComment - 1;
                     blog.sumComment = sumComment;
                     await blog.save();
