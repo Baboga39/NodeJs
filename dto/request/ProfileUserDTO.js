@@ -1,8 +1,8 @@
 class ProfileUserDTO {
-    constructor(username, name, phone, secondName, gender, descriptions, address, email) {
+    constructor(username, name, phone, second_name, gender, descriptions, address, email) {
         this.name = name;
         this.phone = phone;
-        this.secondName = secondName;
+        this.second_name = second_name;
         this.gender = gender;
         this.descriptions = descriptions;
         this.address = address;
