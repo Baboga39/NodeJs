@@ -69,7 +69,7 @@ const userSchema = new mongoose.Schema({
     enum: ['completed', 'unverified', 'locked'],
     default: 'unverified',
   },
-  Descriptions: {
+  descriptions: {
     type: String,
     trim: true,
   },
