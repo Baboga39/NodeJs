@@ -48,7 +48,7 @@ static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
     user.phone = profileDTO.phone;
     user.second_name = profileDTO.secondName;
     user.gender = profileDTO.gender;
-    user.descriptions = profileDTO.descriptions;
+    user.descriptions = profileDTO.Descriptions;
     user.address = profileDTO.address;
     user.username = profileDTO.username;
     // Save the updated user to the database
