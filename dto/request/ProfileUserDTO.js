@@ -11,8 +11,8 @@ class ProfileUserDTO {
     }
 
     static fromRequest(requestBody) {
-        const { username, name, phone, secondName, gender, descriptions, address, email } = requestBody;
-        return new ProfileUserDTO(username, name, phone, secondName, gender, descriptions, address, email);
+        const { username, name, phone, secondName, gender, Descriptions, address, email } = requestBody;
+        return new ProfileUserDTO(username, name, phone, secondName, gender, Descriptions, address, email);
     }
 }
 
