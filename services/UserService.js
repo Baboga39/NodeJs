@@ -43,15 +43,14 @@ static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
         result: null,
       });
   }
-  console.log(profileDTO)
     // Update user information with data from the profileDTO
-    user.name = profileDTO.name;
-    user.phone = profileDTO.phone;
-    user.second_name = profileDTO.secondName;
-    user.gender = profileDTO.gender;
-    user.descriptions = profileDTO.descriptions;
-    user.address = profileDTO.address;
-    user.username = profileDTO.username;
+    user.name = profileDTO.name || user.name;
+    user.phone = profileDTO.phone || user.phone;
+    user.second_name = profileDTO.secondName || user.second_name;
+    user.gender = profileDTO.gender || user.gender;
+    user.descriptions = profileDTO.descriptions || user.descriptions;
+    user.address = profileDTO.address || user.address;
+    user.username = profileDTO.username || user.username;
     // Save the updated user to the database
     await user.save();
     console.log('Updated user info successfully')
