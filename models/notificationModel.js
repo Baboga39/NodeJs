@@ -24,7 +24,7 @@ const NotificationSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['Follow', 'Comment', 'Like','Invite','Accept'],
+        enum: ['Follow', 'Comment', 'Like','Invite','Accept','AcceptBlog','DeclineBlog','Chat'],
     },
     isRead: {
         type: Boolean,
@@ -34,7 +34,16 @@ const NotificationSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-
+    message: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message',
+        autopopulate : true
+    },
+    chat:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group',
+        autopopulate : true
+    },
 }, { timestamps: true,  strict: false });
 NotificationSchema.plugin(autopopulate)
 module.exports = mongoose.model('Notification', NotificationSchema);

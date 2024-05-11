@@ -5,13 +5,14 @@ const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
     user:{ type: Schema.Types.ObjectId, ref: 'User',autopopulate : true},
-    message: String,
-    chat:{ type: Schema.Types.ObjectId, ref: 'Group',autopopulate : true},
-    userReceived: [{
-        user: { type: Schema.Types.ObjectId, ref: 'User', autopopulate: true },
-        isDelete: { type: Boolean, default: false },
-        isSeen: { type: Boolean, default: false }
-    }]
+    message: {
+        content: { type: String },
+        type: {
+            type: String,
+            enum: ['Text', 'Image'],
+        }
+    },
+    chat:{ type: Schema.Types.ObjectId, ref: 'Group',autopopulate : true}
 }, { timestamps: true ,  strict: false }); 
 
 messageSchema.plugin(autopopulate)

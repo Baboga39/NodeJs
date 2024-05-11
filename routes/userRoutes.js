@@ -36,19 +36,25 @@ router.post('/follow/:userId',auth.authenticateToken,userController.followUser)
 router.post('/deleteComment',auth.authenticateToken,userController.deleteComment)
 
 //Chat
+router.post('/checkIsReadChat',auth.authenticateToken,userController.checkIsReadChat)
 router.post('/singleChat',auth.authenticateToken,userController.singleChat)
 router.post('/groupChat',auth.authenticateToken,userController.groupChat)
 router.post('/addUserToGroup',auth.authenticateToken,userController.addUserToGroup)
 router.post('/removeUserToGroup',auth.authenticateToken,userController.removeUserToGroup)
+router.post('/leaveGroup',auth.authenticateToken,userController.leaveGroup)
+router.post('/editChatName',auth.authenticateToken,userController.editChatName)
 router.delete('/:chatId/deleteChatByUser',auth.authenticateToken,userController.deleteChatByUser)
 router.post('/sendMessage',auth.authenticateToken,userController.sendMessage)
 router.get('/listMessage/:chatId',auth.authenticateToken,userController.getAllMessageByChatId)
 router.delete('/deleteMessage/:messageId',auth.authenticateToken,userController.deleteMessage)
+router.post('/evaluateChat',auth.authenticateToken,userController.evaluateChat)
+router.post('/search',auth.authenticateToken,userController.search)
 
 
 router.get('/singleChat/:chatId',auth.authenticateToken,userController.findChatById)
 router.get('/listChat',auth.authenticateToken,userController.listChatUsers)
-
+router.get('/listChatIsWait',auth.authenticateToken,userController.listChatUsersIsWait)
+router.post('/uploadImageMessage',auth.authenticateToken,uploadCloud.single('image'),userController.uploadImageMessage)
 
 
 

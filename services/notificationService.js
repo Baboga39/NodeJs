@@ -2,7 +2,7 @@ const Notification = require('../models/notificationModel')
 const Blog = require('../models/Blog/blogModel')
 const User = require('../models/usermodel')
 const Category = require('../models/Blog/categoryModel')
-
+const Chat = require('../models/Chat/groupModel')
 class NotificationService{
     static notifyComment = async (blogId, userAuthentication)=>{
         const blog  = await Blog.findById(blogId)
@@ -101,8 +101,11 @@ class NotificationService{
     static listNotifyByUser = async (userId) =>{
         const user = await User.findById(userId);
         if(!user)  return 1;
-        const notification = await Notification.find({recipient: user._id}).sort({ isRead: 1, createdAt: -1 });;
-        return notification;
+        const notifications = await Notification.find({
+            recipient: user._id,
+            type: { $ne: 'Chat' } // Sử dụng $ne để loại trừ type là 'Chat'
+        }).sort({ isRead: 1, createdAt: -1 });
+        return notifications;
     }
     static notifyAccept = async (authenticatedUser, userId, categoryId) =>{
         const userAuthenticated = await User.findById(authenticatedUser);
@@ -139,9 +142,55 @@ class NotificationService{
         return notification;
     }
     static listNotifyByType = async (type,user_id) =>{
-        const notification = await Notification.find({type: type, recipient: user_id});
+        const notification = await Notification.find({type: type, recipient: user_id}).sort({ isRead: 1, createdAt: -1 });;
         return notification;
     }
-}
+    static evaluateBlogCategory = async(blogId, authenticatedUser,status) =>{
+        const blog = await Blog.findById(blogId);
+        const user = await User.findById(authenticatedUser._id);
+        if(status===true){
+            console.log(status);
+            const notification = new Notification({
+                sender: user._id,
+                blog: blogId,
+                type: 'AcceptBlog',
+                recipient: blog.user._id,
+            });
+            return notification.save();
+        }
+        const notification = new Notification({
+            sender: user._id,
+            blog: blogId,
+            type: 'DeclineBlog',
+            recipient: blog.user._id,
+        });
+        return notification.save();
+    }
+    static notifyChat = async (message, authenticatedUser) =>{
+        const authenticationUser = await User.findById(authenticatedUser._id);
 
+
+        const listUser =  message.chat.listUser;
+        for(const user of listUser)
+            {
+                if(authenticationUser._id.equals(user._id)){
+                    continue;
+                }
+                await Notification.deleteMany({
+                    chat: message.chat._id,
+                    recipient: user._id,
+                    type: 'Chat',
+                })
+                const notification = new Notification({
+                    sender: authenticationUser._id,
+                    message: message._id,
+                    type: 'Chat',
+                    chat: message.chat._id,
+                    recipient: user._id,
+                });
+                await notification.save();
+            }
+            return 3;
+}
+}
 module.exports = NotificationService;

@@ -99,5 +99,45 @@ class ReportService {
         const reportType = await ReportType.find();
         return reportType;
     }
+    static addTypeReport = async (value)=>{
+        value = value.trim();
+        const reportCheck = await ReportType.findOne({value: value});
+        if(reportCheck){
+            return 1;
+        }
+        const reportType = new ReportType({
+            value: value,
+        })
+        return reportType.save();
+    };
+    static editTypeReport = async (reportTypeId, value)=>{
+        value = value.trim();
+        const report = await ReportType.findById(reportTypeId);
+        if(!report) return 1;
+        const listReportType = await ReportType.find();
+        for(const reportType of listReportType){
+            if(reportType._id.equals(report._id))
+            {
+                continue;
+            }
+            else {
+                if(reportType.value.toLowerCase() === value.toLowerCase()){
+                    return 2;
+                }
+            }
+        }
+        report.value = value;
+        return report.save();
+    };
+    static deleteTypeReport = async (reportTypeId)=>{
+        const report = await ReportType.findById(reportTypeId);
+        if(!report) return 1;
+        const reportUser = await ReportUser.deleteMany({reason: report._id});
+        const reportBlog = await ReportBlog.deleteMany({reason: report._id});
+        const reportTag = await ReportTag.deleteMany({reason: report._id});
+        const reportComment = await ReportComment.deleteMany({reason: report._id});
+        await report.deleteOne();
+        return 0;
+    }
 }
 module.exports = ReportService;

@@ -49,6 +49,11 @@ const blogSchema = new mongoose.Schema({
   listUserLikes: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true}],
   savedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate : true}],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', autopopulate: true }],
+  isApproved: {
+    type: Boolean,
+    default: false
+  },
+  
 }, { timestamps: true, strict: false });
 blogSchema.plugin(autopopulate)
 

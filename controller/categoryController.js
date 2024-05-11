@@ -3,7 +3,7 @@ const Service = require('../services/')
 const addCategory = async (req, res) => {
     try {
         const authenticationUser = req.user;
-        const { name, description, tagIds, status, userIds,banner } = req.body;
+        const { name, description, tagIds, status, userIds,banner,isApproved } = req.body;
 
         if (!name && !status) {
             console.log('Not found name or status');
@@ -34,7 +34,7 @@ const addCategory = async (req, res) => {
             });
         }
 
-        const category = await Service.categoryService.addCategory(name, description, tagIds, status, userIds, authenticationUser.user,banner);
+        const category = await Service.categoryService.addCategory(name, description, tagIds, status, userIds, authenticationUser.user,banner,isApproved);
         if (category == null) {
             console.log('Exits category');
             console.log('--------------------------------------------------------------------------------------------------------------------');
@@ -68,9 +68,20 @@ const addCategory = async (req, res) => {
 const editCategory = async (req,res) =>{
     try {
         const authenticationUser = req.user;
-        const {name, description, status, categoryId } = req.body;
-        let category = await Service.categoryService.editCategory(name, description, status,authenticationUser.user,categoryId);
-        if (category==null) {
+        const {name, description, status, categoryId,isApproved } = req.body;
+        let category = await Service.categoryService.editCategory(name, description, status,authenticationUser.user,categoryId,isApproved);
+        if (category===null) {
+            console.log('Not found category')
+            console.log('--------------------------------------------------------------------------------------------------------------------')
+            return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Not found Category',
+                result: null,
+            })
+        }
+        if(category===3)
+        {
             console.log('Exits category')
             console.log('--------------------------------------------------------------------------------------------------------------------')
             return res.status(400).json({
@@ -104,7 +115,7 @@ const editCategory = async (req,res) =>{
         return res.status(500).json({
             success: false,
             statusCode: 500,
-            message: 'Add Category Failed',
+            message: 'Internal Server Error',
             error: error
         })
     }
@@ -671,7 +682,36 @@ const getCategoryByUser = async (req, res) => {
         });
     }
 }
-
+const getCategoryByUserIsAdmin = async (req, res) => {
+    try {
+    const authenticatedUser = req.user;
+    const index = req.params.index;
+    const category = await Service.categoryService.getCategoryFromUserIsAdmin(authenticatedUser.user._id,index);
+    if (category==null) {
+        console.log('Get Category Success')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: 'Get Category Success',
+            result: null,
+        })
+    }
+    return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Get Category Success',
+        result: category,
+    })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            statusCode: 500,
+            message: 'Internal Server Error',
+            result: error.message,
+        });
+    }
+}
 const getCategoryByUserNotPaging = async (req, res) => {
     try {
     const authenticatedUser = req.user;
@@ -818,6 +858,89 @@ const evaluateRequest = async (req, res) =>{
         result: null,
     });
 }
+const listBlogIsApproved = async(req, res) => {
+    try {
+    const categoryId = req.params.categoryId;
+    const authenticatedUser = req.user;
+    if(!categoryId){
+        console.log('CategoryId is missing')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'CategoryId is missing',
+        result: null,});
+    }
+    const result = await Service.categoryService.listBlogIsApproved(categoryId, authenticatedUser.user);
+    if(result===null)
+    {
+        console.log('Category not found')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Category not found',
+        result: null,});
+    }
+    if(result===3)
+    {
+        console.log('You do not have permission')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(401).json({
+        success: false,
+        statusCode: 401,
+        message: 'You do not have permission',
+        result: null,});
+    }
+    console.log('List blog is approved in category')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'List blog is approved in category',
+    result: result,});
+    } catch (error) {
+    console.log('Internal Server Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal Server Error',
+      result: error.message,
+    });
+   }
+}
+const approvedBlog= async (req, res) => {
+    const {blogId,status} = req.body;
+    const authenticatedUser = req.user;
+    if(!blogId) {
+        console.log('Blog Id is missing')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Blog Id is missing',
+        result: null,});
+    }
+    await Service.notificationService.evaluateBlogCategory(blogId, authenticatedUser.user,status);
+    const result = await Service.categoryService.approvedBlog(blogId, authenticatedUser.user,status);
+    if(result===null) {
+        console.log('Blog not found')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Blog not found',
+        result: null,});
+    }
+    console.log('Evalute blog successfully')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'Evalute blog successfully',
+    result: null,});
+}
 module.exports = {
     addCategory,
     addTagsToCategory,
@@ -841,5 +964,8 @@ module.exports = {
     sizeAllCategoryByUser,
     getCategoryByUserNotPaging,
     acceptInvitation,
-    listInvitations
+    listInvitations,
+    getCategoryByUserIsAdmin,
+    listBlogIsApproved,
+    approvedBlog
 }

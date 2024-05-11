@@ -1,13 +1,16 @@
 const Blog = require('../models/Blog/blogModel')
 const User = require('../models/usermodel')
 const Tag = require('../models/Blog/tagModel')
-const Follow = require('../models/followModel')
 const temporaryImageModel = require('../models/Blog/temporaryImageModel');
-const mongoose = require('mongoose');
 const Category = require('../models/Blog/categoryModel');
 const followModel = require('../models/followModel');
 const Share = require('../models/Blog/shareModel');
-const { post } = require('../routes/userRoutes');
+const Notification= require('../models/notificationModel')
+const reportBlogModel = require('../models/retportBlogModel');
+const shareModel = require('../models/Blog/shareModel')
+const commentService = require('../services/commentService')
+const Access = require('../models/accessModel')
+
 class BlogService{
     static createBlog =  async (blogDTO, authenticatedUser) =>{
         const user = await User.findById(authenticatedUser.user._id)
@@ -16,7 +19,45 @@ class BlogService{
         if(!category)
         {
             return 1;
-        }}
+        }
+        if(category.isAdmin.equals(user._id)){
+            const blog = new Blog({
+                title: blogDTO.title,
+                content: blogDTO.content,
+                category: blogDTO.categoryIds || null,
+                description: blogDTO.description,
+                avatar: blogDTO.avatar,
+                user: user,
+                isApproved: false
+            });
+            await blog.save();
+            if(blogDTO.tagIds!=null){
+            await blog.addTags(blogDTO.tagIds);
+            }
+            await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
+            user.totalBlog = user.totalBlog + 1;
+            await user.save();
+            return blog;
+        }
+        const blog = new Blog({
+            title: blogDTO.title,
+            content: blogDTO.content,
+            category: blogDTO.categoryIds || null,
+            description: blogDTO.description,
+            avatar: blogDTO.avatar,
+            user: user,
+            isApproved: category.isApproved
+        });
+        await blog.save();
+        if(blogDTO.tagIds!=null){
+        await blog.addTags(blogDTO.tagIds);
+        }
+        await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
+        if(blog.isApproved===false){
+            user.totalBlog = user.totalBlog + 1;
+        }
+        return blog;
+    }
         const blog = new Blog({
             title: blogDTO.title,
             content: blogDTO.content,
@@ -91,35 +132,10 @@ class BlogService{
             return temporaryImage;
         }
     }
-    static getBlogById= async (blogId) =>{
-        let blog = await Blog.findById(blogId);
-        blog.views++;
-        blog.save();
-        const category = await blog.category;                        
-        let updateFields;
-        if(category!==null){
-        const isPermission = await category.users.some(user => user._id.equals());
-        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
-                        updateFields = {
-                            isPermission: true
-                        }
-                        if(category.status === 'Private' && !isPermission)
-                        {
-                            updateFields = {
-                                isPermission: false
-                            };
-                        }
-                    }else{  
-                    updateFields = {
-                        isPermission: true
-                    };}
-                    console.log(updateFields);
-                    await Blog.findByIdAndUpdate(blog._id, updateFields);
-        return Blog.findById(blogId);
-    }
     static deleteBlogById = async (blogId,authenticatedUser) => {
         try {
             const blog = await Blog.findById(blogId);
+            await Notification.deleteMany({blog: blog._id})
             if(blog.user._id == authenticatedUser._id || authenticatedUser.roles === 'Admin'){
             const tagIds = blog.tags;
 
@@ -127,14 +143,59 @@ class BlogService{
                 { _id: { $in: tagIds } },
                 { $inc: { sumBlog: -1 } }
             );
-            const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
+            const listReportBlog = await reportBlogModel.deleteMany({blogIsReported: blog._id});
+            const listComment = blog.comments;
+            for(const comment of listComment){
+                await commentService.deleteComment(comment._id,authenticatedUser,blog._id);
+            }
+            const listShareBlog = await shareModel.find({listBlog: blog._id})
+            const updatedShare = await Share.findOneAndUpdate(
+                { listBlog: blogId },
+                { $pull: { listBlog: blogId } }, 
+                { new: true } // Trả về bản ghi Share đã được cập nhật
+            );
             let user = await User.findById(blog.user._id);
-            user.totalBlog = user.totalBlog - 1;
-            await user.save();
+            if(blog.status==='Published'){
+                user.totalBlog = user.totalBlog - 1;
+                await user.save();
+            }
+            const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
             return deletedBlog;}
             else{
                 return 1;
             }
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+    static deleteBlogByIdAuto = async (blogId) => {
+        try {
+            const blog = await Blog.findById(blogId);
+            await Notification.deleteMany({blog: blog._id})
+            const tagIds = blog.tags;
+
+            await Tag.updateMany(
+                { _id: { $in: tagIds } },
+                { $inc: { sumBlog: -1 } }
+            );
+            const listReportBlog = await reportBlogModel.deleteMany({blogIsReported: blog._id});
+            const listComment = blog.comments;
+            for(const comment of listComment){
+                await commentService.deleteCommentAuto(comment._id,blog._id);
+            }
+            const listShareBlog = await shareModel.find({listBlog: blog._id})
+            const updatedShare = await Share.findOneAndUpdate(
+                { listBlog: blogId },
+                { $pull: { listBlog: blogId } }, 
+                { new: true } // Trả về bản ghi Share đã được cập nhật
+            );
+            let user = await User.findById(blog.user._id);
+            if(blog.status==='Published'){
+                user.totalBlog = user.totalBlog - 1;
+                await user.save();
+            }
+            const deletedBlog = await Blog.findOneAndDelete({ _id: blogId });
+            return deletedBlog;
         } catch (error) {
             throw new Error(error.message);
         }
@@ -144,7 +205,7 @@ class BlogService{
         if (!user) {
             return null;
         }
-        const blog = await Blog.find({user: user._id});
+        const blog = await Blog.find({user: user._id, status: 'Published', isApproved:false});
         return blog;
     }
     static getBlogDraftByUser = async (authenticatedUser) =>{
@@ -170,7 +231,6 @@ class BlogService{
                                     .populate('listUserLikes');
     }
     
-
 
 
 
@@ -230,7 +290,7 @@ class BlogService{
             }
         }
         static sizeAllBlogPublish= async ()=>{
-            const countDocuments = await Blog.countDocuments({ status: 'Published' });
+            const countDocuments = await Blog.countDocuments({ status: 'Published',isApproved:false });
             const totalPages = Math.ceil(countDocuments / 6);
             return totalPages;
         }
@@ -239,7 +299,7 @@ class BlogService{
             const skip = (index - 1) * pageSize;
             try {
             const size = await this.sizeAllBlogPublish();
-              const query = await Blog.find({ status: 'Published' }) // Tạo query
+              const query = await Blog.find({ status: 'Published',isApproved:false }) // Tạo query
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(pageSize)
@@ -258,12 +318,23 @@ class BlogService{
             return null;
             }
         };
+        static getBlogById= async (blogId,authenticatedUser) =>{
+            let blog = await Blog.findById(blogId);
+            if(!blog) return null;
+            blog.views++;
+            blog.save();
+            const result = [];
+            result.push(blog);
+            const posts = await this.findAndUpdateLikeAndSave(result,authenticatedUser.user._id)
+            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id);
+            return result[0];
+        }
         static listBlogPopularity = async (authenticatedUser, index) => {
             const pageSize = 6;
             const skip = (index - 1) * pageSize; // Số bài viết sẽ bỏ qua
             try {
             const size = await this.sizeAllBlogPublish();
-            const query = await Blog.find({ status: 'Published' })
+            const query = await Blog.find({ status: 'Published',isApproved: false })
                 .sort({ likes: -1, views: -1, updatedAt: -1 }) // Sắp xếp theo lượt like, views và ngày update
                 .skip(skip)   
                 .limit(pageSize) 
@@ -286,7 +357,7 @@ class BlogService{
             const skip = (index - 1) * pageSize;
             try {
             const size = await this.sizeAllBlogPublish();
-            const query = await Blog.find({ status: 'Published' })
+            const query = await Blog.find({ status: 'Published' ,isApproved: false})
                 .sort({ sumComment: -1, views: -1, updatedAt: -1 }) 
                 .skip(skip)   
                 .limit(pageSize) 
@@ -315,7 +386,7 @@ class BlogService{
             const size = await this.sizeGetAllBlogByCategory(categoryId);
             console.log(size);
             try {
-            const query = await Blog.find({ category: categoryId, status:'Published' })
+            const query = await Blog.find({ category: categoryId, status:'Published', isApproved: false})
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(pageSize)
@@ -355,9 +426,42 @@ class BlogService{
                 return null;
             }
         }
+        //Blog search
+        static listBlogSearch = async (authenticatedUser, key)=>{
+            try {
+                const regex = new RegExp(key, 'i');
+                const query = await Blog.find({
+                    $and: [
+                        {
+                            $or: [
+                                { title: regex },
+                                { description: regex },
+                                { content: regex }
+                            ]
+                        },
+                        { isApproved: false },
+                        {
+                            status:'Published'
+                        } // Điều kiện mới: isApproved phải là true
+                    ]
+                }).populate('tags')
+                .populate('user')
+                .populate('category')
+                .sort({ updatedAt: -1 });
+                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+                if (posts2.length === 0) {
+                    return null;
+                }
+                return posts2;            
+            } catch (error) {
+                console.error("Error fetching most active posts:", error);
+                return null;
+            }
+        }
         static listBlogByUserId = async (userId,authenticatedUser)=>{
             try {
-                const query = await Blog.find({ user: userId , status: 'Published'})
+                const query = await Blog.find({ user: userId , status: 'Published',isApproved: false})
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
@@ -376,6 +480,20 @@ class BlogService{
         }
         static listBlogInFeed = async (authenticatedUser,pageIndex) =>{
         try{
+            const access = new Access({
+                user: authenticatedUser._id,
+            })
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1); 
+            const checkAccess = await Access.findOne({
+                user: authenticatedUser._id,
+                createdAt: { $gte: today, $lt: tomorrow }
+            })
+            if(!checkAccess){
+                access.save();
+            }
             const pageSize = 6;
             const startIndex = (pageIndex - 1) * pageSize; 
             const endIndex = pageIndex * pageSize; 
@@ -383,7 +501,7 @@ class BlogService{
             const uniquePostIds = new Set();
             const categories = await Category.find({users: authenticatedUser._id})
             for (const category of categories) {
-                const query = await Blog.find({ category: category._id, status: 'Published'})
+                const query = await Blog.find({ category: category._id, status: 'Published',isApproved: false})
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
@@ -404,7 +522,7 @@ class BlogService{
         if(follow){
             const users = follow.following;
             for (const user of users) {
-                const query = await Blog.find({ user: user._id, status: 'Published'})
+                const query = await Blog.find({ user: user._id, status: 'Published',isApproved:false})
                                         .sort({ createdAt: -1 })
                                         .populate('tags')
                                         .populate('user')
@@ -502,6 +620,17 @@ class BlogService{
                     return null;
                 }
                 return posts2;
+            } catch (error) {
+                console.error("Error fetching most active posts:", error);
+                return null;
+            }
+        }
+        static getAllBlog = async ()=>{
+            try {
+                const query = await Blog.find()
+                    .sort({ createdAt: -1 })
+                if(!query) return null;
+                return query;
             } catch (error) {
                 console.error("Error fetching most active posts:", error);
                 return null;

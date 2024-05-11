@@ -1,5 +1,4 @@
 const BlogDTO = require('../dto/request/BlogDTO');
-const BlogModel = require('../models/Blog/blogModel');
 const Service = require('../services');
 const { Types } = require('mongoose');
 
@@ -97,8 +96,9 @@ const createBlogDraft = async (req, res) => {
 const getBlogById = async (req, res) => {
     try {
         const blogId = req.params.blogId;
-        const blog = await Service.blogService.getBlogById(blogId);
-        if(!blog) {
+        const authenticatedUser =req.user;
+        const blog = await Service.blogService.getBlogById(blogId,authenticatedUser);
+        if(blog===null) {
            return res.status(400).json({
                 success: false,
                 statusCode: 400,
@@ -147,7 +147,7 @@ const uploadImage = async (req,res) => {
       });
     }
   }
-  const editBlog = async (req,res) => {
+const editBlog = async (req,res) => {
     try {
       const authenticatedUser = req.user;
       const blogId = req.params.blogId;
@@ -228,8 +228,8 @@ const uploadImage = async (req,res) => {
         result: error.message,
       });
     }
-  }
-  const deleteBlogById = async (req, res) => {
+}
+const deleteBlogById = async (req, res) => {
     try {
       const blogId = req.params.blogId;
       const authenticatedUser = req.user;

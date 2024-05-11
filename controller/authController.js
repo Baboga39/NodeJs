@@ -14,10 +14,17 @@ const register = async (req, res) => {
     const user = new User({
       ...userData,
     });
+    if(userData.roles==='Client' || !userData.roles){
+      user.status='unverified';
+    }
     // Save user to database
     await user.save();
-
-    await AuthService.generateOTP(user);
+    if(userData.roles==='Client'){
+      await AuthService.generateOTP(user);
+    }
+    if(!userData.roles){
+      await AuthService.generateOTP(user);
+    }
     console.log('Register user successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     // Return success response
@@ -60,7 +67,59 @@ const register = async (req, res) => {
     }
   }
 };
+const registerAdmin = async (req, res) => {
+  try {
 
+    const userData = UserDTO.fromRequest(req.body);  
+    // Create user
+    const user = new User({
+      ...userData,
+    });
+    user.status='completed';
+    // Save user to database
+    await user.save();
+    console.log('Register user successfully')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    // Return success response
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'User registered successfully.',
+      result: user,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      let errorMessage;
+      if (error.keyPattern && error.keyPattern.username) {
+        console.log('Username is already taken')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        errorMessage = 'Username is already taken';
+      }  
+    console.log('Updated user info successfully')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+      if (error.keyPattern && error.keyPattern.email) {
+        console.log('Email is already taken')
+        console.log('--------------------------------------------------------------------------------------------------------------------')
+        errorMessage = 'Email is already taken';
+      }
+      res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: errorMessage,
+        result: null,
+      });
+    } else {
+      console.log('Error registering user: '+ error)
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      res.status(500).json({
+        success: false,
+        statusCode: 500,
+        message: 'Internal server error',
+        result: error.message,
+      });
+    }
+  }
+};
 const verify = async (req, res) => {
   try {
     const token = req.query.token;
@@ -303,4 +362,5 @@ module.exports = {
   login,
   forgotPassword,
   resetPassword,
+  registerAdmin
 };

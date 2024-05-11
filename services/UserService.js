@@ -9,6 +9,7 @@ const usermodel = require('../models/usermodel');
 const Invitation = require('../models/invitationModel')
 const Share = require('../models/Blog/shareModel')
 const categoryService = require('../services/categoryService')
+const blogService= require('../services/blogService')
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -17,6 +18,13 @@ static getUserInfo = async (userId) => {
   }
   return user;
 };
+static getAllUser = async () => {
+  const listUsers = await UserModel.find();
+  if (!listUsers) {
+    return null;
+  }
+  return listUsers;
+}
 static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
 
     const user_id = authenticatedUser.user._id
@@ -566,6 +574,53 @@ if (listFriend.length===0){
 }
   return listFriend;
 }
-}
 
+static search =async(keyword, type, authenticatedUser) =>
+{
+  try {
+  const regex = new RegExp(keyword, 'i');
+  const user = await usermodel.findById(authenticatedUser._id);
+  if(type==='Blog')
+  {
+    const blogs = await blogService.listBlogSearch(user, keyword)
+    return blogs;
+  }
+  if(type==='Category'){
+    const categories = await categoryService.listCategorySearch(user, keyword) 
+    return categories;
+  }
+  if(type==='User'){
+    const users = await UserModel.find({
+       $and:[
+        {
+          $or: [
+            { name: regex },
+            { email: regex },
+            { description: regex },
+            {second_name: regex },
+            {address: regex }
+        ]
+        },
+        {
+          status: 'completed'
+        }
+       ]
+    });
+    const filteredUsers = [];
+
+    for (const userF of users) {
+        const isFollowed = await this.isUserFollowedByAuthenticatedUser(userF._id, authenticatedUser._id);
+        userF.isfollow = isFollowed;
+        if (!userF._id.equals(user._id)) {
+          filteredUsers.push(userF);
+        }
+    }
+    return filteredUsers;
+  }
+}
+  catch (error) {
+      throw new Error(error.message);
+  }
+}
+}
 module.exports = UserService

@@ -9,13 +9,17 @@ const router = express.Router();
 router.get('/',auth.authenticateToken,controller.categoryController.getCategoryById);
 router.get('/allCategories/:index',auth.authenticateToken,controller.categoryController.getAllCategory);
 router.get('/userCategories/:index',auth.authenticateToken,controller.categoryController.getCategoryByUser)
+router.get('/userCategoriesIsAdmin/:index',auth.authenticateToken,controller.categoryController.getCategoryByUserIsAdmin)
 router.get('/categoryByInvitationCode/:invitationCode',auth.authenticateToken,controller.categoryController.checkInvitationCode)
 router.get('/userRequest/:categoryId',auth.authenticateToken,controller.categoryController.listUserRequest)
 router.get('/sizeAll',controller.categoryController.sizeAllCategory)
 router.get('/sizeAllCategoryByUser',auth.authenticateToken,controller.categoryController.sizeAllCategoryByUser)
 router.get('/categoryByUserNotPaging',auth.authenticateToken,controller.categoryController.getCategoryByUserNotPaging)
 router.get('/listInvitations',auth.authenticateToken,controller.categoryController.listInvitations)
+router.get('/:categoryId/listBlogIsApproved',auth.authenticateToken,controller.categoryController.listBlogIsApproved)
 
+
+router.post('/approveBlog',auth.authenticateToken,controller.categoryController.approvedBlog)
 router.post('/addCategory',auth.authenticateToken, controller.categoryController.addCategory);
 router.post('/requestJoin/:categoryId',auth.authenticateToken, controller.categoryController.sendRequestJoinCategory);
 router.post('/evaluateRequest',auth.authenticateToken, controller.categoryController.evaluateRequest);

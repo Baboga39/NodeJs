@@ -1,17 +1,20 @@
 const categoryModel = require('../models/Blog/categoryModel')
 const Category = require('../models/Blog/categoryModel')
 const User = require('../models/usermodel')
-const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
 const UserRequest = require('../models/Blog/userRequestModel')
-const Invitation = require('../models/invitationModel')
-const Notify = require('../services/notificationService')
+const Notify = require('../services/notificationService');
+const Notification = require('../models/notificationModel')
+const blogModel = require('../models/Blog/blogModel');
+const usermodel = require('../models/usermodel');
+const blogService = require('../services/blogService')
 
 class CategoryService {
     static async getAllCategories(user_id,index) {
+        const listBlog = await usermodel.find();
         const pageSize = 6;
         const skip = (index - 1) * pageSize; 
-        const categories = await categoryModel.find()
+        const categories = await categoryModel.find({status:'Publish'})
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(pageSize)
@@ -31,6 +34,14 @@ class CategoryService {
         });
         const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
         return { categories: categoriesWithUserStatus, size: size}
+    }
+    static async getAllCategory() {
+        const categories = await Category.find();
+        if(!categories)
+        {
+            return null;
+        }
+        return categories;
     }
     static async countDocumentsCategory() {
         const count = await Category.countDocuments();
@@ -68,9 +79,9 @@ class CategoryService {
                 return 'UnJoin';
             }
         }
-     };
+    };
     
-    static async addCategory(name, description,tagIds, status, userIds, authenticationUser,banner) {
+    static async addCategory(name, description,tagIds, status, userIds, authenticationUser,banner,isApproved) {
     const user = await User.findById(authenticationUser._id);
     
     const exitsCategory = await categoryModel.findOne({ name });
@@ -83,6 +94,7 @@ class CategoryService {
         status,
         banner,
         isAdmin: user._id,
+        isApproved:isApproved
     });
     if(tagIds!=null)
     {
@@ -100,18 +112,28 @@ class CategoryService {
         .populate('tags');
     return populatedCategory;
     }
-    static async editCategory(newName, newDescription, newStatus, authenticationUser,categoryId) {
+    static async editCategory(newName, newDescription, newStatus, authenticationUser,categoryId,isApproved) {
         
         let categoryToEdit = await categoryModel.findById(categoryId).populate('users').populate('tags');
 
         if (!categoryToEdit) {
             return null;
         }
-    
+        const listCategory = await categoryModel.find();
+        for(const category of listCategory)
+        {
+            if(category._id.equals(categoryToEdit._id)){
+                continue;
+            }
+            if (category.name.toLowerCase() === newName.toLowerCase()) {
+                return 3;
+            }
+        }
         if (categoryToEdit.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
             categoryToEdit.name = newName || categoryToEdit.name;
             categoryToEdit.description = newDescription || categoryToEdit.description;
             categoryToEdit.status = newStatus || categoryToEdit.status;
+            categoryToEdit.isApproved = isApproved;
             await categoryToEdit.save();
             return categoryToEdit;
         }
@@ -132,6 +154,11 @@ class CategoryService {
         return 1;
     }
     static async getCategoryById(categoryId, user_id) {
+        const listBlog = await usermodel.find()
+        for(const blog of listBlog) {
+            blog.sumViolating = 0; 
+            await blog.save();
+        }
         const category = await categoryModel.findById(categoryId).populate('users')
         .populate('tags')
         .populate('isAdmin');;
@@ -148,11 +175,15 @@ class CategoryService {
         return { ...category.toObject(), statusUser };    }
     static async deleteCategoryById(categoryId, authenticationUser) {
         const category = await Category.findById(categoryId);
+        await Notification.deleteMany({category: category._id})
         if (!category) {
             return null;
         }
-        console.log( authenticationUser.roles)
         if (category.isAdmin._id == authenticationUser._id  || authenticationUser.roles == 'Admin' ) {
+            const listBlog = await blogModel.find({category: category._id})
+            for(const blog of listBlog){
+                blogService.deleteBlogById(blog._id,authenticationUser)
+            }
             await Category.findOneAndDelete({ _id: categoryId });
             return category;
         }
@@ -294,12 +325,79 @@ class CategoryService {
             });
     
             const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
-            const size = await this.sizeGetALlByUser(userId);
+            const result = [];
+            for(const category of categoriesWithUserStatus)
+            {
+                if(!category.isAdmin._id.equals(userId))
+                {
+                    result.push(category);
+                }
+                
+            }
+            const size = await this.sizeGetALlByUser(result);
+            return { categories: result, size: size };
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+    static getCategoryFromUserIsAdmin = async (userId, index) => {
+        try {
+            const user = await User.findById(userId);
+            const pageSize = 6;
+            const skip = (index - 1) * pageSize; 
+            const categories = await Category.find({ isAdmin: userId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(pageSize)
+                .populate('tags')
+                .populate('users')
+                .exec();
+            
+            if (categories.length === 0) {
+                return null;
+            }
+            
+            const categoriesWithUserStatusPromises = categories.map(async category => {
+                const statusUser = await this.getUserStatusInCategory1(category, user._id);  
+                return { ...category.toObject(), statusUser };
+            });
     
+            const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+            const size = await this.sizeGetALlByUser(categoriesWithUserStatusPromises);
             return { categories: categoriesWithUserStatus, size: size };
         } catch (error) {
             console.error(error);
             throw error;
+        }
+    }
+    static listCategorySearch = async (authenticatedUser, key)=>{
+        try {
+            const regex = new RegExp(key, 'i');
+            const user = await User.findById(authenticatedUser._id);
+            const query = await Category.find({
+               $and:[
+              {
+                $or: [
+                    { name: regex },
+                    { description: regex }
+                ]
+              },
+              {
+                status: 'Publish'
+              }
+               ]
+            }).sort({ updatedAt: -1 });;
+            const categoriesWithUserStatusPromises = query.map(async category => {
+                const statusUser = await this.getUserStatusInCategory1(category, user._id);  
+                return { ...category.toObject(), statusUser };
+            });
+    
+            const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+            return categoriesWithUserStatus;            
+        } catch (error) {
+            console.error("Error fetching most active posts:", error);
+            return null;
         }
     }
     static getCategoryFromUserNotPaging = async (userId) => {
@@ -320,15 +418,23 @@ class CategoryService {
             });
     
             const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
-    
-            return  categoriesWithUserStatus;
+            const result = [];
+            for(const category of categoriesWithUserStatus)
+            {
+                if(!category.isAdmin.equals(userId))
+                {
+                    result.push(category);
+                }
+                
+            }
+            return  result;
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
-    static sizeGetALlByUser = async (user_id) =>{
-        const countDocuments = await Category.countDocuments({ users: user_id });
+    static sizeGetALlByUser = async (result) =>{
+        const countDocuments = result.length;
         const totalPages = Math.ceil(countDocuments / 6); // Tính số lượng trang
         return totalPages;
     }
@@ -375,6 +481,44 @@ class CategoryService {
         } catch (error) {
         console.error(error);
         throw error;
+        }
+    }
+    static listBlogIsApproved = async (categoryId, authenticatedUser) => {
+        try {
+            const category = await Category.findById(categoryId);
+            const user = await usermodel.findById(authenticatedUser._id)
+            if (!category) {
+                return null;
+            }
+            if (category.isAdmin._id.equals(user._id)  || user.roles === 'Admin' ) {
+                const blogs = await blogModel.find({ category: categoryId, isApproved: true });
+                return blogs;
+            }
+            return 3;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+    static approvedBlog = async (blogId, authenticatedUser,status) => {
+        const blog = await blogModel.findById(blogId);
+        if(!blog){
+            return null;
+        }
+        const user = await usermodel.findById(blog.user._id);
+        if(status ===true)
+        {
+            blog.isApproved = false;
+            blog.createdAt =new Date();
+            await blog.save();
+            user.totalBlog = user.totalBlog + 1;
+            await user.save();
+            return blog;
+        }
+        if(status ===false)
+        {
+            await blog.deleteOne();
+            return blog;
         }
     }
 }

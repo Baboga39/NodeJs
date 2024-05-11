@@ -5,9 +5,10 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const routes = require('./routes');
+const service = require('./services');
 const http = require('http');
 const { Server } = require("socket.io");
-
+const schedule = require('node-schedule');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -16,6 +17,8 @@ const io = new Server(server, {
   },
 });
 let users = [];
+
+
 
 const addUser = (id, socketId) => {
   const index = users.findIndex((u) => u.id === id);
@@ -42,9 +45,7 @@ io.on("connection", (socket) => {
       io.emit("getUsers", users);
     }
   });
-
   socket.on("sendMessage", ({ fromUser, toUser, text }) => {
-    console.log({ fromUser, text });
     const user = getUser(toUser);
     io.to(user?.socketId).emit("getMessage", {
       fromUser,
@@ -53,7 +54,38 @@ io.on("connection", (socket) => {
     });
     console.log("Send message to socket Success");
   });
-
+//   socket.on("sendMessage", async ({ fromUser, toUser, text, chatId }) => {
+//     console.log({ fromUser, toUser, text, chatId });
+//     const group = await Service.findChatById(toUser);
+//     if (group.isGroup) {
+//         if (!group) {   
+//             console.log("Group not found");
+//             return;
+//         }
+//         group.listUser.forEach(async (userId) => {
+//             const user = getUser(userId);
+//             if (user) {              
+//                 io.to(user.socketId).emit("getMessage", {
+//                     fromUser,
+//                     toUser: user._id,
+//                     text,
+//                 });
+//             }
+//         });
+//     } else {
+//         const user = getUser(toUser);
+//         if (user) {
+//             io.to(user.socketId).emit("getMessage", {
+//                 fromUser,
+//                 toUser,
+//                 text,
+//             });
+//         } else {
+//             console.log("User not found");
+//         }
+//     }
+//     console.log("Send message to socket Success");
+// });
   socket.on("interaction", ({ fromUser, toUser,type, data }) => {
     console.log(`User ${fromUser} interacts with user ${toUser}`);
     if (fromUser === toUser) {
@@ -68,6 +100,22 @@ io.on("connection", (socket) => {
     else{ console.log("User receiver is not online.");
   }
   });
+
+  socket.on("interactionMessage", ({ fromUser, toUser,type, data }) => {
+    console.log(`User ${fromUser} interacts with user ${toUser}`);
+    if (fromUser === toUser) {
+      console.log("The same user is interacting with itself. No need to send socket.");
+      return; 
+    }
+    const recipientSocket = getUser(toUser)?.socketId;
+    if (recipientSocket) {
+      console.log("User receiver is online.");
+      io.to(recipientSocket).emit("notificationMessage", {fromUser, toUser,type, data});
+    }
+    else{ console.log("User receiver is not online.");
+  }
+  });
+
 
   socket.on("disconnect", () => {
     console.log("User disconnect: ", socket.id);
@@ -85,8 +133,20 @@ mongoose.connect(`${process.env.Mongo_DB}`, {
   user: 'Baboga12',
   pass: 'DWtxXsixg7KtOun0',
 }).then(() => {
-  console.log('Connected to Mongo');
+  console.log('Connected to Mongo');  
 });
+
+const job23 = schedule.scheduleJob('59 23 * * *', () => {
+  console.log('Running scheduled task at 23:59:59');
+  console.log('--------------------------------------------------------------------------------------------------------------------');
+  service.adminService.autoFilterBlog();
+});
+// const intervalId = setInterval(() => {
+//   console.log('Running scheduled task at 2s');
+//   console.log('--------------------------------------------------------------------------------------------------------------------');
+//   service.adminService.autoFilterBlog();
+// }, 2000); 
+
 
 const port = process.env.PORT || 3001;
 server.listen(port, () => {

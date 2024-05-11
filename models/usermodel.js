@@ -100,7 +100,10 @@ const userSchema = new mongoose.Schema({
   isfollow:{
     type:Boolean,
     default:false
-  }
+  },
+  sumViolating: { 
+    type: Number, 
+    default:0}
 }, { timestamps: true,  strict: false });
 userSchema.pre('save', async function (next) {
   const user = this;

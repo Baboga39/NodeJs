@@ -20,11 +20,15 @@ const categorySchema = new mongoose.Schema({
       return this.users.length;
     },
   },
-  isAdmin: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false},
+  isAdmin: {type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : true},
   users: [{type: mongoose.Schema.Types.ObjectId, ref:'User',autopopulate : false}],
   avatar: {
     publicId: { type: String, default: null },
     url: { type: String, default: null },
+  },
+  isApproved: {
+    type: Boolean,
+    default: false
   },
   banner: String,
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag', autopopulate: false }],
@@ -91,7 +95,6 @@ categorySchema.pre('findOneAndDelete', async function (next) {
     const docToDelete = await this.model.findOne(this.getQuery());
     if (docToDelete) {
       const blogs = await Blog.find({ category: docToDelete._id }).populate('tags');
-      console.log(blogs);
       for (const blog of blogs) {
         if (blog.tags && blog.tags.length > 0) {
           for (const tag of blog.tags) {
@@ -103,7 +106,6 @@ categorySchema.pre('findOneAndDelete', async function (next) {
     await UserRequest.deleteMany({
       Category: docToDelete._id
     })
-    await Blog.deleteMany({ category: docToDelete._id });
     next();
   } catch (error) {
     console.error("Error in pre 'findOneAndDelete' middleware for category:", error);

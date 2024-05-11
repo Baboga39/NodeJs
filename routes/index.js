@@ -4,6 +4,7 @@ const userRoutes = require('./userRoutes');
 const tagRoutes = require('./tagRoutes');
 const categoryRoutes = require('./categoryRoutes');
 const blogRoutes = require('./blogRoutes');
+const adminRoutes =require('./adminRoutes')
 module.exports = (app) => {
 
   //Authentication
@@ -16,4 +17,7 @@ module.exports = (app) => {
   app.use('/api/v1/tag', tagRoutes);
   app.use('/api/v1/category', categoryRoutes);
   app.use('/api/v1/blog', blogRoutes);
+
+  //Admin
+  app.use('/api/v1/admin', adminRoutes);
 };
