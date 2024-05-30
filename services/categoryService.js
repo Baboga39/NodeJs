@@ -10,30 +10,48 @@ const usermodel = require('../models/usermodel');
 const blogService = require('../services/blogService')
 
 class CategoryService {
-    static async getAllCategories(user_id,index) {
-        const listBlog = await usermodel.find();
-        const pageSize = 6;
-        const skip = (index - 1) * pageSize; 
-        const categories = await categoryModel.find({status:'Publish'})
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(pageSize)
-        .populate('tags')
-        .populate('users')
-        .exec();
-        const user = await User.findById(user_id);
-        if (!user) {
-            console.log('------------------------------------------------------------------------------------------------')
-            console.log('Not found user');
-            return 1;
+    static async getAllCategories(userId, index) {
+        try {
+            const pageSize = 6;
+            const skip = (index - 1) * pageSize; 
+    
+            // Lấy thông tin người dùng
+            const user = await User.findById(userId);
+            if (!user) {
+                console.log('Not found user');
+                return 1;
+            }
+    
+            // Truy vấn lấy tất cả các category mà người dùng không phải là thành viên và không phải là admin
+            const excludedCategories = await Category.find({
+                users: { $ne: userId },
+                isAdmin: { $ne: userId }
+            })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(pageSize)
+            .populate('tags')
+            .populate('users')
+            .exec();
+    
+            // Thêm trạng thái người dùng vào mỗi category
+            const categoriesWithUserStatusPromises = excludedCategories.map(async category => {
+                const statusUser = await this.getUserStatusInCategory1(category, user._id);
+                return { ...category.toObject(), statusUser };
+            });
+            
+            const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
+            const size = await Category.countDocuments({
+                users: { $ne: userId },
+                isAdmin: { $ne: userId }
+            });
+    
+            return { categories: categoriesWithUserStatus, size: size };
+    
+        } catch (error) {
+            console.error(error);
+            throw error;
         }
-        const size = await this.countDocumentsCategory();
-        const categoriesWithUserStatusPromises = categories.map(async category => {
-            const statusUser = await this.getUserStatusInCategory1(category, user._id);  
-            return { ...category.toObject(), statusUser };
-        });
-        const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
-        return { categories: categoriesWithUserStatus, size: size}
     }
     static async getAllCategory() {
         const categories = await Category.find();
@@ -307,40 +325,45 @@ class CategoryService {
             const user = await User.findById(userId);
             const pageSize = 6;
             const skip = (index - 1) * pageSize; 
-            const categories = await Category.find({ users: userId })
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(pageSize)
-                .populate('tags')
-                .populate('users')
-                .exec();
-            
+    
+            // Lấy các danh mục mà người dùng là thành viên nhưng không phải là admin
+            const categories = await Category.find({
+                users: userId,
+                isAdmin: { $ne: userId } // Loại trừ trường hợp người dùng là admin của danh mục
+            })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(pageSize)
+            .populate('tags')
+            .populate('users')
+            .exec();
+    
             if (categories.length === 0) {
                 return null;
             }
-            
+    
+            // Thêm trạng thái người dùng vào mỗi danh mục
             const categoriesWithUserStatusPromises = categories.map(async category => {
                 const statusUser = await this.getUserStatusInCategory1(category, user._id);  
                 return { ...category.toObject(), statusUser };
             });
     
             const categoriesWithUserStatus = await Promise.all(categoriesWithUserStatusPromises);
-            const result = [];
-            for(const category of categoriesWithUserStatus)
-            {
-                if(!category.isAdmin._id.equals(userId))
-                {
-                    result.push(category);
-                }
-                
-            }
-            const size = await this.sizeGetALlByUser(result);
-            return { categories: result, size: size };
+    
+            // Tính toán kích thước của kết quả
+            const size = await Category.countDocuments({
+                users: userId,
+                isAdmin: { $ne: userId }
+            });
+    
+            return { categories: categoriesWithUserStatus, size: size };
+    
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
+    
     static getCategoryFromUserIsAdmin = async (userId, index) => {
         try {
             const user = await User.findById(userId);
@@ -421,7 +444,7 @@ class CategoryService {
             const result = [];
             for(const category of categoriesWithUserStatus)
             {
-                if(!category.isAdmin.equals(userId))
+                if(!category.isAdmin._id.equals(userId))
                 {
                     result.push(category);
                 }
@@ -474,7 +497,6 @@ class CategoryService {
             const userCount = await User.countDocuments({ _id: { $in: categoryUpdate.users } });
             categoryUpdate.sumUser = userCount;
             await categoryUpdate.save();
-          
             return 4;
         }
         return 3;

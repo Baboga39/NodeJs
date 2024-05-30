@@ -293,7 +293,7 @@ static invitationRequest = async(userId, categoryId, authenticatedUser) =>{
   const authenticatedUserFind = await UserModel.findById(authenticatedUser._id);
   const category = await Category.findById(categoryId);
   if (category.isAdmin._id.equals(authenticatedUserFind._id)  || authenticatedUserFind.roles === 'Admin' ) {
-        const user = usermodel.findById(userId);
+        const user = await usermodel.findById(userId);
         if(!user)
         {
           return 1;
@@ -621,6 +621,19 @@ static search =async(keyword, type, authenticatedUser) =>
   catch (error) {
       throw new Error(error.message);
   }
+}
+static listFiveUser= async()=>{
+  const mostFollowedClientUser = await UserModel.find({ roles: 'Client' })
+      .sort({ totalFollower: -1 })
+      .limit(5)
+      .exec();
+  return mostFollowedClientUser;
+}
+static updateStatusUser= async(userId)=> {
+  const user = await usermodel.findById(userId);
+  user.isLogin = true;
+  await user.save();
+  return 0;
 }
 }
 module.exports = UserService

@@ -12,8 +12,11 @@ const commentService = require('../services/commentService')
 const Access = require('../models/accessModel')
 
 class BlogService{
-    static createBlog =  async (blogDTO, authenticatedUser) =>{
+    static createBlog = async (blogDTO, authenticatedUser) =>{
         const user = await User.findById(authenticatedUser.user._id)
+        if (blogDTO.title.length < 10) {
+            return 2;
+        }    
         if(blogDTO.categoryIds){
         const category = await Category.findById(blogDTO.categoryIds);
         if(!category)

@@ -1734,7 +1734,31 @@ const search = async (req, res) => {
     });
   }
 }
+const listFiveFollowerMost= async(req, res)=>{
+  const listUser = await Service.userService.listFiveUser();
+  console.log('List five user follower most');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'List five user follower most',
+    result: listUser,
+  });
+}
+const updateStatusLogin = async (req, res) => {
+  const user = req.user;
+  const userUpdate =  await Service.userService.updateStatusUser(user.user);
+  console.log('Update status login success');
+  console.log('--------------------------------------------------------------------------------------------------------------------')
+  return res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'Update status login success',
+    result: null,
+  })
+};
 module.exports = {
+  updateStatusLogin,
   getUserInfo,
   updatedUserInfo,
   updateAvatar,
@@ -1767,5 +1791,5 @@ module.exports = {
   editChatName,evaluateChat,
   uploadImageMessage,
   search,
-  checkIsReadChat
+  checkIsReadChat,listFiveFollowerMost
 }

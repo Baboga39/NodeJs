@@ -24,7 +24,7 @@ const reportTagSchema = new mongoose.Schema({
         ref: 'ReportType',
         autopopulate : true,
     },
-});
+}, { timestamps: true });
 reportTagSchema.plugin(autopopulate)
 const Report = mongoose.model('ReportTag', reportTagSchema);
 

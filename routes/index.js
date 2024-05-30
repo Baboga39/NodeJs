@@ -5,6 +5,7 @@ const tagRoutes = require('./tagRoutes');
 const categoryRoutes = require('./categoryRoutes');
 const blogRoutes = require('./blogRoutes');
 const adminRoutes =require('./adminRoutes')
+const chatAI = require('./chatAIRoutes')
 module.exports = (app) => {
 
   //Authentication
@@ -20,4 +21,7 @@ module.exports = (app) => {
 
   //Admin
   app.use('/api/v1/admin', adminRoutes);
+
+  //AI
+  app.use('/api/v1/chatAI', chatAI);
 };

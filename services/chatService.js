@@ -5,7 +5,7 @@ const Follow = require('../models/followModel')
 const notification = require('../models/notificationModel')
 
 class ChatService {
-    static   = async (user_id, authenticatedUser_id) => {
+    static isUserFollowedByAuthenticatedUser   = async (user_id, authenticatedUser_id) => {
         try {
             const follow = await Follow.findOne({ user: authenticatedUser_id }); 
             if (!follow) {
@@ -294,6 +294,7 @@ class ChatService {
                 return 2;
             }
             else return 5;
+
         }
         else{
             // const userIndex = chat.listUser.findIndex(userList => userList._id.equals(user._id));
@@ -364,7 +365,7 @@ class ChatService {
         if(!message) return null;
         if(!message.user.equals(authenticatedUser._id))
         return 1;
-        await message.deleteOne();
+        await message.deleteOne();M 
     }
     static editChatName = async(chatId,authenticatedUser,name)=>{
         const chat = await Group.findById(chatId);

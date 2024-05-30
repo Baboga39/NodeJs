@@ -9,6 +9,7 @@ const service = require('./services');
 const http = require('http');
 const { Server } = require("socket.io");
 const schedule = require('node-schedule');
+const moment = require('moment-timezone');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -129,23 +130,26 @@ app.use(bodyParser.json());
 routes(app);
 
 mongoose.connect(`${process.env.Mongo_DB}`, {
-  dbName: 'KeyhubStaging',
+  dbName: 'Keyhub',
   user: 'Baboga12',
   pass: 'DWtxXsixg7KtOun0',
 }).then(() => {
   console.log('Connected to Mongo');  
 });
 
-const job23 = schedule.scheduleJob('59 23 * * *', () => {
-  console.log('Running scheduled task at 23:59:59');
+const timeZone = 'Asia/Ho_Chi_Minh'; // Xác định múi giờ Việt Nam
+
+const job23 = schedule.scheduleJob('59 59 23 * * *', () => {
+  const currentTime = moment().tz(timeZone).format();
+  console.log(`Running scheduled task at ${currentTime} (${timeZone})`);
   console.log('--------------------------------------------------------------------------------------------------------------------');
   service.adminService.autoFilterBlog();
 });
-// const intervalId = setInterval(() => {
-//   console.log('Running scheduled task at 2s');
-//   console.log('--------------------------------------------------------------------------------------------------------------------');
-//   service.adminService.autoFilterBlog();
-// }, 2000); 
+const intervalId = setInterval(() => {
+  console.log('Running scheduled task at 5m');
+  console.log('--------------------------------------------------------------------------------------------------------------------');
+  service.adminService.autoFilterBlog();
+}, 300000); 
 
 
 const port = process.env.PORT || 3001;

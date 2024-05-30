@@ -752,41 +752,19 @@ const blogInChartWeek = async (req, res) => {
         })
 }
 const blogInChartMonth = async (req, res) => {
-    const month = req.params.month;
-    if(!month){
-        console.log('Month is required');
-        console.log('--------------------------------------------------------------------------------------------------------------------');
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: 'Month is required',
-            result: null,
-        });
-    }
-    const result= await Service.adminService.charBlogInMonth(month);
+    const result= await Service.adminService.charBlogInCurrentMonth();
     console.log('Get chart blog in month successfully');
     console.log('--------------------------------------------------------------------------------------------------------------------');
     return res.status(200).json(
         {
             success: true,
             statusCode: 200,
-            message: 'Get chart blog in mothn successfully',
+            message: 'Get chart blog in month successfully',
             result: result,
         })
 }
 const blogInChartYear = async (req, res) => {
-    const year = req.params.year;
-    if(!year){
-        console.log('Year is required');
-        console.log('--------------------------------------------------------------------------------------------------------------------');
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: 'Year is required',
-            result: null,
-        });
-    }
-    const result= await Service.adminService.chartBlogInYear(year);
+    const result= await Service.adminService.chartBlogInYear();
     console.log('Get chart blog in year successfully');
     console.log('--------------------------------------------------------------------------------------------------------------------');
     return res.status(200).json(

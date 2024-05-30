@@ -3,9 +3,9 @@ const middleware = require('../middlewares');
 const controller = require('../controller')
 const router = express.Router();
 
-router.post('/addSettingBlog',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.addSettingsBlog)
-router.post('/deleteSettingBlog',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.deleteSettingBlog)
-router.patch('/editSettingBlog',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.editSettingsBlog)
+router.post('/addSettingBlog',middleware.authenticateToken,controller.adminController.addSettingsBlog)
+router.post('/deleteSettingBlog',middleware.authenticateToken,controller.adminController.deleteSettingBlog)
+router.patch('/editSettingBlog',middleware.authenticateToken,controller.adminController.editSettingsBlog)
 router.post('/addTypeReport',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.addTypeReport)
 router.post('/deleteTypeReport',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.deleteTypeReport)
 router.patch('/editTypeReport',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.editTypeReport)
@@ -13,19 +13,22 @@ router.patch('/editTypeReport',middleware.authenticateToken,middleware.filter('A
 
 router.get('/:type/listReport',middleware.authenticateToken,controller.adminController.getListReportByType)
 router.get('/allBlog',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.getALlBlog)
-router.get('/allBlogSetting',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.getAllBlogSettings)
+router.get('/allBlogSetting',middleware.authenticateToken,controller.adminController.getAllBlogSettings)
 router.get('/allTag',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.getAllTag)
 router.get('/allCategory',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.getAllCategory)
 router.get('/allUser',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.getAllUser)
 router.get('/allUserBlocked',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.getAllUserBlocked)
-router.get('/:month/chartAccess',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.access)
-router.get('/generalBlog',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.generalBlog)
-router.get('/generalTag',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.generalTag)
-router.get('/generalCategory',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.generalCategory)
-router.get('/generalUser',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.generalUser)
-router.get('/blogInChartWeek',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.blogInChartWeek)
-router.get('/:month/blogInChartMonth',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.blogInChartMonth)
-router.get('/:year/blogInChartYear',middleware.authenticateToken,middleware.filter('Admin'),controller.adminController.blogInChartYear)
+
+
+//Chart
+router.get('/:month/chartAccess',middleware.authenticateToken,controller.adminController.access)
+router.get('/generalBlog',middleware.authenticateToken,controller.adminController.generalBlog)
+router.get('/generalTag',middleware.authenticateToken,controller.adminController.generalTag)
+router.get('/generalCategory',middleware.authenticateToken,controller.adminController.generalCategory)
+router.get('/generalUser',middleware.authenticateToken,controller.adminController.generalUser)
+router.get('/blogInChartWeek',middleware.authenticateToken,controller.adminController.blogInChartWeek)
+router.get('/blogInChartMonth',middleware.authenticateToken,controller.adminController.blogInChartMonth)
+router.get('/blogInChartYear',middleware.authenticateToken,controller.adminController.blogInChartYear)
 
 
 

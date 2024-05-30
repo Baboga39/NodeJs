@@ -132,10 +132,10 @@ class ReportService {
     static deleteTypeReport = async (reportTypeId)=>{
         const report = await ReportType.findById(reportTypeId);
         if(!report) return 1;
-        const reportUser = await ReportUser.deleteMany({reason: report._id});
-        const reportBlog = await ReportBlog.deleteMany({reason: report._id});
-        const reportTag = await ReportTag.deleteMany({reason: report._id});
-        const reportComment = await ReportComment.deleteMany({reason: report._id});
+        await ReportUser.deleteMany({reason: report._id});
+        await ReportBlog.deleteMany({reason: report._id});
+        await ReportTag.deleteMany({reason: report._id});
+        await ReportComment.deleteMany({reason: report._id});
         await report.deleteOne();
         return 0;
     }

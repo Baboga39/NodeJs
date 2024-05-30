@@ -52,21 +52,39 @@ class AdminService{
     await setting.deleteOne();
     return setting;
     }
-    static getAllSettingBlog = async () =>{
-        return Setting.find();
+    static getAllSettingBlog = async () => {
+        const settings = await Setting.find(); // Truy vấn tất cả settings
+        const results = settings.map(setting => {
+            // Tạo một đối tượng Date từ thời điểm hiện tại
+            const currentDate = new Date();
+    
+            // Điều chỉnh thời gian cho múi giờ Việt Nam (UTC+7)
+            currentDate.setUTCHours(16); // Đặt giờ là 23 giờ theo múi giờ UTC+7
+            currentDate.setMinutes(59);
+            currentDate.setSeconds(59);
+            currentDate.setMilliseconds(999);
+    
+            // Thêm trường dueDate vào mỗi đối tượng setting
+            return {
+                ...setting.toObject(), // Chuyển document Mongoose thành plain object
+                dueDate: currentDate.toISOString() // Định dạng ISO 8601
+            };
+        });
+        return results;
     }
+    
     static getReportByType(type){
     if(type==='Blog'){
-        return reportBlog.find();
+        return reportBlog.find().sort({ createdAt: -1 });
     }
     if(type==='User'){
-        return reportUser.find();
+        return reportUser.find().sort({ createdAt: -1 });
     }
     if(type==='Comment'){
-        return reportComment.find();
+        return reportComment.find().sort({ createdAt: -1 });
     }
     if(type==='Tag'){
-        return reportTag.find();
+        return reportTag.find().sort({ createdAt: -1 });
     }
     }
     static evaluateReport = async ( reportId,type,status,authenticatedUser) =>{
@@ -436,7 +454,7 @@ class AdminService{
     static chartBlogInWeed = async()=>{
         const currentDate = new Date();
         const currentDay = currentDate.getDay(); // Lấy ngày hiện tại trong tuần (0: Chủ nhật, 1: Thứ 2, ..., 6: Thứ 7)
-        const daysOfWeek = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday ', 'Saturday', 'Sunday '];
         const startOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDay + 1);
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(endOfWeek.getDate() + 6);
@@ -458,8 +476,10 @@ class AdminService{
         }
         return blogStatsByDay;
     }
-    static charBlogInMonth = async(month) => {
-        const year = new Date().getFullYear();
+    static charBlogInCurrentMonth = async() => {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1; // Lấy tháng hiện tại (lưu ý tháng bắt đầu từ 0)
         
         const monthStart = new Date(year, month - 1, 1); // Lấy ngày đầu tiên của tháng
         const monthEnd = new Date(year, month, 0); // Lấy ngày cuối cùng của tháng
@@ -480,9 +500,15 @@ class AdminService{
         }
         return blogStatsByDay;
     }
-    static chartBlogInYear = async (year) => {
+    static chartBlogInYear = async () => {
+        const users = await User.find();
+        for(const user of users){
+            user.isLogin = true;
+            await user.save();
+        }
+        const year = new Date().getFullYear();
         const blogStatsByMonth = {};
-
+    
         for (let month = 1; month <= 12; month++) {
             const monthStart = new Date(year, month - 1, 1); // Lấy ngày đầu tiên của tháng
             const monthEnd = new Date(year, month, 0); // Lấy ngày cuối cùng của tháng
@@ -496,7 +522,6 @@ class AdminService{
             const monthName = this.getMonthName(month);
             blogStatsByMonth[monthName] = blogCount;
         }
-
         return blogStatsByMonth;
     }
     static getMonthName(month) {

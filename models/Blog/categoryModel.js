@@ -58,17 +58,13 @@ categorySchema.methods.addTags = async function (newTagIds) {
   await this.save();
 };
 categorySchema.methods.addUsers = async function (newUsers) {
-  const addAdmin = !this.users.some(existingUserId => existingUserId.equals(this.isAdmin));
-  if (addAdmin) {
-    this.users.push(this.isAdmin);
-  }
-
   if (typeof newUsers === 'object' && !Array.isArray(newUsers)) {
     const userId = newUsers;
     const existingUser = await User.findById(userId);
     if (existingUser) {
       const duplicate = this.users.some(existingUserId => existingUserId.equals(userId));
       if (!duplicate) { 
+        console.log(existingUser.name)
         this.users.push(existingUser);
       }
     }

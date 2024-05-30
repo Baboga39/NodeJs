@@ -46,14 +46,7 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
   phone: {
-    type: String,
-    validate: {
-      validator: (value) => {
-        const phoneRegex = /^\d{10}$/;
-        return validator.matches(value, phoneRegex);
-      },
-      message: 'Invalid phone number format',
-    },
+    type: String
   },
   gender: {
     type: String,
@@ -103,7 +96,11 @@ const userSchema = new mongoose.Schema({
   },
   sumViolating: { 
     type: Number, 
-    default:0}
+    default:0},
+  isLogin: {
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true,  strict: false });
 userSchema.pre('save', async function (next) {
   const user = this;

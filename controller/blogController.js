@@ -11,32 +11,32 @@ const createBlog = async (req, res) => {
     try {
         const authenticatedUser = req.user;
         const blogDTO = BlogDTO.fromRequest(req.body);
-        const blog = await Service.blogService.createBlog(blogDTO,authenticatedUser);
         if(!blogDTO.title)
-        {
-          return res.status(400).json({
-              success: false,
-              statusCode: 400,
-              message: 'Title is required',
-              result: null
-          });
-        }
-        if(!blogDTO.content){
-          return res.status(400).json({
-              success: false,
-              statusCode: 400,
-              message: 'Content is required',
-              result: null
-          });
-        }
-        if(!blogDTO.avatar){
-          return res.status(400).json({
-              success: false,
-              statusCode: 400,
-              message: 'Avatar is required',
-              result: null
-          });
-        }
+          {
+            return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Title is required',
+                result: null
+            });
+          }
+          if(!blogDTO.content){
+            return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Content is required',
+                result: null
+            });
+          }
+          if(!blogDTO.avatar){
+            return res.status(400).json({
+                success: false,
+                statusCode: 400,
+                message: 'Avatar is required',
+                result: null
+            });
+          }
+        const blog = await Service.blogService.createBlog(blogDTO,authenticatedUser);
         if(blog === 1)
         {
         console.log('Not found Category')
@@ -47,6 +47,16 @@ const createBlog = async (req, res) => {
             message: 'Not found Category',
             result: null
         });
+        }
+        if(blog===2){
+          console.log('Title required 10 characters');
+          console.log('--------------------------------------------------------------------------------------------------------------------')
+          return res.status(400).json({
+            success:false,
+            statusCode: 400,
+            message: 'Title required 10 characters',
+            result: null,
+          });
         }
         console.log('Create Blog successfully')
         console.log('--------------------------------------------------------------------------------------------------------------------')

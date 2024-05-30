@@ -24,7 +24,7 @@ const reportSchema = new mongoose.Schema({
         ref: 'ReportType',
         autopopulate : true
     },
-});
+}, { timestamps: true });
 reportSchema.plugin(autopopulate)
 const Report = mongoose.model('Report', reportSchema);
 
