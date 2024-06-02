@@ -73,7 +73,7 @@ class AdminService{
         return results;
     }
     
-    static getReportByType(type){
+    static getReportByType (type){
     if(type==='Blog'){
         return reportBlog.find().sort({ createdAt: -1 });
     }

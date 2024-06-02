@@ -623,6 +623,7 @@ static search =async(keyword, type, authenticatedUser) =>
   }
 }
 static listFiveUser= async()=>{
+  const users = await usermodel.find();
   const mostFollowedClientUser = await UserModel.find({ roles: 'Client' })
       .sort({ totalFollower: -1 })
       .limit(5)
