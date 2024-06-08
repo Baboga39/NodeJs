@@ -16,7 +16,7 @@ class TagService {
         return tag.save()
     }
     static async getAllTags() {
-        const tags = await Tag.find();
+        const tags = await Tag.find().sort({createdAt:-1});
         if(!tags) return null;
         return tags
     }

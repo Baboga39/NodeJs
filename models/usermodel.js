@@ -37,14 +37,6 @@ const userSchema = new mongoose.Schema({
     enum: ['Client', 'Admin','Editor'],
     default: 'Client',
   },
-  createDate: {
-    type: Date,
-    default: Date.now,
-  },
-  updateDate: {
-    type: Date,
-    default: Date.now,
-  },
   phone: {
     type: String
   },
@@ -100,8 +92,16 @@ const userSchema = new mongoose.Schema({
   isLogin: {
     type: Boolean,
     default: false
-  }
-}, { timestamps: true,  strict: false });
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+}, { timestamps: false,  strict: false });
 userSchema.pre('save', async function (next) {
   const user = this;
   if (user.isModified('password')) {

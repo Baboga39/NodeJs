@@ -344,7 +344,7 @@ class AdminService{
         // Tính % chênh lệch so với tháng trước
         let percentChange = 0;
         if (previousMonthBlogCount !== 0) {
-            percentChange = ((currentMonthBlogCount - previousMonthBlogCount) / previousMonthBlogCount) * 100;
+            percentChange = ((currentMonthBlogCount / previousMonthBlogCount)-1) * 100;
         }
         return { 
             sumBlog,
@@ -377,7 +377,7 @@ class AdminService{
         // Tính % chênh lệch so với tháng trước
         let percentChange = 0;
         if (previousMonthTagCount !== 0) {
-            percentChange = ((currentMonthTagCount - previousMonthTagCount) / previousMonthTagCount) * 100;
+            percentChange = ((currentMonthTagCount / previousMonthTagCount)-1) * 100;
         }
         return {
             sumTag,
@@ -412,7 +412,7 @@ class AdminService{
         // Tính % chênh lệch so với tháng trước
         let percentChange = 0;
         if (previousMonthCategoryCount !== 0) {
-            percentChange = ((currentMonthCategoryCount - previousMonthCategoryCount) / previousMonthCategoryCount) * 100;
+            percentChange = ((currentMonthCategoryCount / previousMonthCategoryCount) -1) * 100;
         }
     
         return {
@@ -443,8 +443,11 @@ class AdminService{
         });
         // Tính % chênh lệch so với tháng trước
         let percentChange = 0;
+        console.log(currentMonthUserCount);
+        console.log(previousMonthUserCount);
+
         if (previousMonthUserCount !== 0) {
-            percentChange = ((currentMonthUserCount - previousMonthUserCount) / previousMonthUserCount) * 100;
+            percentChange = ((currentMonthUserCount / previousMonthUserCount)-1) * 100;
         }
         return {
             sumUser,

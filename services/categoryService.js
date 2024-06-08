@@ -54,7 +54,7 @@ class CategoryService {
         }
     }
     static async getAllCategory() {
-        const categories = await Category.find();
+        const categories = await Category.find().sort({createdAt: -1});
         if(!categories)
         {
             return null;

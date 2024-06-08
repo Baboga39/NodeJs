@@ -10,6 +10,9 @@ const Invitation = require('../models/invitationModel')
 const Share = require('../models/Blog/shareModel')
 const categoryService = require('../services/categoryService')
 const blogService= require('../services/blogService')
+const removeDiacritics = require('diacritics').remove;
+const Access = require('../models/accessModel')
+
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -18,13 +21,227 @@ static getUserInfo = async (userId) => {
   }
   return user;
 };
+
 static getAllUser = async () => {
-  const listUsers = await UserModel.find();
+
+  // const roles =  ['Client', 'Admin','Editor'];
+  // const statuses =  ['completed', 'locked'];
+  // for (let i = 0; i < 30; i++) {
+  //   let phoneNumber = '090';
+  
+  //   for (let j = 0; j < 7; j++) {
+  //     phoneNumber += Math.floor(Math.random() * 10); // Tạo số ngẫu nhiên từ 0 đến 9
+  //   }
+  //   const randomRoleIndex = Math.floor(Math.random() * roles.length);
+  //   const randomStatusesIndex = Math.floor(Math.random() * statuses.length);
+  //   const user = new UserModel();
+  //   const name = this.generateName();
+  //   const second_name = this.generateMeaningfulNickname();
+  //   const username = this.generateUsername(name,second_name);
+  //   const email1 = this.generateEmail(name);
+  //   user.name= name;
+  //   user.isLogin= true;
+  //   user.second_name= second_name;
+  //   user.username= username;
+  //   user.email= email1;
+  //   user.phone= phoneNumber;
+  //   user.status = statuses[randomStatusesIndex];
+  //   const randomdate = this.randomDate();
+  //   user.createdAt = randomdate;
+  //   user.updatedAt = randomdate;
+  //   user.password="Ngochai0204@";
+  //   user.roles= roles[randomRoleIndex];
+  //   user.address='Hồ Chí Minh - Thủ Đức';
+  //   const gender = this.generateRandomGender();
+  //   user.gender= gender;
+  //   user.avatar= {
+  //     publicId: null,
+  //     url: this.generateRandomAvatar(gender)
+  //   }
+  //   await user.save();
+  // }
+  const listUsers = await UserModel.find().sort({createAt: -1});
+//   for (const user of listUsers) {
+//     const numAccesses = Math.floor(Math.random() * 11) + 15;
+
+//     for (let i = 0; i < numAccesses; i++) {
+//         const randomDay = Math.floor(Math.random() * 31) + 1;
+//         const createdAt = new Date(new Date().getFullYear(), 4, randomDay);
+//         await Access.create({ user: user._id, createdAt });
+//     }
+// }
   if (!listUsers) {
     return null;
   }
   return listUsers;
 }
+static getRandomElement(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+static randomDate() {
+  const currentYear = new Date().getFullYear();
+  const start = new Date(currentYear, 0, 1); // Ngày 1 tháng 1 của năm hiện tại
+  const end = new Date(currentYear, 7, 1); // Ngày 1 tháng 8 của năm hiện tại
+  
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+static generateMeaningfulNickname() {
+  const meaningfulWords = [
+    "Hero", "Champion", "Dragon", "Tiger", "Lion", "Eagle", "Wolf", "Phoenix",
+    "Warrior", "Knight", "Wizard", "Ninja", "Samurai", "Master", "King", "Queen",
+    "Prince", "Princess", "Star", "Sun", "Moon", "Comet", "Storm", "Shadow",
+    "Ghost", "Spirit", "Light", "Dark", "Fire", "Water", "Earth", "Wind", "Metal",
+    "Rock", "Stone", "Gem", "Crystal", "Blade", "Arrow", "Bow", "Sword", "Shield",
+    "Armor", "Hunter", "Ranger", "Mage", "Healer", "Guardian", "Rider", "Saint",
+    "Angel", "Demon", "Dragonborn", "Phoenixborn", "Beast", "Goddess", "God",
+    "Lord", "Lady", "Druid", "Summoner", "Warlock", "Bard", "Champ", "Legend"
+  ];
+  
+  // Tạo mảng ký tự đặc biệt
+  const specialChars = ['-', '_', '@', '#', '$', '%', '*', '^', '!', '\\', '/'];
+  
+  const wordCount = Math.floor(Math.random() * 2) + 1;
+  let nickname = '';
+  for (let i = 0; i < wordCount; i++) {
+    nickname += this.getRandomElement(meaningfulWords);
+  }
+
+  // Thêm ngẫu nhiên số vào biệt danh
+  const numberCount = Math.floor(Math.random() * 3); // Số chữ số từ 0 đến 2
+  for (let i = 0; i < numberCount; i++) {
+    const pos = Math.floor(Math.random() * (nickname.length + 1));
+    nickname = nickname.slice(0, pos) + Math.floor(Math.random() * 10) + nickname.slice(pos);
+  }
+
+  // Thêm ngẫu nhiên ký tự đặc biệt vào biệt danh
+  const specialCharCount = Math.floor(Math.random() * 3); // Số ký tự đặc biệt từ 0 đến 2
+  for (let i = 0; i < specialCharCount; i++) {
+    const pos = Math.floor(Math.random() * (nickname.length - 1)) + 1; // Đảm bảo không thêm ở đầu
+    nickname = nickname.slice(0, pos) + this.getRandomElement(specialChars) + nickname.slice(pos);
+  }
+
+  return nickname;
+}
+
+static generateName() {
+   //Generate Name: 
+const ho = [
+  "Nguyễn", "Trần", "Lê", "Phạm", "Huỳnh", "Hoàng", "Phan", "Vũ", 
+  "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương"
+];
+
+const tenDem = [
+  "Văn", "Thị", "Quốc", "Ngọc", "Hữu", "Minh", "Thanh", "Đức", "Công", 
+  "Đình", "Trung", "Xuân", "Quang", "Bảo", "Khánh", "Phương", "Gia", 
+  "Hải", "Chí", "Thành", "Nhật", "Đăng", "Tuấn", "Ngọc", "Thiên", "Kiều", 
+  "Thu", "Đông", "Nam", "Bắc", "Thảo", "Hương", "Hồng", "Hoàng", "Mai", 
+  "Lan", "Linh", "Yến", "Nga", "Phượng", "Hạnh", "My", "Uyên", "Trâm", 
+  "Vi", "Vy", "Thùy", "An", "Nhi", "Diễm"
+];
+
+const ten = [
+  "Anh", "Bình", "Châu", "Dũng", "Em", "Giang", "Hòa", "Khang", 
+  "Lam", "Lộc", "Minh", "Nam", "Oanh", "Phát", "Quân", "Sơn", 
+  "Thành", "Uy", "Vân", "Xuân", "Yên", "Đan", "Đạt", "Hùng", "Quyên"
+];
+  const hoRandom = ho[Math.floor(Math.random() * ho.length)];
+  
+  const demCount = Math.floor(Math.random() * 3); 
+  let tenDemRandom = '';
+  for (let i = 0; i < demCount; i++) {
+    tenDemRandom += tenDem[Math.floor(Math.random() * tenDem.length)] + ' ';
+  }
+  
+  const tenRandom = ten[Math.floor(Math.random() * ten.length)];
+  
+  const fullName = hoRandom + ' ' + tenDemRandom + tenRandom;
+  
+  return fullName.trim();
+}
+static generateEmail(nickname) {
+  // Bỏ dấu tiếng Việt
+  let email = removeDiacritics(nickname);
+  
+  // Loại bỏ khoảng cách và ký tự đặc biệt
+  email = email.replace(/[\s\W]+/g, '').toLowerCase();
+  
+  // Nối với "@gmail.com"
+  email += "@gmail.com";
+  
+  return email;
+}
+static generateUsername(str1, str2) {
+  // Bỏ dấu tiếng Việt
+  let username1 = removeDiacritics(str1);
+  let username2 = removeDiacritics(str2);
+  
+  // Loại bỏ khoảng cách và ký tự đặc biệt
+  username1 = username1.replace(/[\s\W]+/g, '').toLowerCase();
+  username2 = username2.replace(/[\s\W]+/g, '').toLowerCase();
+  
+  // Nối hai chuỗi lại
+  return username1 + username2;
+}
+static generateRandomGender() {
+  // Mảng chứa hai giá trị giới tính
+  const genders = ["male", "female"];
+  // Chọn ngẫu nhiên một trong hai giá trị
+  return genders[Math.floor(Math.random() * genders.length)];
+}
+static generateRandomAvatar(gender) {
+  // Mảng chứa hình ảnh cho giới tính nam
+const maleAvatars = [
+  "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/775358/pexels-photo-775358.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/90764/man-studio-portrait-light-90764.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/848117/pexels-photo-848117.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/868113/pexels-photo-868113.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/834863/pexels-photo-834863.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/761115/pexels-photo-761115.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1073097/pexels-photo-1073097.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1182825/pexels-photo-1182825.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1043473/pexels-photo-1043473.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/832998/pexels-photo-832998.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=600",
+  // Thêm các hình ảnh khác nếu cần
+];
+
+// Mảng chứa hình ảnh cho giới tính nữ
+const femaleAvatars = [
+  "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1462637/pexels-photo-1462637.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/774095/pexels-photo-774095.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1090387/pexels-photo-1090387.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/413959/pexels-photo-413959.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/235462/pexels-photo-235462.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/4380970/pexels-photo-4380970.jpeg?auto=compress&cs=tinysrgb&w=600",
+  "https://images.pexels.com/photos/2613260/pexels-photo-2613260.jpeg?auto=compress&cs=tinysrgb&w=600",
+  // Thêm các hình ảnh khác nếu cần
+];
+  // Nếu giới tính là male, chọn ngẫu nhiên một hình ảnh từ mảng maleAvatars
+  if (gender === "male") {
+    return maleAvatars[Math.floor(Math.random() * maleAvatars.length)];
+  } 
+  // Nếu giới tính là female, chọn ngẫu nhiên một hình ảnh từ mảng femaleAvatars
+  else if (gender === "female") {
+    return femaleAvatars[Math.floor(Math.random() * femaleAvatars.length)];
+  } 
+  // Mặc định, trả về null
+  else {
+    return null;
+  }
+}
+
 static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
 
     const user_id = authenticatedUser.user._id
