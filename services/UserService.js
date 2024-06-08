@@ -70,10 +70,37 @@ static getAllUser = async () => {
 //         await Access.create({ user: user._id, createdAt });
 //     }
 // }
+
+//Follow:
+const allUsers = await UserModel.find({roles: 'Client'});
+
+// Lặp qua từng người dùng
+for (const user of allUsers) {
+    // // Không tự theo dõi chính mình
+    // const usersToFollow = allUsers.filter(u => !u._id.equals(user._id));
+
+    // // Nếu người dùng có ít hơn 40 người dùng
+    // if (usersToFollow.length < 40) {
+    //     // Chỉ lấy số người dùng cần thiết
+    //     usersToFollow.splice(40);
+    // }
+
+    // // Lấy 40 người dùng ngẫu nhiên
+    // const randomUsersToFollow = this.getRandomElements(usersToFollow, 40);
+
+    // // Theo dõi mỗi người dùng ngẫu nhiên
+    // for (const randomUser of randomUsersToFollow) {
+    //     await this.followUser(randomUser._id, user);
+    // }
+  }
   if (!listUsers) {
     return null;
   }
   return listUsers;
+}
+static getRandomElements = (array, count) => {
+  const shuffled = array.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
 }
 static getRandomElement(arr) {
   return arr[Math.floor(Math.random() * arr.length)];

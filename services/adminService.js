@@ -443,8 +443,6 @@ class AdminService{
         });
         // Tính % chênh lệch so với tháng trước
         let percentChange = 0;
-        console.log(currentMonthUserCount);
-        console.log(previousMonthUserCount);
 
         if (previousMonthUserCount !== 0) {
             percentChange = ((currentMonthUserCount / previousMonthUserCount)-1) * 100;
