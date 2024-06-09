@@ -1353,6 +1353,16 @@ const checkIsReadChat = async (req, res) => {
       });
     }
     const checkIsRead = await Service.chatService.checkIsReadChat(authenticated.user,chatId);
+    if(checkIsRead===null){
+      console.log('Not found Chat');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success:false,
+        statusCode: 400,
+        message: 'Not found Chat',
+        result: null,
+      });
+    }
     console.log('Check is Read Success');
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({

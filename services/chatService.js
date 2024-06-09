@@ -235,6 +235,7 @@ class ChatService {
     }
     static checkIsReadChat = async (authenticationUser,chatId)=> {
         const chat = await Group.findById(chatId);
+        if(!chat) return null;
         let isRead = true;
         const listNotify =  await notification.find({
             chat: chatId,
