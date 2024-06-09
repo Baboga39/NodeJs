@@ -12,7 +12,7 @@ const categoryService = require('../services/categoryService')
 const blogService= require('../services/blogService')
 const removeDiacritics = require('diacritics').remove;
 const Access = require('../models/accessModel')
-
+const Notify = require('../models/notificationModel')
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -23,7 +23,6 @@ static getUserInfo = async (userId) => {
 };
 
 static getAllUser = async () => {
-
   // const roles =  ['Client', 'Admin','Editor'];
   // const statuses =  ['completed', 'locked'];
   // for (let i = 0; i < 30; i++) {

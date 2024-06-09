@@ -1339,27 +1339,38 @@ const listChatUsers = async (req, res) =>{
   }
 }
 const checkIsReadChat = async (req, res) => {
-  const chatId = req.body.chatId;
-  const authenticated = req.user;
-  if(!chatId) {
-    console.log('Chat Id is required');
+  try{
+    const chatId = req.body.chatId;
+    const authenticated = req.user;
+    if(!chatId) {
+      console.log('Chat Id is required');
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success:false,
+        statusCode: 400,
+        message: 'Chat Id is required',
+        result: null,
+      });
+    }
+    const checkIsRead = await Service.chatService.checkIsReadChat(authenticated.user,chatId);
+    console.log('Check is Read Success');
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    return res.status(400).json({
-      success:false,
-      statusCode: 400,
-      message: 'Chat Id is required',
-      result: null,
+    return res.status(200).json({
+      success:true,
+      statusCode: 200,
+      message: 'Check is Read Success',
+      result: checkIsRead,
+    });
+  } catch(error){
+    console.log('Server Internal Error');
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Server Internal Error',
+      result: error.message,
     });
   }
-  const checkIsRead = await Service.chatService.checkIsReadChat(authenticated.user,chatId);
-  console.log('Check is Read Success');
-  console.log('--------------------------------------------------------------------------------------------------------------------')
-  return res.status(200).json({
-    success:true,
-    statusCode: 200,
-    message: 'Check is Read Success',
-    result: checkIsRead,
-  });
 }
 const listChatUsersIsWait = async (req, res) =>{
   try {
