@@ -25,7 +25,8 @@ class CategoryService {
             // Truy vấn lấy tất cả các category mà người dùng không phải là thành viên và không phải là admin
             const excludedCategories = await Category.find({
                 users: { $ne: userId },
-                isAdmin: { $ne: userId }
+                isAdmin: { $ne: userId },
+                status:'Publish',
             })
             .sort({ createdAt: -1 })
             .skip(skip)
