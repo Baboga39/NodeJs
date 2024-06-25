@@ -73,6 +73,11 @@ blogSchema.methods.addTags = async function (tagIds) {
 
   await this.save();
 };
+blogSchema.index({
+  title: 'text',
+  description: 'text',
+  content: 'text'
+});
 blogSchema.post('save', async function () {
 
   const count = await this.model('Blog').countDocuments({ tags: { $in: this.tags } });

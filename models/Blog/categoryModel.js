@@ -122,6 +122,11 @@ categorySchema.methods.removeTags = async function (tagIdsToRemove) {
   // Lưu thay đổi
   await this.save();
 };
+categorySchema.index({
+  name: 'text',
+  description: 'text'
+});
+
 categorySchema.methods.removeUsers = async function (userIdsToRemove) {
   const updatedUsers = [];
 

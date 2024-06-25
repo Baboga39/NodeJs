@@ -59,6 +59,7 @@ static getAllUser = async () => {
   //   await user.save();
   // }
   const listUsers = await UserModel.find().sort({createdAt: -1});
+  
 //   for (const user of listUsers) {
 //     const numAccesses = Math.floor(Math.random() * 11) + 15;
 
@@ -70,7 +71,7 @@ static getAllUser = async () => {
 // }
 
 //Follow:
-const allUsers = await UserModel.find({roles: 'Client'});
+const allUsers = await UserModel.find({roles: 'Client', status:'completed'});
 
 // // Lặp qua từng người dùng
 // for (const user of allUsers) {
@@ -833,21 +834,15 @@ static search =async(keyword, type, authenticatedUser) =>
   }
   if(type==='User'){
     const users = await UserModel.find({
-       $and:[
-        {
-          $or: [
-            { name: regex },
-            { email: regex },
-            { description: regex },
-            {second_name: regex },
-            {address: regex }
-        ]
-        },
-        {
-          status: 'completed'
-        }
-       ]
+      $text: { $search: regex },
+      status: 'completed',
+      _id: { $ne: user._id } // Loại bỏ user hiện tại
+    }, {
+      score: { $meta: 'textScore' } // Lấy điểm số của kết quả tìm kiếm
+    }).sort({
+      score: { $meta: 'textScore' } // Sắp xếp theo điểm số giảm dần
     });
+
     const filteredUsers = [];
 
     for (const userF of users) {
@@ -864,6 +859,9 @@ static search =async(keyword, type, authenticatedUser) =>
       throw new Error(error.message);
   }
 }
+static removeAccents = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
 static listFiveUser= async()=>{
   const users = await usermodel.find();
   const mostFollowedClientUser = await UserModel.find({ roles: 'Client', status:'completed' })

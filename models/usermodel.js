@@ -102,6 +102,13 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
 }, { timestamps: false,  strict: false });
+userSchema.index({
+  name: 'text',
+  email: 'text',
+  descriptions: 'text',
+  second_name: 'text',
+  address: 'text'
+});
 userSchema.pre('save', async function (next) {
   const user = this;
   if (user.isModified('password')) {

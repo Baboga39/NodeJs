@@ -398,19 +398,10 @@ class CategoryService {
         try {
             const regex = new RegExp(key, 'i');
             const user = await User.findById(authenticatedUser._id);
-            const query = await Category.find({
-               $and:[
-              {
-                $or: [
-                    { name: regex },
-                    { description: regex }
-                ]
-              },
-              {
+            const query =  await Category.find({
+                $text: { $search: key },
                 status: 'Publish'
-              }
-               ]
-            }).sort({ updatedAt: -1 });;
+              }).sort({ updatedAt: -1 });
             const categoriesWithUserStatusPromises = query.map(async category => {
                 const statusUser = await this.getUserStatusInCategory1(category, user._id);  
                 return { ...category.toObject(), statusUser };
