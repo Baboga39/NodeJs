@@ -503,121 +503,41 @@ const listBlogDraftByUser = async (req, res) => {
     });
   }
 }
-// const listBlogInFeed = async (req, res) => {
-//   try {
-//     const authenticatedUser = req.user;
-//     const  index  = req.params.index;
-//     if(!index)
-//     {
-//       console.log('Index is missing')
-//       console.log('--------------------------------------------------------------------------------------------------------------------')
-//       return res.status(400).json({
-//         success: false,
-//         statusCode: 400,
-//         message: 'Index is missing',
-//         result: null,
-//       });
-//     }
-//     const listBlog  = await Service.blogService.listBlogInFeed(authenticatedUser.user,index);
-//     console.log('List Blog In Feed')
-//     console.log('--------------------------------------------------------------------------------------------------------------------')
-//     return res.status(200).json({
-//       success: true,
-//       statusCode: 200,
-//       message: 'List Blog In Feed',
-//       result: listBlog,
-//     });
-//   } catch (error) {
-//     console.log('Internal server error')
-//     console.log('--------------------------------------------------------------------------------------------------------------------')
-//     return res.status(500).json({
-//       success: false,
-//       statusCode: 500,
-//       message: 'Internal server error',
-//       result: error.message,
-//     });
-//   }
-// }
-static listBlogInFeed = async (authenticatedUser, pageIndex) => {
+const listBlogInFeed = async (req, res) => {
   try {
-      const userId = authenticatedUser._id;
-      
-      // Đảm bảo Access được ghi nhận
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); 
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-
-      const access = new Access({ user: userId });
-      const checkAccess = await Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
-
-      if (!checkAccess) {
-          await access.save();
-      }
-
-      const pageSize = 6;
-      const startIndex = (pageIndex - 1) * pageSize;
-
-      // Lấy danh sách categories
-      const categories = await Category.find({ users: userId }).select('_id');
-      const categoryIds = categories.map(category => category._id);
-
-      // Lấy danh sách người theo dõi
-      const follow = await followModel.findOne({ user: userId }).select('following');
-      const followingIds = follow ? follow.following.map(follow => follow._id) : [];
-
-      // Kết hợp truy vấn category và user
-      const queryConditions = [
-          { category: { $in: categoryIds }, status: 'Published', isApproved: false },
-          { user: { $in: followingIds }, status: 'Published', isApproved: false }
-      ];
-
-      const blogs = await Blog.find({ $or: queryConditions })
-          .sort({ createdAt: -1 })
-          .skip(startIndex)
-          .limit(pageSize)
-          .populate('tags')
-          .populate('user')
-          .populate('category')
-          .exec();
-
-      // Lấy danh sách blogs được chia sẻ
-      const sharedBlogs = await Share.find({ user: { $in: followingIds } }).populate('listBlog').exec();
-
-      for (const share of sharedBlogs) {
-          if (share.listBlog) {
-              const posts = await this.findAndUpdateLikeAndSave(share.listBlog, userId);
-              const postsWithPermissions = await this.findAndUpdatePermissions(posts, userId);
-              for (const post of postsWithPermissions) {
-                  post.isShare = true;
-                  post.shareBy = share.user;
-                  blogs.push(post);
-              }
-          }
-      }
-
-      // Loại bỏ các bài viết trùng lặp
-      const uniqueBlogs = Array.from(new Set(blogs.map(blog => blog._id))).map(id => blogs.find(blog => blog._id.toString() === id.toString()));
-
-      // Sắp xếp theo createdAt và updatedAt
-      uniqueBlogs.sort((a, b) => {
-          if (a.createdAt > b.createdAt) return -1;
-          if (a.createdAt < b.createdAt) return 1;
-          if (a.updatedAt > b.updatedAt) return -1;
-          if (a.updatedAt < b.updatedAt) return 1;
-          return 0;
+    const authenticatedUser = req.user;
+    const  index  = req.params.index;
+    if(!index)
+    {
+      console.log('Index is missing')
+      console.log('--------------------------------------------------------------------------------------------------------------------')
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Index is missing',
+        result: null,
       });
-
-      const size = Math.ceil(uniqueBlogs.length / pageSize);
-      const paginatedPosts = uniqueBlogs.slice(startIndex, startIndex + pageSize);
-
-      return { size, posts: paginatedPosts };
+    }
+    const listBlog  = await Service.blogService.listBlogInFeed(authenticatedUser.user,index);
+    console.log('List Blog In Feed')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'List Blog In Feed',
+      result: listBlog,
+    });
   } catch (error) {
-      console.error("Error fetching most active posts:", error);
-      return null;
+    console.log('Internal server error')
+    console.log('--------------------------------------------------------------------------------------------------------------------')
+    return res.status(500).json({
+      success: false,
+      statusCode: 500,
+      message: 'Internal server error',
+      result: error.message,
+    });
   }
 }
-
 const listBlogShareBy = async (req, res) => {
   try {
     const userId = req.params.userId;
