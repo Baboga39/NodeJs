@@ -866,7 +866,7 @@ static search =async(keyword, type, authenticatedUser) =>
 }
 static listFiveUser= async()=>{
   const users = await usermodel.find();
-  const mostFollowedClientUser = await UserModel.find({ roles: 'Client' })
+  const mostFollowedClientUser = await UserModel.find({ roles: 'Client', status:'completed' })
       .sort({ totalFollower: -1 })
       .limit(5)
       .exec();
