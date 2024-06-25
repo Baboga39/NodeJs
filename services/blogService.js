@@ -631,8 +631,8 @@ class BlogService{
     
             // Kết hợp truy vấn category và user
             const queryConditions = [
-                { category: { $in: categoryIds }, status: 'Published', isApproved: false },
-                { user: { $in: followingIds }, status: 'Published', isApproved: false }
+                { category: { $in: categoryIds }, status: 'Published', isApproved: false, user:userId },
+                { user: { $in: followingIds }, status: 'Published', isApproved: false, user: userId },
             ];
     
             const blogs = await Blog.find({ $or: queryConditions })
