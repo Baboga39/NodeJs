@@ -10,9 +10,8 @@ const Invitation = require('../models/invitationModel')
 const Share = require('../models/Blog/shareModel')
 const categoryService = require('../services/categoryService')
 const blogService= require('../services/blogService')
+const notifyService = require('../services/notificationService')
 const removeDiacritics = require('diacritics').remove;
-const Access = require('../models/accessModel')
-const Notify = require('../models/notificationModel')
 class UserService {
 static getUserInfo = async (userId) => {
   const user = await UserModel.findById(userId);
@@ -59,7 +58,7 @@ static getAllUser = async () => {
   //   }
   //   await user.save();
   // }
-  const listUsers = await UserModel.find().sort({createAt: -1});
+  const listUsers = await UserModel.find().sort({createdAt: -1});
 //   for (const user of listUsers) {
 //     const numAccesses = Math.floor(Math.random() * 11) + 15;
 
@@ -73,25 +72,25 @@ static getAllUser = async () => {
 //Follow:
 const allUsers = await UserModel.find({roles: 'Client'});
 
-// Lặp qua từng người dùng
-for (const user of allUsers) {
-    // // Không tự theo dõi chính mình
-    // const usersToFollow = allUsers.filter(u => !u._id.equals(user._id));
+// // Lặp qua từng người dùng
+// for (const user of allUsers) {
+//     // Không tự theo dõi chính mình
+//     const usersToFollow = allUsers.filter(u => !u._id.equals(user._id));
 
-    // // Nếu người dùng có ít hơn 40 người dùng
-    // if (usersToFollow.length < 40) {
-    //     // Chỉ lấy số người dùng cần thiết
-    //     usersToFollow.splice(40);
-    // }
+//     // Nếu người dùng có ít hơn 40 người dùng
+//     if (usersToFollow.length < 40) {
+//         // Chỉ lấy số người dùng cần thiết
+//         usersToFollow.splice(40);
+//     }
 
-    // // Lấy 40 người dùng ngẫu nhiên
-    // const randomUsersToFollow = this.getRandomElements(usersToFollow, 40);
+//     // Lấy 40 người dùng ngẫu nhiên
+//     const randomUsersToFollow = this.getRandomElements(usersToFollow, 40);
 
-    // // Theo dõi mỗi người dùng ngẫu nhiên
-    // for (const randomUser of randomUsersToFollow) {
-    //     await this.followUser(randomUser._id, user);
-    // }
-  }
+//     // Theo dõi mỗi người dùng ngẫu nhiên
+//     for (const randomUser of randomUsersToFollow) {
+//         await this.followUser(randomUser._id, user);
+//     }
+//   }
   if (!listUsers) {
     return null;
   }
@@ -609,7 +608,7 @@ static getWallUsers = async (userId, authenticatedUser) =>{
 static likeBlog = async (authenticatedUser, blogId) => {
   const blog = await Blog.findById(blogId);
   const user = await UserModel.findById(authenticatedUser._id);
-  
+
   if (!blog || !user) {
     return null;
   }
