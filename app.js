@@ -149,7 +149,7 @@ const intervalId = setInterval(() => {
   console.log('Running scheduled task at 5m');
   console.log('--------------------------------------------------------------------------------------------------------------------');
   service.adminService.autoFilterBlog();
-},6000); 
+},80000); 
 
 
 const port = process.env.PORT || 3001;
