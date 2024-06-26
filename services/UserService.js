@@ -73,25 +73,25 @@ static getAllUser = async () => {
 //Follow:
 const allUsers = await UserModel.find({roles: 'Client', status:'completed'});
 
-// // Lặp qua từng người dùng
-// for (const user of allUsers) {
-//     // Không tự theo dõi chính mình
-//     const usersToFollow = allUsers.filter(u => !u._id.equals(user._id));
+// Lặp qua từng người dùng
+for (const user of allUsers) {
+    // Không tự theo dõi chính mình
+    const usersToFollow = allUsers.filter(u => !u._id.equals(user._id));
 
-//     // Nếu người dùng có ít hơn 40 người dùng
-//     if (usersToFollow.length < 40) {
-//         // Chỉ lấy số người dùng cần thiết
-//         usersToFollow.splice(40);
-//     }
+    // Nếu người dùng có ít hơn 40 người dùng
+    if (usersToFollow.length < 40) {
+        // Chỉ lấy số người dùng cần thiết
+        usersToFollow.splice(40);
+    }
 
-//     // Lấy 40 người dùng ngẫu nhiên
-//     const randomUsersToFollow = this.getRandomElements(usersToFollow, 40);
+    // Lấy 40 người dùng ngẫu nhiên
+    const randomUsersToFollow = this.getRandomElements(usersToFollow, 40);
 
-//     // Theo dõi mỗi người dùng ngẫu nhiên
-//     for (const randomUser of randomUsersToFollow) {
-//         await this.followUser(randomUser._id, user);
-//     }
-//   }
+    // Theo dõi mỗi người dùng ngẫu nhiên
+    for (const randomUser of randomUsersToFollow) {
+        await this.followUser(randomUser._id, user);
+    }
+  }
   if (!listUsers) {
     return null;
   }
