@@ -262,61 +262,34 @@ class BlogService{
                 throw error;
             }
         }
-        // static findAndUpdatePermissions = async (listBlog, userId) =>{
-        //     try {
-        //         const promises = listBlog.map(async (blog, index) => {
-        //             const category = await blog.category;    
-        //             let updateFields;
-        //             if(category && category.users){
-        //                 const isPermission = await category.users.some(user => user._id.equals(userId));
-        //                 if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
-        //                 updateFields = {
-        //                     isPermission: true
-        //                 }
-        //                 if(category.status === 'Private' && !isPermission)
-        //                 {
-        //                     updateFields = {
-        //                         isPermission: false
-        //                     };
-        //                 }
-        //             }else{  
-        //             updateFields = {
-        //                 isPermission: true
-        //             };}
-        //             await Blog.findByIdAndUpdate(blog._id, updateFields);
-        //         });
-        //         await Promise.all(promises);
-        //         return listBlog;
-        //     } catch (error) {
-        //         console.error("Error updating blogs:", error);
-        //         throw error;
-        //     }
-        // }
-        static async findAndUpdatePermissions(listBlog, userId) {
+        static findAndUpdatePermissions = async (listBlog, userId) =>{
             try {
-              // Populate categories before processing
-              const blogsWithCategories = await Blog.find({ _id: { $in: listBlog.map(blog => blog._id) } })
-                .populate('category')
-                .exec();
-          
-              // Map blogs and update isPermission field
-              const updatedBlogs = blogsWithCategories.map(blog => {
-                const category = blog.category;
-                let isPermission = true;
-          
-                if (category && category.users && category.status !== 'Publish') {
-                  const isUserInCategory = category.users.some(user => user._id.equals(userId));
-                  isPermission = category.status === 'Private' ? isUserInCategory : true;
-                }
-          
-                // Create a new blog object with updated isPermission field
-                return { ...blog.toObject(), isPermission };
-              });
-          
-              return updatedBlogs;
+                const promises = listBlog.map(async (blog, index) => {
+                    const category = await blog.category;    
+                    let updateFields;
+                    if(category && category.users){
+                        const isPermission = await category.users.some(user => user._id.equals(userId));
+                        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
+                        updateFields = {
+                            isPermission: true
+                        }
+                        if(category.status === 'Private' && !isPermission)
+                        {
+                            updateFields = {
+                                isPermission: false
+                            };
+                        }
+                    }else{  
+                    updateFields = {
+                        isPermission: true
+                    };}
+                    await Blog.findByIdAndUpdate(blog._id, updateFields);
+                });
+                await Promise.all(promises);
+                return listBlog;
             } catch (error) {
-              console.error("Error updating blogs permissions:", error);
-              throw error;
+                console.error("Error updating blogs:", error);
+                throw error;
             }
         }
         static sizeAllBlogPublish= async ()=>{
