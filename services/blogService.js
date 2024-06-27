@@ -265,8 +265,9 @@ class BlogService{
         static findAndUpdatePermissions = async (listBlog, userId) =>{
             try {
                 const promises = listBlog.map(async (blog, index) => {
-                    const category = await blog.category;    
+                    const category_id = await blog.category;    
                     let updateFields;
+                    const category = await Category.findById(category_id);
                     if(category && category.users){
                         const isPermission = await category.users.some(user => user._id.equals(userId));
                         if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
@@ -330,7 +331,7 @@ class BlogService{
             result.push(blog);
             const posts = await this.findAndUpdateLikeAndSave(result,authenticatedUser.user._id)
             const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id);
-            return result[0];
+            return posts2[0];
         }
         static listBlogPopularity = async (authenticatedUser, index) => {
             const pageSize = 6;
