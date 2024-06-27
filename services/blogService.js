@@ -435,13 +435,14 @@ class BlogService{
                 const regex = new RegExp(key, 'i');
                 const query = await Blog.find({
                     $and: [
-                      {
-                        $or: [
-                          { title: regex },
-                          { description: regex },
-                          { content: regex }
-                        ]
-                      },
+                    //   {
+                    //     $or: [
+                    //       { title: regex },
+                    //       { description: regex },
+                    //       { content: regex }
+                    //     ]
+                    //   },
+                    { $text: { $search: regex } },
                       { isApproved: false }, 
                       { status: 'Published' }
                     ]
