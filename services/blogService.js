@@ -365,12 +365,12 @@ class BlogService{
             try {
             const size = await this.sizeAllBlogPublish();
             const query = await Blog.find({ status: 'Published',isApproved: false })
-                .sort({ likes: -1, views: -1, updatedAt: -1 }) // Sắp xếp theo lượt like, views và ngày update
-                .skip(skip)   
-                .limit(pageSize) 
-                .populate('tags') 
-                .populate('category') 
-                .exec();
+                        .sort({ likes: -1, views: -1, updatedAt: -1 }) // Sắp xếp theo lượt like, views và ngày update
+                        .skip(skip)   
+                        .limit(pageSize) 
+                        .populate('tags') 
+                        .populate('category') 
+                        .exec();
             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
             const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
             if (posts2.length === 0) {
