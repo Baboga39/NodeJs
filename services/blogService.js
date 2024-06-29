@@ -708,89 +708,88 @@ class BlogService{
     //     }
     // }
     static listBlogInFeed = async (authenticatedUser, pageIndex) => {
-        try {
-            const userId = authenticatedUser._id;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-    
-            const accessPromise = Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
-            const pageSize = 6;
-            const startIndex = (pageIndex - 1) * pageSize;
-    
-            // Lấy danh sách categories và người theo dõi đồng thời
-            const categoriesPromise = Category.find({ users: userId }).select('_id').lean();
-            const followPromise = followModel.findOne({ user: userId }).select('following').lean();
-    
-            const [checkAccess, categories, follow] = await Promise.all([accessPromise, categoriesPromise, followPromise]);
-    
-            if (!checkAccess) {
-                const access = new Access({ user: userId });
-                await access.save();
-            }
-    
-            const categoryIds = categories.map(category => category._id);
-            const followingIds = follow ? follow.following.map(follow => follow._id) : [];
-    
-            // Tạo điều kiện truy vấn kết hợp
-            const queryConditions = [
-                { category: { $in: categoryIds }, status: 'Published', isApproved: false, user: { $ne: userId } },
-                { user: { $in: followingIds }, status: 'Published', isApproved: false, user: { $ne: userId } },
-            ];
-    
-            // Thực hiện truy vấn blogs và shared blogs đồng thời
-            const blogsPromise = Blog.find({ $or: queryConditions })
-                .sort({ createdAt: -1 })
-                .skip(startIndex)
-                .limit(pageSize)
-                .populate('tags')
-                .populate('user')
-                .populate('category')
-                .lean()
-                .exec();
-    
-            const sharedBlogsPromise = Share.find({ user: { $in: followingIds } }).populate('listBlog').lean().exec();
-    
-            const [blogs, sharedBlogs] = await Promise.all([blogsPromise, sharedBlogsPromise]);
-    
-            const sharedBlogPosts = [];
-            for (const share of sharedBlogs) {
-                if (share.listBlog) {
-                    const posts = await this.findAndUpdateLikeAndSave(share.listBlog, userId);
-                    const postsWithPermissions = await this.findAndUpdatePermissions(posts, userId);
-                    for (const post of postsWithPermissions) {
-                        post.isShare = true;
-                        post.shareBy = share.user;
-                        sharedBlogPosts.push(post);
-                    }
+    try {
+        const userId = authenticatedUser._id;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const access = new Access({ user: userId });
+        const checkAccessPromise = Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
+
+        const pageSize = 6;
+        const startIndex = (pageIndex - 1) * pageSize;
+
+        // Lấy danh sách categories và người theo dõi đồng thời
+        const categoriesPromise = Category.find({ users: userId }).select('_id');
+        const followPromise = followModel.findOne({ user: userId }).select('following');
+
+        const [checkAccess, categories, follow] = await Promise.all([checkAccessPromise, categoriesPromise, followPromise]);
+
+        if (!checkAccess) {
+            await access.save();
+        }
+
+        const categoryIds = categories.map(category => category._id);
+        const followingIds = follow ? follow.following.map(follow => follow._id) : [];
+
+        // Tạo điều kiện truy vấn kết hợp
+        const queryConditions = [
+            { category: { $in: categoryIds }, status: 'Published', isApproved: false, user: { $ne: userId } },
+            { user: { $in: followingIds }, status: 'Published', isApproved: false, user: { $ne: userId } },
+        ];
+
+        // Thực hiện truy vấn blogs và shared blogs đồng thời
+        const blogsPromise = Blog.find({ $or: queryConditions })
+            .sort({ createdAt: -1 })
+            .skip(startIndex)
+            .limit(pageSize)
+            .populate('tags')
+            .populate('user')
+            .populate('category')
+            .exec();
+
+        const sharedBlogsPromise = Share.find({ user: { $in: followingIds } }).populate('listBlog').exec();
+
+        const [blogs, sharedBlogs] = await Promise.all([blogsPromise, sharedBlogsPromise]);
+
+        const sharedBlogPosts = [];
+        for (const share of sharedBlogs) {
+            if (share.listBlog) {
+                const posts = await this.findAndUpdateLikeAndSave(share.listBlog, userId);
+                const postsWithPermissions = await this.findAndUpdatePermissions(posts, userId);
+                for (const post of postsWithPermissions) {
+                    post.isShare = true;
+                    post.shareBy = share.user;
+                    sharedBlogPosts.push(post);
                 }
             }
-    
-            // Kết hợp và loại bỏ các bài viết trùng lặp
-            const allBlogs = blogs.concat(sharedBlogPosts);
-            const uniqueBlogs = Array.from(new Set(allBlogs.map(blog => blog._id))).map(id => allBlogs.find(blog => blog._id.toString() === id.toString()));
-    
-            // Sắp xếp theo createdAt và updatedAt
-            uniqueBlogs.sort((a, b) => {
-                if (a.createdAt > b.createdAt) return -1;
-                if (a.createdAt < b.createdAt) return 1;
-                if (a.updatedAt > b.updatedAt) return -1;
-                if (a.updatedAt < b.updatedAt) return 1;
-                return 0;
-            });
-    
-            const size = Math.ceil(uniqueBlogs.length / pageSize);
-            const paginatedPosts = uniqueBlogs.slice(startIndex, startIndex + pageSize);
-    
-            return { size, posts: paginatedPosts };
-        } catch (error) {
-            console.error("Error fetching most active posts:", error);
-            return null;
         }
+
+        // Kết hợp và loại bỏ các bài viết trùng lặp
+        const allBlogs = blogs.concat(sharedBlogPosts);
+        const uniqueBlogs = Array.from(new Set(allBlogs.map(blog => blog._id))).map(id => allBlogs.find(blog => blog._id.toString() === id.toString()));
+
+        // Sắp xếp theo createdAt và updatedAt
+        uniqueBlogs.sort((a, b) => {
+            if (a.createdAt > b.createdAt) return -1;
+            if (a.createdAt < b.createdAt) return 1;
+            if (a.updatedAt > b.updatedAt) return -1;
+            if (a.updatedAt < b.updatedAt) return 1;
+            return 0;
+        });
+
+        const size = Math.ceil(uniqueBlogs.length / pageSize);
+        const paginatedPosts = uniqueBlogs.slice(startIndex, startIndex + pageSize);
+
+        return { size, posts: paginatedPosts };
+    } catch (error) {
+        console.error("Error fetching most active posts:", error);
+        return null;
     }
-    
-    
+}
+
         static listBlogShareByUSer = async (authenticatedUser,userId)=>{
             try {
                 const query = await Share.findOne({ user: userId})
