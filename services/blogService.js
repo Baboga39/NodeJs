@@ -715,19 +715,18 @@ class BlogService{
             const tomorrow = new Date(today);
             tomorrow.setDate(today.getDate() + 1);
     
-            const access = new Access({ user: userId });
-            const checkAccessPromise = Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
-    
+            const accessPromise = Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
             const pageSize = 6;
             const startIndex = (pageIndex - 1) * pageSize;
     
             // Lấy danh sách categories và người theo dõi đồng thời
-            const categoriesPromise = Category.find({ users: userId }).select('_id');
-            const followPromise = followModel.findOne({ user: userId }).select('following');
+            const categoriesPromise = Category.find({ users: userId }).select('_id').lean();
+            const followPromise = followModel.findOne({ user: userId }).select('following').lean();
     
-            const [checkAccess, categories, follow] = await Promise.all([checkAccessPromise, categoriesPromise, followPromise]);
+            const [checkAccess, categories, follow] = await Promise.all([accessPromise, categoriesPromise, followPromise]);
     
             if (!checkAccess) {
+                const access = new Access({ user: userId });
                 await access.save();
             }
     
@@ -748,9 +747,10 @@ class BlogService{
                 .populate('tags')
                 .populate('user')
                 .populate('category')
+                .lean()
                 .exec();
     
-            const sharedBlogsPromise = Share.find({ user: { $in: followingIds } }).populate('listBlog').exec();
+            const sharedBlogsPromise = Share.find({ user: { $in: followingIds } }).populate('listBlog').lean().exec();
     
             const [blogs, sharedBlogs] = await Promise.all([blogsPromise, sharedBlogsPromise]);
     
@@ -789,6 +789,7 @@ class BlogService{
             return null;
         }
     }
+    
     
         static listBlogShareByUSer = async (authenticatedUser,userId)=>{
             try {
