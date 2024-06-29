@@ -262,37 +262,64 @@ class BlogService{
                 throw error;
             }
         }
-        static findAndUpdatePermissions = async (listBlog, userId) =>{
+        // static findAndUpdatePermissions = async (listBlog, userId) =>{
+        //     try {
+        //         const promises = listBlog.map(async (blog, index) => {
+        //             const category_id = blog.category;    
+        //             let updateFields;
+        //             const category = await Category.findById(category_id);
+        //             if(category && category.users){
+        //                 const isPermission = await category.users.some(user => user._id.equals(userId));
+        //                 console.log(isPermission)
+        //                 if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
+        //                 updateFields = {
+        //                     isPermission: true
+        //                 }
+        //                 if(category.status === 'Private' && !isPermission)
+        //                 {
+        //                     updateFields = {
+        //                         isPermission: false
+        //                     };
+        //                 }
+        //             }else{  
+        //             updateFields = {
+        //                 isPermission: true
+        //             };}
+        //             await Blog.findByIdAndUpdate(blog._id, updateFields);
+        //         });
+        //         await Promise.all(promises);
+        //         return listBlog;
+        //     } catch (error) {
+        //         console.error("Error updating blogs:", error);
+        //         throw error;
+        //     }
+        // }
+        static findAndUpdatePermissions = async (listBlog, userId) => {
             try {
-                const promises = listBlog.map(async (blog, index) => {
-                    const category_id = await blog.category;    
-                    let updateFields;
+                const promises = listBlog.map(async (blog) => {
+                    const category_id = blog.category; 
+                    let updateFields = { isPermission: true }; 
+                    
                     const category = await Category.findById(category_id);
-                    if(category && category.users){
-                        const isPermission = await category.users.some(user => user._id.equals(userId));
-                        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
-                        updateFields = {
-                            isPermission: true
+                    
+                    if (category && category.users) {
+                        const isPermission = category.users.some(user => user._id.equals(userId));
+        
+                        if (category.status === 'Private' && !isPermission) {
+                            updateFields = { isPermission: false };
                         }
-                        if(category.status === 'Private' && !isPermission)
-                        {
-                            updateFields = {
-                                isPermission: false
-                            };
-                        }
-                    }else{  
-                    updateFields = {
-                        isPermission: true
-                    };}
+                    }
+        
                     await Blog.findByIdAndUpdate(blog._id, updateFields);
                 });
+        
                 await Promise.all(promises);
                 return listBlog;
             } catch (error) {
                 console.error("Error updating blogs:", error);
                 throw error;
             }
-        }
+        }        
         static sizeAllBlogPublish= async ()=>{
             const countDocuments = await Blog.countDocuments({ status: 'Published',isApproved:false });
             const totalPages = Math.ceil(countDocuments / 6);
