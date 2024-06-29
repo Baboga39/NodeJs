@@ -255,6 +255,7 @@ class BlogService{
                     };
                     await Blog.findByIdAndUpdate(blog._id, updateFields);
                 });
+
                 await Promise.all(promises);
                 return listBlog;
             } catch (error) {
@@ -270,7 +271,6 @@ class BlogService{
                     const category = await Category.findById(category_id);
                     if(category && category.users){
                         const isPermission = await category.users.some(user => user._id.equals(userId));
-                        console.log(isPermission)
                         if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
                         updateFields = {
                             isPermission: true
