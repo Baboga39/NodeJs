@@ -145,11 +145,11 @@ const job23 = schedule.scheduleJob('59 59 23 * * *', () => {
   console.log('--------------------------------------------------------------------------------------------------------------------');
   service.adminService.autoFilterBlog();
 });
-const intervalId = setInterval(() => {
-  console.log('Running scheduled task at 5m');
-  console.log('--------------------------------------------------------------------------------------------------------------------');
-  service.adminService.autoFilterBlog();
-},80000); 
+// const intervalId = setInterval(() => {
+//   console.log('Running scheduled task at 5m');
+//   console.log('--------------------------------------------------------------------------------------------------------------------');
+//   service.adminService.autoFilterBlog();
+// },80000); 
 
 
 const port = process.env.PORT || 3001;
