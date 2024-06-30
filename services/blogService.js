@@ -271,7 +271,7 @@ class BlogService{
                     const category = await Category.findById(category_id);
                     if(category && category.users){
                         const isPermission = await category.users.some(user => user._id.equals(userId));
-                        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission) || (category.status === 'Publish' && !isPermission))
+                        if((category.status === 'Publish' && isPermission) || (category.status === 'Private' && isPermission))
                         updateFields = {
                             isPermission: true
                         }
