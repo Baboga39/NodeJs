@@ -143,9 +143,6 @@ class NotificationService{
     }
     static listNotifyByType = async (type,user_id) =>{
         const notifications = await Notification.find({type: type, recipient: user_id}).sort({ isRead: 1, createdAt: -1 });
-        for(const notification of notifications){
-            await notification.deleteOne();
-        }
         return notifications;
     }
     static evaluateBlogCategory = async(blogId, authenticatedUser,status) =>{
