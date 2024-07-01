@@ -314,6 +314,7 @@ class ChatService {
             //     }
             // }
             // await chat.save();
+            await notification.deleteMany({chat: chat});
             await chat.deleteOne();
             return 4;
         }
