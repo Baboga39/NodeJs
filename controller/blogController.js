@@ -80,7 +80,6 @@ const createBlog = async (req, res) => {
 const createBlogDraft = async (req, res) => {
   try {
       const authenticatedUser = req.user;
-      console.log(authenticatedUser);
       const blogDTO = BlogDTO.fromRequest(req.body);
       const blog = await Service.blogService.createBlogDraft(blogDTO,authenticatedUser);
       console.log('Create Blog Draft successfully')
