@@ -141,7 +141,6 @@ class BlogService{
             await Notification.deleteMany({blog: blog._id})
             if(blog.user._id == authenticatedUser._id || authenticatedUser.roles === 'Admin'){
             const tagIds = blog.tags;
-
             await Tag.updateMany(
                 { _id: { $in: tagIds } },
                 { $inc: { sumBlog: -1 } }

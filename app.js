@@ -54,6 +54,7 @@ io.on("connection", (socket) => {
       text,
     });
     console.log("Send message to socket Success");
+    console.log("--------------------------------");
   });
 //   socket.on("sendMessage", async ({ fromUser, toUser, text, chatId }) => {
 //     console.log({ fromUser, toUser, text, chatId });
