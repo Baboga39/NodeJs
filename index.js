@@ -168,7 +168,7 @@ app.use(bodyParser.json());
 routes(app);
 
 mongoose.connect(`${process.env.Mongo_DB}`, {
-  dbName: 'Keyhub',
+  dbName: 'KeyhubStagging',
   user: 'Baboga12',
   pass: 'DWtxXsixg7KtOun0',
 }).then(() => {
