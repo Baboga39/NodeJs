@@ -10,6 +10,8 @@ const reportBlogModel = require('../models/retportBlogModel');
 const shareModel = require('../models/Blog/shareModel')
 const commentService = require('../services/commentService')
 const Access = require('../models/accessModel')
+const memcached = require('memcached'); // Install Memcached library (npm install memcached)
+
 
 class BlogService{
     static createBlog = async (blogDTO, authenticatedUser) =>{
@@ -337,25 +339,30 @@ class BlogService{
             const pageSize = 6;
             const skip = (index - 1) * pageSize; // Số bài viết sẽ bỏ qua
             try {
-            const size = await this.sizeAllBlogPublish();
-            const query = await Blog.find({ status: 'Published',isApproved: false })
+                const [size, query] = await Promise.all([
+                    this.sizeAllBlogPublish(),
+                    Blog.find({ status: 'Published', isApproved: false })
                         .sort({ likes: -1, views: -1, updatedAt: -1 }) // Sắp xếp theo lượt like, views và ngày update
-                        .skip(skip)   
-                        .limit(pageSize) 
+                        .skip(skip)
+                        .limit(pageSize)
                         .populate('tags') 
-                        .populate('category') 
-                        .exec();
-            const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser.user._id)
-            const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser.user._id)
-            if (posts2.length === 0) {
+                        .populate('category')
+                ]);
+        
+                if (query.length === 0) {
                     return null;
-            }
-            return {posts : posts2, size: size};
+                }
+        
+                let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser.user._id);
+                posts = await this.findAndUpdatePermissions(posts, authenticatedUser.user._id);
+        
+                return { posts, size };
             } catch (error) {
-            console.error("Error fetching most active posts:", error);
-            return null;
+                console.error("Error fetching most active posts:", error);
+                return null;
             }
         };
+
         static listBlogDiscussions = async (authenticatedUser, index) => {
             const pageSize = 6;
             const skip = (index - 1) * pageSize;
@@ -603,6 +610,87 @@ class BlogService{
     //             return null;
     //         }
     //     }
+    // static listBlogInFeed = async (authenticatedUser, pageIndex) => {
+    //     try {
+    //         const userId = authenticatedUser._id;
+    //         const today = new Date();
+    //         today.setHours(0, 0, 0, 0); 
+    //         const tomorrow = new Date(today);
+    //         tomorrow.setDate(today.getDate() + 1);
+    
+    //         const access = new Access({ user: userId });
+    //         const checkAccess = await Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
+    
+    //         if (!checkAccess) {
+    //             await access.save();
+    //         }
+    
+    //         const pageSize = 6;
+    //         const startIndex = (pageIndex - 1) * pageSize;
+    
+    //         // Lấy danh sách categories
+    //         const categories = await Category.find({ users: userId }).select('_id');
+    //         const categoryIds = categories.map(category => category._id);
+    
+    //         // Lấy danh sách người theo dõi
+    //         const follow = await followModel.findOne({ user: userId }).select('following');
+    //         const followingIds = follow ? follow.following.map(follow => follow._id) : [];
+    
+    //         // Kết hợp truy vấn category và user
+    //         const queryConditions = [
+    //             { category: { $in: categoryIds }, status: 'Published', isApproved: false, user:{$ne:userId} },
+    //             { user: { $in: followingIds }, status: 'Published', isApproved: false, user: {$ne:userId} },
+    //         ];
+    
+    //         const blogs = await Blog.find({ $or: queryConditions })
+    //             .sort({ createdAt: -1 })
+    //             .skip(startIndex)
+    //             .limit(pageSize)
+    //             .populate('tags')
+    //             .populate('user')
+    //             .populate('category')
+    //             .exec();
+    
+    //         // Lấy danh sách blogs được chia sẻ
+    //         const sharedBlogs = await Share.find({ user: { $in: followingIds } }).populate('listBlog').exec();
+    
+    //         for (const share of sharedBlogs) {
+    //             if (share.listBlog) {
+    //                 const posts = await this.findAndUpdateLikeAndSave(share.listBlog, userId);
+    //                 const postsWithPermissions = await this.findAndUpdatePermissions(posts, userId);
+    //                 for (const post of postsWithPermissions) {
+    //                     post.isShare = true;
+    //                     post.shareBy = share.user;
+    //                     blogs.push(post);
+    //                 }
+    //             }
+    //         }
+     
+    //         await this.findAndUpdateLikeAndSave(blogs, userId);
+    //         await this.findAndUpdatePermissions(blogs, userId);
+            
+    //         // Loại bỏ các bài viết trùng lặp
+    //         const uniqueBlogs = Array.from(new Set(blogs.map(blog => blog._id))).map(id => blogs.find(blog => blog._id.toString() === id.toString()));
+    
+    //         // Sắp xếp theo createdAt và updatedAt
+    //         uniqueBlogs.sort((a, b) => {
+    //             if (a.createdAt > b.createdAt) return -1;
+    //             if (a.createdAt < b.createdAt) return 1;
+    //             if (a.updatedAt > b.updatedAt) return -1;
+    //             if (a.updatedAt < b.updatedAt) return 1;
+    //             return 0;
+    //         });
+    
+    //         const size = Math.ceil(uniqueBlogs.length / pageSize);
+    //         const paginatedPosts = uniqueBlogs.slice(startIndex, startIndex + pageSize);
+    
+    //         return { size, posts: paginatedPosts };
+    //     } catch (error) {
+    //         console.error("Error fetching most active posts:", error);
+    //         return null;
+    //     }
+    // }
+
     static listBlogInFeed = async (authenticatedUser, pageIndex) => {
         try {
             const userId = authenticatedUser._id;
@@ -724,7 +812,9 @@ class BlogService{
             return null;
         }
     }
-
+    
+    
+    
 
         static listBlogShareByUSer = async (authenticatedUser,userId)=>{
             try {

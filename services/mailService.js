@@ -191,7 +191,7 @@ const nodemailer = require('nodemailer');
 //                                                           <tr>
 //                                                               <td class="pad">
 //                                                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-//                                                                       <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u> vui lòng không reply<br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>
+//                                                                       <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u> vui lòng không reply<br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>
 //                                                                   </div>
 //                                                               </td>
 //                                                           </tr>
@@ -402,7 +402,7 @@ const generateEmail = (code) => {
                                                         <tr>
                                                             <td class="pad">
                                                                 <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-                                                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u>, please do not reply<br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>
+                                                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u>, please do not reply<br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -616,7 +616,7 @@ const generateEmail = (code) => {
 //                             <tr>
 //                               <td class="pad">
 //                                 <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-//                                   <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+//                                   <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
 //                                     Vietnam.<br></em></p>
 //                                 </div>
 //                               </td>
@@ -830,7 +830,7 @@ const deleteBlog = (title) => {
                           <tr>
                             <td class="pad">
                               <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-                                <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+                                <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
                                   Vietnam.<br></em></p>
                               </div>
                             </td>
@@ -1052,7 +1052,7 @@ const deleteBlog = (title) => {
 //   "                            <tr>\n" +
 //   "                              <td class=\"pad\">\n" +
 //   "                                <div style=\"color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;\">\n" +
-//   "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
+//   "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
 //   "                                </div>\n" +
 //   "                              </td>\n" +
 //   "                            </tr>\n" +
@@ -1273,7 +1273,7 @@ const warningUser = (reason) => {
   "                            <tr>\n" +
   "                              <td class=\"pad\">\n" +
   "                                <div style=\"color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;\">\n" +
-  "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
+  "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
   "                                </div>\n" +
   "                              </td>\n" +
   "                            </tr>\n" +
@@ -1490,7 +1490,7 @@ const warningUser = (reason) => {
 //   "                            <tr>\n" +
 //   "                              <td class=\"pad\">\n" +
 //   "                                <div style=\"color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;\">\n" +
-//   "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
+//   "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
 //   "                                </div>\n" +
 //   "                              </td>\n" +
 //   "                            </tr>\n" +
@@ -1707,7 +1707,7 @@ const blockUser = () => {
   "                            <tr>\n" +
   "                              <td class=\"pad\">\n" +
   "                                <div style=\"color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;\">\n" +
-  "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
+  "                                  <p style=\"margin: 0;\"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node=\"[object Object]\" prompt=\"Tell me more about Thu Duc City.\" style=\"text-decoration: underline; color: #0068a5;\">Thu Duc City</a>, <a node=\"[object Object]\" prompt=\"Tell me more about Ho Chi Minh City.\" style=\"text-decoration: underline; color: #0068a5;\">Ho Chi Minh City</a>,<em> Vietnam.<br></em></p>\n" +
   "                                </div>\n" +
   "                              </td>\n" +
   "                            </tr>\n" +
@@ -1842,7 +1842,7 @@ const blockUser = () => {
 //                               <tr>
 //                                 <td class="pad">
 //                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
 //                                       Vietnam.<br></em></p>
 //                                   </div>
 //                                 </td>
@@ -1978,7 +1978,7 @@ const deleteTag = (tag) => {
                               <tr>
                                 <td class="pad">
                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
                                       Vietnam.<br></em></p>
                                   </div>
                                 </td>
@@ -2074,7 +2074,7 @@ const deleteTag = (tag) => {
 //                                         Chúng tôi xin thông báo rằng tài khoản ${name} của bạn đã được mở khóa.
 //                                     </p>
 //                                 <p>
-//                                     Chúng tôi mong muốn bạn tiếp tục sử dụng dịch vụ của chúng tôi một cách an toàn và có trách nhiệm.Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận hỗ trợ khách hàng của chúng tôi qua baboga12@gmail.com để được hỗ trợ.
+//                                     Chúng tôi mong muốn bạn tiếp tục sử dụng dịch vụ của chúng tôi một cách an toàn và có trách nhiệm.Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận hỗ trợ khách hàng của chúng tôi qua brainiacservicehelp@gmail.com để được hỗ trợ.
 //                                 </p>                                  </div>           
 //                                 </td>
 //                               </tr>
@@ -2105,7 +2105,7 @@ const deleteTag = (tag) => {
 //                               <tr>
 //                                 <td class="pad">
 //                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
 //                                       Vietnam.<br></em></p>
 //                                   </div>
 //                                 </td>
@@ -2201,7 +2201,7 @@ const openAccount = (name) => {
                                       We are pleased to inform you that your account ${name} has been unlocked.
                                     </p>
                                     <p>
-                                      We hope you continue to use our services safely and responsibly. If you have any questions, please contact our customer support at baboga12@gmail.com for assistance.
+                                      We hope you continue to use our services safely and responsibly. If you have any questions, please contact our customer support at brainiacservicehelp@gmail.com for assistance.
                                     </p> 
                                   </div>           
                                 </td>
@@ -2233,7 +2233,7 @@ const openAccount = (name) => {
                               <tr>
                                 <td class="pad">
                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>, Vietnam.<br></em></p>
+                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>, Vietnam.<br></em></p>
                                   </div>
                                 </td>
                               </tr>
@@ -2369,7 +2369,7 @@ const openAccount = (name) => {
 //                               <tr>
 //                                 <td class="pad">
 //                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
 //                                       Vietnam.<br></em></p>
 //                                   </div>
 //                                 </td>
@@ -2505,7 +2505,7 @@ const deleteComment = (title) => {
                               <tr>
                                 <td class="pad">
                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>, Vietnam.<br></em></p>
+                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>, Vietnam.<br></em></p>
                                   </div>
                                 </td>
                               </tr>
@@ -2641,7 +2641,7 @@ const deleteComment = (title) => {
 //                               <tr>
 //                                 <td class="pad">
 //                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
+//                                     <p style="margin: 0;"><em> </em><br><em>Email được gửi từ Hệ thống của <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>,
 //                                       Vietnam.<br></em></p>
 //                                   </div>
 //                                 </td>
@@ -2777,7 +2777,7 @@ const deleteCategory = (name) => {
                               <tr>
                                 <td class="pad">
                                   <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:13px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:15.6px;">
-                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Braniac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>, Vietnam.<br></em></p>
+                                    <p style="margin: 0;"><em> </em><br><em>Email sent from the system of <u>Brainiac Social Media</u><br>No. 1 Vo Van Ngan Street, Linh Chieu Ward, </em><a node="[object Object]" prompt="Tell me more about Thu Duc City." style="text-decoration: underline; color: #0068a5;">Thu Duc City</a>, <a node="[object Object]" prompt="Tell me more about Ho Chi Minh City." style="text-decoration: underline; color: #0068a5;">Ho Chi Minh City</a>, Vietnam.<br></em></p>
                                   </div>
                                 </td>
                               </tr>
@@ -2802,15 +2802,15 @@ const sendVerificationEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
 
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
-    subject: 'Account Verification OTP - BRANIAC SOCIAL MEDIA',
+    subject: 'Account Verification OTP - BRAINIAC SOCIAL MEDIA',
     html: generateEmail(otp),
   };
 
@@ -2824,17 +2824,15 @@ const sendVerificationEmail = async (email, otp) => {
   }
 };
 const sendInformDeleteBlog = async (email, title) => {
-  console.log(email);
-  console.log(title);
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
     subject: 'Delete Blog!!!!!',
     html: deleteBlog(title),
@@ -2853,12 +2851,12 @@ const sendInformDeleteGroup = async (email, name) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
     subject: 'Delete Group',
     html: deleteCategory(name),
@@ -2877,12 +2875,12 @@ const sendInformDeleteTag = async (email, tag) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
     subject: 'Delete Tags',
     html: deleteTag(tag),
@@ -2901,14 +2899,14 @@ const sendInformWarningUser = async (email, reason) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
-    subject: 'Violation Warning - BRANIAC SOCIAL MEDIA',
+    subject: 'Violation Warning - BRAINIAC SOCIAL MEDIA',
     html: warningUser(reason),
   };
 
@@ -2926,14 +2924,14 @@ const sendInformBlockUser = async (email) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
-    subject: 'Violation - BRANIAC SOCIAL MEDIA',
+    subject: 'Violation - BRAINIAC SOCIAL MEDIA',
     html: blockUser(),
   };
 
@@ -2951,14 +2949,14 @@ const sendInformDeleteComment = async (email, title) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
-    subject: 'Violation - BRANIAC SOCIAL MEDIA',
+    subject: 'Violation - BRAINIAC SOCIAL MEDIA',
     html: deleteComment(title),
   };
 
@@ -2976,14 +2974,14 @@ const sendInformOpenAccount = async (email, name) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'lswrmzkoklucesjh', // Your Gmail email password
+      user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
+      pass: 'oegwbkflmskqidun', // Your Gmail email password
     },
   });
   const mailOptions = {
-    from: 'baboga12@gmail.com',
+    from: 'brainiacservicehelp@gmail.com',
     to: email,
-    subject: 'Open Account - BRANIAC SOCIAL MEDIA',
+    subject: 'Open Account - BRAINIAC SOCIAL MEDIA',
     html: openAccount(name),
   };
 

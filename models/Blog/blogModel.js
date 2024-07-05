@@ -83,5 +83,23 @@ blogSchema.post('save', async function () {
   const count = await this.model('Blog').countDocuments({ tags: { $in: this.tags } });
 
   await Tag.updateMany({ _id: { $in: this.tags } }, { sumBlog: count });
+  blogSchema.post('save', async function () {
+    const count = await this.model('Blog').countDocuments({ tags: { $in: this.tags } });
+    await Tag.updateMany({ _id: { $in: this.tags } }, { sumBlog: count });
+  
+    const fieldsToCheck = ['views', 'sumComment', 'likes'];
+    let needsSave = false;
+  
+    fieldsToCheck.forEach(field => {
+      if (this[field] < 0) {
+        this[field] = 0;
+        needsSave = true;
+      }
+    });
+  
+    if (needsSave) {
+      await this.save();
+    }
+  });  
 });
 module.exports = mongoose.model('Blog', blogSchema);;

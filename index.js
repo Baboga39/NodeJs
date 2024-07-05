@@ -11,6 +11,7 @@ const { Server } = require("socket.io");
 const schedule = require('node-schedule');
 const moment = require('moment-timezone');
 const app = express();
+const Service = require('./services/chatService')
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -46,54 +47,80 @@ io.on("connection", (socket) => {
       io.emit("getUsers", users);
     }
   });
-  socket.on("sendMessage", ({ fromUser, toUser, text }) => {
-    const user = getUser(toUser);
-    io.to(user?.socketId).emit("getMessage", {
-      fromUser,
-      toUser,
-      text,
-    });
-    console.log("Send message to socket Success");
-    console.log("--------------------------------");
-  });
-//   socket.on("sendMessage", async ({ fromUser, toUser, text, chatId }) => {
-//     console.log({ fromUser, toUser, text, chatId });
-//     const group = await Service.findChatById(toUser);
-//     if (group.isGroup) {
-//         if (!group) {   
-//             console.log("Group not found");
+
+
+  // socket.on("sendMessage", ({ fromUser, toUser, text }) => {
+  //   const user = getUser(toUser);
+  //   io.to(user?.socketId).emit("getMessage", {
+  //     fromUser,
+  //     toUser,
+  //     text,
+  //   });
+  //   console.log("Send message to socket Success");
+  // });
+
+
+
+//   socket.on("sendMessage", async ({ fromUser, chatId, text  }) => {
+//     let group = await Service.findChatById(chatId);
+//     if (!group) {   
+//       console.log("Group not found");
+//       return;
+//   }
+//         group.listUser.forEach(async (userId) => {
+//           if (userId._id === fromUser) {
 //             return;
 //         }
-//         group.listUser.forEach(async (userId) => {
-//             const user = getUser(userId);
+//         if (userId._id.toString() === fromUser) {
+//           return;
+//       }
+//             const user = getUser(userId._id.toString());
 //             if (user) {              
-//                 io.to(user.socketId).emit("getMessage", {
+//                 io.to(user?.socketId).emit("getMessage", {
 //                     fromUser,
 //                     toUser: user._id,
 //                     text,
 //                 });
+//                 console.log("Send message to socket Success");
+
 //             }
 //         });
-//     } else {
-//         const user = getUser(toUser);
-//         if (user) {
-//             io.to(user.socketId).emit("getMessage", {
-//                 fromUser,
-//                 toUser,
-//                 text,
-//             });
-//         } else {
-//             console.log("User not found");
-//         }
-//     }
 //     console.log("Send message to socket Success");
 // });
-  socket.on("interaction", ({ fromUser, toUser,type, data }) => {
+socket.on("sendMessage", async ({ fromUser, chatId, text }) => {
+  let group = await Service.findChatById(chatId);
+  if (!group) {   
+    console.log("Group not found");
+    return;
+}
+    group.listUser.forEach(async (userId) => {
+        if (userId._id === fromUser) {
+          return;
+      }
+      if (userId._id.toString() === fromUser) {
+        return;
+    }
+          const user = getUser(userId._id.toString());
+          if (user) {              
+              io.to(user?.socketId).emit("getMessage", {
+                  fromUser,
+                  toUser: user._id,
+                  text,
+                  chatId: group._id
+              });
+              console.log("Send message to socket Success");
+          }
+      });
+  console.log("Send message to socket Success");
+});
+
+socket.on("interaction", ({ fromUser, toUser,type, data }) => {
     console.log(`User ${fromUser} interacts with user ${toUser}`);
     if (fromUser === toUser) {
       console.log("The same user is interacting with itself. No need to send socket.");
       return; 
     }
+
     const recipientSocket = getUser(toUser)?.socketId;
     if (recipientSocket) {
       console.log("User receiver is online.");
@@ -103,19 +130,29 @@ io.on("connection", (socket) => {
   }
   });
 
-  socket.on("interactionMessage", ({ fromUser, toUser,type, data }) => {
-    console.log(`User ${fromUser} interacts with user ${toUser}`);
-    if (fromUser === toUser) {
-      console.log("The same user is interacting with itself. No need to send socket.");
-      return; 
-    }
-    const recipientSocket = getUser(toUser)?.socketId;
-    if (recipientSocket) {
-      console.log("User receiver is online.");
-      io.to(recipientSocket).emit("notificationMessage", {fromUser, toUser,type, data});
-    }
-    else{ console.log("User receiver is not online.");
+socket.on("interactionMessage", async({ fromUser, chatId ,type, data }) => {
+    let group = await Service.findChatById(chatId);
+    if (!group) {   
+      console.log("Group not found");
+      return;
   }
+        group.listUser.forEach(async (userId) => {
+          if (userId._id === fromUser) {
+            return;
+        }
+        if (userId._id.toString() === fromUser) {
+          return;
+      }
+      const recipientSocket = getUser(userId._id.toString())?.socketId;
+      const toUserId = userId._id.toString();
+      const chatId = group._id;
+      if (recipientSocket) {
+        console.log("User receiver is online.");
+        io.to(recipientSocket).emit("notificationMessage", {fromUser, toUserId,type, data,chatId});
+      }
+      else{ console.log("User receiver is not online.");
+    }
+        });
   });
 
 
@@ -131,7 +168,7 @@ app.use(bodyParser.json());
 routes(app);
 
 mongoose.connect(`${process.env.Mongo_DB}`, {
-  dbName: 'KeyhubStaging',
+  dbName: 'Keyhub',
   user: 'Baboga12',
   pass: 'DWtxXsixg7KtOun0',
 }).then(() => {
@@ -140,7 +177,7 @@ mongoose.connect(`${process.env.Mongo_DB}`, {
 
 const timeZone = 'Asia/Ho_Chi_Minh'; // Xác định múi giờ Việt Nam
 
-const job23 = schedule.scheduleJob('59 59 23 * * *', () => {
+const job23 = schedule.scheduleJob('59 59 13 * * *', () => {
   const currentTime = moment().tz(timeZone).format();
   console.log(`Running scheduled task at ${currentTime} (${timeZone})`);
   console.log('--------------------------------------------------------------------------------------------------------------------');

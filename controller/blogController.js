@@ -333,8 +333,6 @@ const listBlogPopularity = async (req, res) => {
   try {
     const { index } = req.query; 
     const blogs = await Service.blogService.listBlogPopularity(req.user, index);
-    console.log('Get All Blog Popularity Success');
-    console.log('---------------------------------------------- ----------------------------------------------------------------------')
     if(blogs==null){
       return res.status(200).json({
         success: true,
