@@ -103,6 +103,17 @@ class BlogService{
         const user = await User.findById(authenticatedUser.user._id)
         const blog = await Blog.findById(blogId);
         if(!blog) return null;
+        if(blog.status === 'Published' && blogDTO.status === 'Draft'){
+            user.totalBlog = user.totalBlog - 1;
+            await user.save();
+        }
+        if(blogDTO.status === 'Published' && blog.status === 'Draft'){
+            user.totalBlog = user.totalBlog + 1;
+            await user.save();
+            await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
+        }
+        console.log(blog.status)
+        console.log(blogDTO.status)
         blog.title = blogDTO.title|| blogDTO.title;
         blog.content = blogDTO.content;
         blog.category = blogDTO.categoryIds;
@@ -114,17 +125,6 @@ class BlogService{
         if(blogDTO.tagIds!=null){
             await blog.addTags(blogDTO.tagIds);
             }
-        console.log(blog.status)
-        console.log(blogDTO.status)
-        if(blog.status === 'Published' && blogDTO.status === 'Draft'){
-            user.totalBlog = user.totalBlog - 1;
-            await user.save();
-        }
-        if(blogDTO.status === 'Published' && blog.status === 'Draft'){
-            user.totalBlog = user.totalBlog + 1;
-            await user.save();
-            await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
-        }
         return blog;
     }
     static uploadImage = async (fileData, authenticatedUser) =>{
