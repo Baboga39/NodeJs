@@ -834,6 +834,7 @@ class BlogService{
                     result.push(blog)
                 }
                }
+               const blogs = await Blog.find({ _id: { $in: result } }).populate('category');
                 const posts = await this.findAndUpdateLikeAndSave(result,authenticatedUser._id)
                 const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
                 if (posts2.length === 0) {
