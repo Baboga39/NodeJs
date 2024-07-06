@@ -114,6 +114,8 @@ class BlogService{
         if(blogDTO.tagIds!=null){
             await blog.addTags(blogDTO.tagIds);
             }
+        console.log(blog.status)
+        console.log(blogDTO.status)
         if(blog.status === 'Published' && blogDTO.status === 'Draft'){
             user.totalBlog = user.totalBlog - 1;
             await user.save();
