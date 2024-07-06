@@ -820,7 +820,7 @@ class BlogService{
     
     
 
-    static listBlogShareByUser = async (authenticatedUser, userId) => {
+    static listBlogShareByUSer = async (authenticatedUser, userId) => {
         try {
             const query = await Share.findOne({ user: userId });
             if (!query) {
