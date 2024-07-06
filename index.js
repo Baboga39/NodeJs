@@ -176,7 +176,7 @@ mongoose.connect(`${process.env.Mongo_DB}`, {
 
 const timeZone = 'Asia/Ho_Chi_Minh'; // Xác định múi giờ Việt Nam
 
-const job23 = schedule.scheduleJob('59 59 13 * * *', () => {
+const job23 = schedule.scheduleJob('59 59 16 * * *', () => {
   const currentTime = moment().tz(timeZone).format();
   console.log(`Running scheduled task at ${currentTime} (${timeZone})`);
   console.log('--------------------------------------------------------------------------------------------------------------------');
