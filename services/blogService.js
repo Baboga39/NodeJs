@@ -118,7 +118,7 @@ class BlogService{
             user.totalBlog = user.totalBlog - 1;
             await user.save();
         }
-        if(blogDTO.status === 'Published'){
+        if(blogDTO.status === 'Published' && blog.status === 'Draft'){
             user.totalBlog = user.totalBlog + 1;
             await user.save();
             await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
