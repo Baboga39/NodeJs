@@ -186,7 +186,7 @@ const job23 = schedule.scheduleJob('59 59 16 * * *', () => {
 //   console.log('Running scheduled task at 5m');
 //   console.log('--------------------------------------------------------------------------------------------------------------------');
 //   service.adminService.autoFilterBlog();
-// },80000); 
+// },60000); 
 
 
 const port = process.env.PORT || 3001;
