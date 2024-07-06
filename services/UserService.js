@@ -334,13 +334,14 @@ static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
     
     // Save the updated user to the database
     await user.save();
+    const userUpdate = await UserModel.findById(user_id);
     console.log('Updated user info successfully')
     console.log('--------------------------------------------------------------------------------------------------------------------')
     return res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'User information updated successfully',
-      result: user,
+      result: userUpdate,
     });
 }
 static uploadAvatar = async(authenticatedUser, fileData) =>{

@@ -156,7 +156,7 @@ class BlogService{
             const updatedShare = await Share.findOneAndUpdate(
                 { listBlog: blogId },
                 { $pull: { listBlog: blogId } }, 
-                { new: true } // Trả về bản ghi Share đã được cập nhật
+                { new: true } 
             );
             let user = await User.findById(blog.user._id);
             if(blog.status==='Published'){
