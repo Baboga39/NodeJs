@@ -326,7 +326,7 @@ static updateUserInfo = async (authenticatedUser, profileDTO,res ) =>{
     // Update user information with data from the profileDTO
     user.name = profileDTO.name || user.name;
     user.phone = profileDTO.phone || user.phone;
-    user.second_name = profileDTO.second_name || user.second_name;
+    user.second_name = profileDTO.secondName || user.second_name;
     user.gender = profileDTO.gender || user.gender;
     user.descriptions = profileDTO.descriptions || user.descriptions;
     user.address = profileDTO.address || user.address;
