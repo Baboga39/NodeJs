@@ -208,7 +208,6 @@ class AdminService{
             })
             if(query.length>0){
                 for(const blog of query){
-                    console.log('Da gui')
                     await blogService.deleteBlogByIdAuto(blog._id);
                     await mailService.sendInformDeleteBlog(blog.user.email,blog.title);
                 }
