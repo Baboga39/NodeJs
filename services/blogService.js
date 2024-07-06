@@ -820,32 +820,36 @@ class BlogService{
     
     
 
-        static listBlogShareByUSer = async (authenticatedUser,userId)=>{
-            try {
-                const query = await Share.findOne({ user: userId})
-                if(!query){
-                    return 1;
+    static listBlogShareByUser = async (authenticatedUser, userId) => {
+        try {
+            const query = await Share.findOne({ user: userId });
+            if (!query) {
+                return 1;
+            }
+            
+            let listBlog = query.listBlog;
+            let result = [];
+    
+            for (const blogId of listBlog) {
+                if (blogId) {
+                    result.push(blogId);
                 }
-                let listBlog = query.listBlog;         
-                let result = []
-               for (const blog of listBlog) {
-                if(blog)
-                {
-                    result.push(blog)
-                }
-               }
-               const blog = await Blog.find({ _id: { $in: result } }).populate('category');
-                const posts = await this.findAndUpdateLikeAndSave(result,authenticatedUser._id)
-                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-                if (posts2.length === 0) {
-                    return null;
-                }
-                return posts2;
-            } catch (error) {
-                console.error("Error fetching most active posts:", error);
+            }
+    
+            const blogs = await Blog.find({ _id: { $in: result } }).populate('category');
+    
+            const posts = await this.findAndUpdateLikeAndSave(blogs, authenticatedUser._id);
+            const posts2 = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
+            if (posts2.length === 0) {
                 return null;
             }
+            return posts2;
+        } catch (error) {
+            console.error("Error fetching most active posts:", error);
+            return null;
         }
+    }
+    
         static getAllBlog = async ()=>{
             try {
                 const query = await Blog.find()
