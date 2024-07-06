@@ -111,9 +111,7 @@ class BlogService{
             user.totalBlog = user.totalBlog + 1;
             await user.save();
             await temporaryImageModel.findOneAndDelete({user: authenticatedUser.user._id})
-        }
-        console.log(blog.status)
-        console.log(blogDTO.status)
+        }    
         blog.title = blogDTO.title|| blogDTO.title;
         blog.content = blogDTO.content;
         blog.category = blogDTO.categoryIds;
