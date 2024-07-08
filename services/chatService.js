@@ -181,15 +181,6 @@ class ChatService {
                 }
             ]
         }).exec();
-    
-        const chatGroup = await Group.find({
-            $and: [
-                { listUser: { $all: [authenticationUser._id] } },
-                { isWait: false },
-                { isGroup: true }
-            ]
-        }).exec();
-    
         if (!chats) return null;
     
         const result = [];
