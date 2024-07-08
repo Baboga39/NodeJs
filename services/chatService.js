@@ -165,67 +165,115 @@ class ChatService {
         }
         return result;
     }
+    // static listChatUsers = async (authenticationUser) => {
+    //     const user = await User.findById(authenticationUser._id);
+    //     const chats = await Group.find({
+    //         $and: [
+    //             { listUser: { $all: [authenticationUser._id] } },
+    //             {
+    //                 $or: [
+    //                     { isWait: false },
+    //                     {
+    //                         isWait: true,
+    //                         userReceived: { $ne: authenticationUser._id }
+    //                     }
+    //                 ]
+    //             }
+    //         ]
+    //     }).exec();
+    //     if (!chats) return null;
+    
+    //     const result = [];
+    
+    //     const removeDuplicates = (arr) => {
+    //         const uniqueArray = [];
+    //         arr.forEach(item => {
+    //             if (!uniqueArray.some(uniqueItem => uniqueItem._id.equals(item._id))) {
+    //                 uniqueArray.push(item);
+    //             }
+    //         });
+    //         return uniqueArray;
+    //     };
+    
+    //     chats.forEach(chat => {
+    //         result.push(chat);
+    //     });
+    
+    //     chats.forEach(chat => {
+    //         if (!chat.isGroup) {
+    //             const listUser = chat.listUser;
+    //             let userReceived;
+    //             for (let userCheck of listUser) {
+    //                 if (!userCheck._id.equals(user._id)) {
+    //                     userReceived = userCheck;
+    //                 }
+    //             }
+    //             chat.userReceived = userReceived;
+    //             chat.isWait = false;
+    //             result.push(chat);
+    //         }
+    //     });
+    
+    //     const uniqueResult = removeDuplicates(result);
+    //     const chatWithStatus = uniqueResult.map(async chat => {
+    //         const isRead = await this.updateIsRead(authenticationUser._id, chat._id);  
+    //         return { ...chat.toObject(), isRead };
+    //     });
+    //     const resultRes = await Promise.all(chatWithStatus);
+    //     resultRes.sort((a, b) => {
+    //         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    //     });
+    
+    //     return resultRes;
+    // }
     static listChatUsers = async (authenticationUser) => {
-        const user = await User.findById(authenticationUser._id);
+        const userId = authenticationUser._id;
+    
+        // Tối ưu hóa truy vấn MongoDB và sử dụng projection để giới hạn các trường
         const chats = await Group.find({
             $and: [
-                { listUser: { $all: [authenticationUser._id] } },
+                { listUser: { $all: [userId] } },
                 {
                     $or: [
                         { isWait: false },
                         {
                             isWait: true,
-                            userReceived: { $ne: authenticationUser._id }
+                            userReceived: { $ne: userId }
                         }
                     ]
                 }
             ]
-        }).exec();
+        }).select('_id listUser isGroup updatedAt isWait userReceived').exec();
+    
         if (!chats) return null;
     
-        const result = [];
-    
-        const removeDuplicates = (arr) => {
-            const uniqueArray = [];
-            arr.forEach(item => {
-                if (!uniqueArray.some(uniqueItem => uniqueItem._id.equals(item._id))) {
-                    uniqueArray.push(item);
-                }
-            });
-            return uniqueArray;
-        };
+        // Sử dụng Set để lưu trữ các mục duy nhất
+        const chatMap = new Map();
     
         chats.forEach(chat => {
-            result.push(chat);
-        });
-    
-        chats.forEach(chat => {
+            // Nếu chat không phải là nhóm, xác định userReceived
             if (!chat.isGroup) {
-                const listUser = chat.listUser;
-                let userReceived;
-                for (let userCheck of listUser) {
-                    if (!userCheck._id.equals(user._id)) {
-                        userReceived = userCheck;
-                    }
-                }
+                const userReceived = chat.listUser.find(u => !u.equals(userId));
                 chat.userReceived = userReceived;
                 chat.isWait = false;
-                result.push(chat);
             }
+            chatMap.set(chat._id.toString(), chat);
         });
     
-        const uniqueResult = removeDuplicates(result);
-        const chatWithStatus = uniqueResult.map(async chat => {
-            const isRead = await this.updateIsRead(authenticationUser._id, chat._id);  
+        // Theo dõi trạng thái đã đọc
+        const chatWithStatusPromises = Array.from(chatMap.values()).map(async chat => {
+            const isRead = await this.updateIsRead(userId, chat._id);
             return { ...chat.toObject(), isRead };
         });
-        const resultRes = await Promise.all(chatWithStatus);
-        resultRes.sort((a, b) => {
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-        });
+    
+        const resultRes = await Promise.all(chatWithStatusPromises);
+    
+        // Sắp xếp kết quả theo updatedAt
+        resultRes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     
         return resultRes;
     }
+    
     static checkIsReadChat = async (authenticationUser,chatId)=> {
         const chat = await Group.findById(chatId);
         if(!chat) return null;
