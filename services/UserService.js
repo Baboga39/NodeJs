@@ -93,34 +93,34 @@ static getAllUser = async () => {
 //         await this.followUser(randomUser._id, user);
 //     }
 //   }
-  const listUserAccess = await UserModel.find({roles: 'Client'})
-  for (const user of listUserAccess) {
-    // Tạo ngẫu nhiên số lần truy cập, ít nhất là 10
-    const numAccesses = Math.floor(Math.random() * 4) + 10; // Số ngẫu nhiên từ 10 đến 13
+  // const listUserAccess = await UserModel.find({roles: 'Client'})
+  // for (const user of listUserAccess) {
+  //   // Tạo ngẫu nhiên số lần truy cập, ít nhất là 10
+  //   const numAccesses = Math.floor(Math.random() * 4) + 10; // Số ngẫu nhiên từ 10 đến 13
 
-    for (let i = 0; i < numAccesses; i++) {
-        // Tạo ngẫu nhiên ngày từ 01/07 đến 12/07
-        const randomDay = Math.floor(Math.random() * 12) + 1;
-        const createdAt = new Date(new Date().getFullYear(), 6, randomDay); // Tháng 6 là tháng 7 do chỉ số bắt đầu từ 0
+  //   for (let i = 0; i < numAccesses; i++) {
+  //       // Tạo ngẫu nhiên ngày từ 01/07 đến 12/07
+  //       const randomDay = Math.floor(Math.random() * 12) + 1;
+  //       const createdAt = new Date(new Date().getFullYear(), 6, randomDay); // Tháng 6 là tháng 7 do chỉ số bắt đầu từ 0
 
-        // Tìm bản ghi truy cập đã tồn tại trong ngày đó của người dùng
-        const existingAccess = await Access.findOne({
-            user: user._id,
-            createdAt: {
-                $gte: new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate()),
-                $lt: new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + 1)
-            }
-        });
+  //       // Tìm bản ghi truy cập đã tồn tại trong ngày đó của người dùng
+  //       const existingAccess = await Access.findOne({
+  //           user: user._id,
+  //           createdAt: {
+  //               $gte: new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate()),
+  //               $lt: new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + 1)
+  //           }
+  //       });
 
-        // Nếu tồn tại, xóa bản ghi truy cập đó
-        if (existingAccess) {
-            await Access.deleteOne({ _id: existingAccess._id });
-        }
+  //       // Nếu tồn tại, xóa bản ghi truy cập đó
+  //       if (existingAccess) {
+  //           await Access.deleteOne({ _id: existingAccess._id });
+  //       }
 
-        // Tạo bản ghi truy cập mới
-        await Access.create({ user: user._id, createdAt });
-    }
-}
+  //       // Tạo bản ghi truy cập mới
+  //       await Access.create({ user: user._id, createdAt });
+  //   }
+//}
   if (!listUsers) {
     return null;
   }
