@@ -2804,8 +2804,8 @@ const sendVerificationEmail = async (email, otp) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
 
@@ -2831,8 +2831,8 @@ const sendInformDeleteBlog = async (email, title) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
@@ -2857,8 +2857,8 @@ const sendInformDeleteGroup = async (email, name) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
@@ -2883,8 +2883,8 @@ const sendInformDeleteTag = async (email, tag) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
@@ -2909,8 +2909,8 @@ const sendInformWarningUser = async (email, reason) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
@@ -2936,8 +2936,8 @@ const sendInformBlockUser = async (email) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
@@ -2963,8 +2963,8 @@ const sendInformDeleteComment = async (email, title) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
@@ -2990,8 +2990,8 @@ const sendInformOpenAccount = async (email, name) => {
     auth: {
       // user: 'brainiacservicehelp@gmail.com', // Your Gmail email address
       // pass: 'oegwbkflmskqidun', // Your Gmail email password
-      user: 'baboga12@gmail.com', // Your Gmail email address
-      pass: 'gommwlbokkhmtqln', //
+      user: 'brainiacservicecontact@gmail.com', // Your Gmail email address
+      pass: 'ylgctqlkndjigbnm', //
     },
   });
   const mailOptions = {
