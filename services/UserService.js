@@ -59,7 +59,7 @@ static getAllUser = async () => {
   //   }
   //   await user.save();
   // }
-  const listUsers = await UserModel.find().sort({createdAt: -1});
+  const listUsers = await UserModel.find({status: 'completed'}).sort({createdAt: -1});
   
 //   for (const user of listUsers) {
 //     const numAccesses = Math.floor(Math.random() * 11) + 15;
