@@ -695,187 +695,109 @@ class BlogService{
     //     }
     // }
 
-    // static listBlogInFeed = async (authenticatedUser, pageIndex) => {
-    //     try {
-    //         const userId = authenticatedUser._id;
-    //         const today = new Date();
-    //         today.setHours(0, 0, 0, 0);
-    //         const tomorrow = new Date(today);
-    //         tomorrow.setDate(today.getDate() + 1);
-    
-    //         // Kiểm tra quyền truy cập chỉ một lần
-    //         await Access.findOneAndUpdate(
-    //             { user: userId, createdAt: { $gte: today, $lt: tomorrow } },
-    //             { $setOnInsert: { user: userId } },
-    //             { upsert: true, new: true }
-    //         );
-    
-    //         const pageSize = 6;
-    //         const startIndex = (pageIndex - 1) * pageSize;
-    
-    //         // Lấy danh sách categories và người theo dõi cùng một lúc
-    //         const [categories, follow] = await Promise.all([
-    //             Category.find({ users: userId }).select('_id'),
-    //             followModel.findOne({ user: userId }).select('following')
-    //         ]);
-    
-    //         const categoryIds = categories.map(category => category._id);
-    //         const followingIds = follow ? follow.following.map(follow => follow._id) : [];
-    
-    //         // Sử dụng điều kiện truy vấn chung để tính tổng số lượng bài viết
-    //         const queryConditions = [
-    //             { category: { $in: categoryIds }, status: 'Published', isApproved: false, user: { $ne: userId } },
-    //             { user: { $in: followingIds }, status: 'Published', isApproved: false, user: { $ne: userId } }
-    //         ];
-    
-    //         // Đếm tổng số lượng bài viết
-    //         const totalBlogsCount = await Blog.countDocuments({ $or: queryConditions });
-    
-    //         // Sử dụng aggregate để kết hợp truy vấn và phân trang
-    //         const blogs = await Blog.aggregate([
-    //             { $match: { $or: queryConditions }},
-    //             { $sort: { createdAt: -1 }},
-    //             { $skip: startIndex },
-    //             { $limit: pageSize },
-    //             { $lookup: {
-    //                 from: 'users',
-    //                 localField: 'user',
-    //                 foreignField: '_id',
-    //                 as: 'user'
-    //             }},
-    //             { $unwind: '$user' },
-    //             { $lookup: {
-    //                 from: 'categories',
-    //                 localField: 'category',
-    //                 foreignField: '_id',
-    //                 as: 'category'
-    //             }},
-    //             { $unwind: '$category' },
-    //             { $lookup: {
-    //                 from: 'tags',
-    //                 localField: 'tags',
-    //                 foreignField: '_id',
-    //                 as: 'tags'
-    //             }}
-    //         ]);
-    
-    //         // Lấy danh sách blogs được chia sẻ và xử lý trong một truy vấn duy nhất
-    //         const sharedBlogs = await Share.aggregate([
-    //             { $match: { user: { $in: followingIds }}},
-    //             { $lookup: {
-    //                 from: 'blogs',
-    //                 localField: 'listBlog',
-    //                 foreignField: '_id',
-    //                 as: 'listBlog'
-    //             }},
-    //             { $unwind: '$listBlog' },
-    //             { $replaceRoot: { newRoot: '$listBlog' }},
-    //             { $lookup: {
-    //                 from: 'users',
-    //                 localField: 'user',
-    //                 foreignField: '_id',
-    //                 as: 'user'
-    //             }},
-    //             { $unwind: '$user' },
-    //             { $lookup: {
-    //                 from: 'categories',
-    //                 localField: 'category',
-    //                 foreignField: '_id',
-    //                 as: 'category'
-    //             }},
-    //             { $unwind: '$category' },
-    //             { $lookup: {
-    //                 from: 'tags',
-    //                 localField: 'tags',
-    //                 foreignField: '_id',
-    //                 as: 'tags'
-    //             }}
-    //         ]);
-    
-    //         // Kết hợp và xử lý dữ liệu
-    //         const allBlogs = [...blogs, ...sharedBlogs];
-    
-    //         // Loại bỏ các bài viết trùng lặp
-    //         const uniqueBlogs = Array.from(new Set(allBlogs.map(blog => blog._id.toString()))).map(id => allBlogs.find(blog => blog._id.toString() === id));
-    
-    //         // Sắp xếp theo createdAt và updatedAt
-    //         uniqueBlogs.sort((a, b) => {
-    //             if (a.createdAt > b.createdAt) return -1;
-    //             if (a.createdAt < b.createdAt) return 1;
-    //             if (a.updatedAt > b.updatedAt) return -1;
-    //             if (a.updatedAt < b.updatedAt) return 1;
-    //             return 0;
-    //         });
-    
-    //         const size = Math.ceil(totalBlogsCount / pageSize);
-    //         const paginatedPosts = uniqueBlogs.slice(0, pageSize);  // Đã được phân trang trong truy vấn
-    
-    //         return { size, posts: paginatedPosts };
-    //     } catch (error) {
-    //         console.error("Error fetching most active posts:", error);
-    //         return null;
-    //     }
-    // }
-    
-        static listBlogInFeed = async (authenticatedUser, pageIndex) => {
+    static listBlogInFeed = async (authenticatedUser, pageIndex) => {
         try {
             const userId = authenticatedUser._id;
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0);
             const tomorrow = new Date(today);
             tomorrow.setDate(today.getDate() + 1);
-
-            const access = new Access({ user: userId });
-            const checkAccess = await Access.findOne({ user: userId, createdAt: { $gte: today, $lt: tomorrow } });
-
-            if (!checkAccess) {
-                await access.save();
-            }
-
+    
+            // Kiểm tra quyền truy cập chỉ một lần
+            await Access.findOneAndUpdate(
+                { user: userId, createdAt: { $gte: today, $lt: tomorrow } },
+                { $setOnInsert: { user: userId } },
+                { upsert: true, new: true }
+            );
+    
             const pageSize = 6;
             const startIndex = (pageIndex - 1) * pageSize;
-
-            // Lấy danh sách categories
-            const categories = await Category.find({ users: userId }).select('_id');
+    
+            // Lấy danh sách categories và người theo dõi cùng một lúc
+            const [categories, follow] = await Promise.all([
+                Category.find({ users: userId }).select('_id'),
+                followModel.findOne({ user: userId }).select('following')
+            ]);
+    
             const categoryIds = categories.map(category => category._id);
-
-            // Lấy danh sách người theo dõi
-            const follow = await followModel.findOne({ user: userId }).select('following');
             const followingIds = follow ? follow.following.map(follow => follow._id) : [];
-
-            // Kết hợp truy vấn category và user
+    
+            // Sử dụng điều kiện truy vấn chung để tính tổng số lượng bài viết
             const queryConditions = [
-                { category: { $in: categoryIds }, status: 'Published', isApproved: false, user:{$ne:userId} },
-                { user: { $in: followingIds }, status: 'Published', isApproved: false, user: {$ne:userId} },
+                { category: { $in: categoryIds }, status: 'Published', isApproved: false, user: { $ne: userId } },
+                { user: { $in: followingIds }, status: 'Published', isApproved: false, user: { $ne: userId } }
             ];
-
-            const blogs = await Blog.find({ $or: queryConditions })
-                .sort({ createdAt: -1 })
-                .skip(startIndex)
-                .limit(pageSize)
-                .populate('tags')
-                .populate('user')
-                .populate('category')
-                .exec();
-
-            // Lấy danh sách blogs được chia sẻ
-            const sharedBlogs = await Share.find({ user: { $in: followingIds } }).populate('listBlog').exec();
-
-            for (const share of sharedBlogs) {
-                if (share.listBlog) {
-                    const posts = await this.findAndUpdateLikeAndSave(share.listBlog, userId);
-                    const postsWithPermissions = await this.findAndUpdatePermissions(posts, userId);
-                    for (const post of postsWithPermissions) {
-                        post.isShare = true;
-                        post.shareBy = share.user;
-                        blogs.push(post);
-                    }
-                }
-            }
-
+    
+            // Đếm tổng số lượng bài viết
+            const totalBlogsCount = await Blog.countDocuments({ $or: queryConditions });
+    
+            // Sử dụng aggregate để kết hợp truy vấn và phân trang
+            const blogs = await Blog.aggregate([
+                { $match: { $or: queryConditions }},
+                { $sort: { createdAt: -1 }},
+                { $skip: startIndex },
+                { $limit: pageSize },
+                { $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }},
+                { $unwind: '$user' },
+                { $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'category'
+                }},
+                { $unwind: '$category' },
+                { $lookup: {
+                    from: 'tags',
+                    localField: 'tags',
+                    foreignField: '_id',
+                    as: 'tags'
+                }}
+            ]);
+    
+            // Lấy danh sách blogs được chia sẻ và xử lý trong một truy vấn duy nhất
+            const sharedBlogs = await Share.aggregate([
+                { $match: { user: { $in: followingIds }}},
+                { $lookup: {
+                    from: 'blogs',
+                    localField: 'listBlog',
+                    foreignField: '_id',
+                    as: 'listBlog'
+                }},
+                { $unwind: '$listBlog' },
+                { $replaceRoot: { newRoot: '$listBlog' }},
+                { $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }},
+                { $unwind: '$user' },
+                { $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'category'
+                }},
+                { $unwind: '$category' },
+                { $lookup: {
+                    from: 'tags',
+                    localField: 'tags',
+                    foreignField: '_id',
+                    as: 'tags'
+                }}
+            ]);
+    
+            // Kết hợp và xử lý dữ liệu
+            const allBlogs = [...blogs, ...sharedBlogs];
+    
             // Loại bỏ các bài viết trùng lặp
-            const uniqueBlogs = Array.from(new Set(blogs.map(blog => blog._id))).map(id => blogs.find(blog => blog._id.toString() === id.toString()));
-
+            const uniqueBlogs = Array.from(new Set(allBlogs.map(blog => blog._id.toString()))).map(id => allBlogs.find(blog => blog._id.toString() === id));
+    
             // Sắp xếp theo createdAt và updatedAt
             uniqueBlogs.sort((a, b) => {
                 if (a.createdAt > b.createdAt) return -1;
@@ -884,16 +806,18 @@ class BlogService{
                 if (a.updatedAt < b.updatedAt) return 1;
                 return 0;
             });
-
-            const size = Math.ceil(uniqueBlogs.length / pageSize);
-            const paginatedPosts = uniqueBlogs.slice(startIndex, startIndex + pageSize);
-
+    
+            const size = Math.ceil(totalBlogsCount / pageSize);
+            const paginatedPosts = uniqueBlogs.slice(0, pageSize);  // Đã được phân trang trong truy vấn
+    
             return { size, posts: paginatedPosts };
         } catch (error) {
             console.error("Error fetching most active posts:", error);
             return null;
         }
     }
+    
+     
     
 
     static listBlogShareByUSer = async (authenticatedUser, userId) => {
