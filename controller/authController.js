@@ -139,7 +139,7 @@ const verify = async (req, res) => {
     {
       console.log('Token Expired')
       console.log('--------------------------------------------------------------------------------------------------------------------')
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         statusCode: 400,
         message: 'Token Expired',
@@ -163,7 +163,7 @@ const verify = async (req, res) => {
       await user.save();
       console.log('User verified successfully')
       console.log('--------------------------------------------------------------------------------------------------------------------')
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         statusCode: 200,
         message: 'User verified successfully',
@@ -173,7 +173,7 @@ const verify = async (req, res) => {
   } catch (error) {
     console.error('Error verifying user:', error);
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       statusCode: 500,
       message: 'Internal server error',
