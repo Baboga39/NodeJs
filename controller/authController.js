@@ -137,6 +137,7 @@ const verify = async (req, res) => {
     
     if(AuthService.isTokenExpired(verificationToken.expiryDate))
     {
+      await VerificationToken.deleteOne({ token: token });
       console.log('Token Expired')
       console.log('--------------------------------------------------------------------------------------------------------------------')
       return res.status(400).json({
