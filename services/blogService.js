@@ -492,131 +492,242 @@ class BlogService{
                 return null;
             }
         }
-        static listBlogInFeed = async (authenticatedUser,pageIndex) =>{
-        try{
-            const access = new Access({
-                user: authenticatedUser._id,
-            })
+    //     static listBlogInFeed = async (authenticatedUser,pageIndex) =>{
+    //     try{
+    //         const access = new Access({
+    //             user: authenticatedUser._id,
+    //         })
+    //         const today = new Date();
+    //         today.setHours(0, 0, 0, 0); 
+    //         const tomorrow = new Date(today);
+    //         tomorrow.setDate(today.getDate() + 1); 
+    //         const checkAccess = await Access.findOne({
+    //             user: authenticatedUser._id,
+    //             createdAt: { $gte: today, $lt: tomorrow }
+    //         })
+    //         if(!checkAccess){
+    //             access.save();
+    //         }
+    //         const pageSize = 6;
+    //         const startIndex = (pageIndex - 1) * pageSize; 
+    //         const endIndex = pageIndex * pageSize; 
+    //         const listBlog = [];
+    //         const uniquePostIds = new Set();
+    //         const categories = await Category.find({users: authenticatedUser._id})
+    //         for (const category of categories) {
+    //             const query = await Blog.find({ category: category._id, status: 'Published',isApproved: false})
+    //                 .sort({ createdAt: -1 })
+    //                 .populate('tags')
+    //                 .populate('user')
+    //                 .populate('category')
+    //                 .exec();
+    //             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+    //             const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+    //             if (posts2.length>0) {
+    //                 for (const post of posts2) {
+    //                     if (!uniquePostIds.has(post._id)) { 
+    //                         listBlog.push(post);
+    //                         uniquePostIds.add(post._id);
+    //                     }
+    //                 }
+    //         }
+    //     }
+    //     const follow = await followModel.findOne({user: authenticatedUser._id})
+    //     if(follow){
+    //         const users = follow.following;
+    //         for (const user of users) {
+    //             const query = await Blog.find({ user: user._id, status: 'Published',isApproved:false})
+    //                                     .sort({ createdAt: -1 })
+    //                                     .populate('tags')
+    //                                     .populate('user')
+    //                                     .populate('category')
+    //                                     .exec()
+    //             const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+    //             const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+    //             if (posts2.length>0) {
+    //                 for (const post of posts2) {
+    //                     if (!uniquePostIds.has(post._id)) {
+    //                         listBlog.push(post);
+    //                         uniquePostIds.add(post._id);
+    //                     }
+    //                 }
+    //             }
+    //         }   
+    //         for (const user of users) {
+    //             const shareBlog = await Share.findOne({ user: user._id})
+    //                 if(shareBlog)
+    //                 {
+    //                 const blogFindShare = shareBlog.listBlog;
+    //                 if(blogFindShare){
+    //                 const posts = await this.findAndUpdateLikeAndSave(blogFindShare,authenticatedUser._id)
+    //                 const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+    //                 if (posts2.length>0) {
+    //                 const UserFind = await User.findById(user._id)
+    //                 for (const post of posts2) {
+    //                     post.isShare = true;
+    //                     post.shareBy = UserFind;
+    //                     listBlog.push(post);
+    //                     }
+    //                     }
+    //                 }
+    //                 continue;
+    //             }
+    //         }
+    //     }
+    //     // const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})
+    //     //                             .sort({ createdAt: -1 }) 
+    //     //                             .populate('tags')
+    //     //                             .populate('user')
+    //     //                             .populate('category')
+    //     //                             .exec();
+    //     //     const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
+    //     //     const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
+    //     //     if (posts2.length>0) {
+    //     //         for (const post of posts2) {
+    //     //             if (!uniquePostIds.has(post._id)) {
+    //     //                 listBlog.push(post);
+    //     //                 uniquePostIds.add(post._id);
+    //     //             }
+    //     //         }
+    //     //     }
+    //         listBlog.sort((a, b) => {
+    //             if (a.createdAt > b.createdAt) {
+    //                 return -1; 
+    //             } else if (a.createdAt < b.createdAt) {
+    //                 return 1;
+    //             } else {
+    //                 if (a.updatedAt > b.updatedAt) {
+    //                     return -1;
+    //                 } else if (a.updatedAt < b.updatedAt) {
+    //                     return 1;
+    //                 } else {
+    //                     return 0;
+    //                 }
+    //             }
+    //         });
+    //     const size = Math.ceil(listBlog.length / 6);
+    //     const paginatedPosts = listBlog.slice(startIndex, endIndex);
+    //     return {size: size, posts: paginatedPosts};
+    // }
+    //     catch (error) {
+    //             console.error("Error fetching most active posts:", error);
+    //             return null;
+    //         }
+    //     }
+    static listBlogInFeed = async (authenticatedUser, pageIndex) => {
+        try {
+            const access = new Access({ user: authenticatedUser._id });
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0);
             const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1); 
+            tomorrow.setDate(today.getDate() + 1);
+            
             const checkAccess = await Access.findOne({
                 user: authenticatedUser._id,
                 createdAt: { $gte: today, $lt: tomorrow }
-            })
-            if(!checkAccess){
-                access.save();
+            });
+            if (!checkAccess) {
+                await access.save();
             }
+    
             const pageSize = 6;
-            const startIndex = (pageIndex - 1) * pageSize; 
-            const endIndex = pageIndex * pageSize; 
-            const listBlog = [];
+            const startIndex = (pageIndex - 1) * pageSize;
+            const endIndex = pageIndex * pageSize;
             const uniquePostIds = new Set();
-            const categories = await Category.find({users: authenticatedUser._id})
-            for (const category of categories) {
-                const query = await Blog.find({ category: category._id, status: 'Published',isApproved: false})
+            const listBlog = [];
+    
+            const categories = await Category.find({ users: authenticatedUser._id }).exec();
+            const follow = await followModel.findOne({ user: authenticatedUser._id }).exec();
+            const users = follow ? follow.following : [];
+    
+            const allPostsPromises = categories.map(async (category) => {
+                const query = await Blog.find({ category: category._id, status: 'Published', isApproved: false })
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
                     .populate('category')
                     .exec();
-                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
-                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-                if (posts2.length>0) {
-                    for (const post of posts2) {
-                        if (!uniquePostIds.has(post._id)) { 
-                            listBlog.push(post);
-                            uniquePostIds.add(post._id);
-                        }
-                    }
-            }
-        }
-        const follow = await followModel.findOne({user: authenticatedUser._id})
-        if(follow){
-            const users = follow.following;
-            for (const user of users) {
-                const query = await Blog.find({ user: user._id, status: 'Published',isApproved:false})
-                                        .sort({ createdAt: -1 })
-                                        .populate('tags')
-                                        .populate('user')
-                                        .populate('category')
-                                        .exec()
-                const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
-                const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-                if (posts2.length>0) {
-                    for (const post of posts2) {
-                        if (!uniquePostIds.has(post._id)) {
-                            listBlog.push(post);
-                            uniquePostIds.add(post._id);
-                        }
-                    }
-                }
-            }   
-            for (const user of users) {
-                const shareBlog = await Share.findOne({ user: user._id})
-                    if(shareBlog)
-                    {
+    
+                let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser._id);
+                posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
+    
+                return posts;
+            });
+    
+            const followPostsPromises = users.map(async (user) => {
+                const query = await Blog.find({ user: user._id, status: 'Published', isApproved: false })
+                    .sort({ createdAt: -1 })
+                    .populate('tags')
+                    .populate('user')
+                    .populate('category')
+                    .exec();
+    
+                let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser._id);
+                posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
+    
+                return posts;
+            });
+    
+            const sharePostsPromises = users.map(async (user) => {
+                const shareBlog = await Share.findOne({ user: user._id }).exec();
+                if (shareBlog) {
                     const blogFindShare = shareBlog.listBlog;
-                    if(blogFindShare){
-                    const posts = await this.findAndUpdateLikeAndSave(blogFindShare,authenticatedUser._id)
-                    const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-                    if (posts2.length>0) {
-                    const UserFind = await User.findById(user._id)
-                    for (const post of posts2) {
-                        post.isShare = true;
-                        post.shareBy = UserFind;
-                        listBlog.push(post);
-                        }
-                        }
+                    if (blogFindShare) {
+                        let posts = await this.findAndUpdateLikeAndSave(blogFindShare, authenticatedUser._id);
+                        posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
+    
+                        const UserFind = await User.findById(user._id).exec();
+                        posts.forEach(post => {
+                            post.isShare = true;
+                            post.shareBy = UserFind;
+                        });
+    
+                        return posts;
                     }
-                    continue;
                 }
-            }
-        }
-        // const query = await Blog.find({ user: authenticatedUser._id, status: 'Published'})
-        //                             .sort({ createdAt: -1 }) 
-        //                             .populate('tags')
-        //                             .populate('user')
-        //                             .populate('category')
-        //                             .exec();
-        //     const posts = await this.findAndUpdateLikeAndSave(query,authenticatedUser._id)
-        //     const posts2 = await this.findAndUpdatePermissions(posts,authenticatedUser._id)
-        //     if (posts2.length>0) {
-        //         for (const post of posts2) {
-        //             if (!uniquePostIds.has(post._id)) {
-        //                 listBlog.push(post);
-        //                 uniquePostIds.add(post._id);
-        //             }
-        //         }
-        //     }
-            listBlog.sort((a, b) => {
-                if (a.createdAt > b.createdAt) {
-                    return -1; 
-                } else if (a.createdAt < b.createdAt) {
-                    return 1;
-                } else {
-                    if (a.updatedAt > b.updatedAt) {
-                        return -1;
-                    } else if (a.updatedAt < b.updatedAt) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                return [];
+            });
+    
+            const [allPostsResults, followPostsResults, sharePostsResults] = await Promise.all([
+                Promise.all(allPostsPromises),
+                Promise.all(followPostsPromises),
+                Promise.all(sharePostsPromises)
+            ]);
+    
+            const allPosts = allPostsResults.flat();
+            const followPosts = followPostsResults.flat();
+            const sharePosts = sharePostsResults.flat();
+    
+            [...allPosts, ...followPosts, ...sharePosts].forEach(post => {
+                if (!uniquePostIds.has(post._id)) {
+                    listBlog.push(post);
+                    uniquePostIds.add(post._id);
                 }
             });
-        const size = Math.ceil(listBlog.length / 6);
-        const paginatedPosts = listBlog.slice(startIndex, endIndex);
-        return {size: size, posts: paginatedPosts};
-    }
-        catch (error) {
-                console.error("Error fetching most active posts:", error);
-                return null;
-            }
+    
+            listBlog.sort((a, b) => {
+                if (a.createdAt > b.createdAt) return -1;
+                if (a.createdAt < b.createdAt) return 1;
+                if (a.updatedAt > b.updatedAt) return -1;
+                if (a.updatedAt < b.updatedAt) return 1;
+                return 0;
+            });
+    
+            const size = Math.ceil(listBlog.length / pageSize);
+            const paginatedPosts = listBlog.slice(startIndex, endIndex);
+    
+            return { size, posts: paginatedPosts };
+        } catch (error) {
+            console.error("Error fetching most active posts:", error);
+            return null;
         }
+    };
     
 
-  
+   
+    
+    
+        
    
     
 
