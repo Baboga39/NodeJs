@@ -641,8 +641,14 @@ class BlogService{
             const follow = await followModel.findOne({ user: authenticatedUser._id }).exec();
             const users = follow ? follow.following : [];
     
+            // Lấy bài viết từ các danh mục người dùng đã theo dõi, trừ các bài viết của chính người dùng đã xác thực
             const allPostsPromises = categories.map(async (category) => {
-                const query = await Blog.find({ category: category._id, user: authenticatedUser._id, status: 'Published', isApproved: false })
+                const query = await Blog.find({
+                    category: category._id,
+                    user: { $ne: authenticatedUser._id },
+                    status: 'Published',
+                    isApproved: false
+                })
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
@@ -655,8 +661,13 @@ class BlogService{
                 return posts;
             });
     
+            // Lấy bài viết từ những người dùng mà người dùng hiện tại theo dõi
             const followPostsPromises = users.map(async (user) => {
-                const query = await Blog.find({ user: user._id, status: 'Published', isApproved: false })
+                const query = await Blog.find({
+                    user: user._id,
+                    status: 'Published',
+                    isApproved: false
+                })
                     .sort({ createdAt: -1 })
                     .populate('tags')
                     .populate('user')
@@ -669,6 +680,7 @@ class BlogService{
                 return posts;
             });
     
+            // Lấy bài viết được chia sẻ từ những người dùng mà người dùng hiện tại theo dõi
             const sharePostsPromises = users.map(async (user) => {
                 const shareBlog = await Share.findOne({ user: user._id }).exec();
                 if (shareBlog) {
