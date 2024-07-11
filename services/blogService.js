@@ -736,7 +736,6 @@ class BlogService{
     //     }
     // };
     
-
     static listBlogInFeed = async (authenticatedUser, pageIndex) => {
         try {
             const access = new Access({ user: authenticatedUser._id });
@@ -859,6 +858,7 @@ class BlogService{
         }
     };
     
+
     
 
 
