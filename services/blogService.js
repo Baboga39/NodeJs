@@ -832,7 +832,7 @@ class BlogService{
             const followPosts = followPostsResults.flat();
             const sharePosts = sharePostsResults.flat();
     
-            // Ghép các bài viết vào danh sách listBlog và loại bỏ các bài viết trùng lặp
+            // Ghép các bài viết vào danh sách listBlog và loại bỏ các bài viết trùng lặp bằng _id
             [...allPosts, ...followPosts, ...sharePosts].forEach(post => {
                 if (!uniquePostIds.has(post._id)) {
                     listBlog.push(post);
@@ -857,6 +857,7 @@ class BlogService{
             return null;
         }
     };
+    
     
     
 
