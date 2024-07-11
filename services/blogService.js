@@ -725,111 +725,6 @@ class BlogService{
     
 
 // 3s
-// static listBlogInFeed = async (authenticatedUser, pageIndex) => {
-//     try {
-//         const access = new Access({ user: authenticatedUser._id });
-//         const today = new Date();
-//         today.setHours(0, 0, 0, 0);
-//         const tomorrow = new Date(today);
-//         tomorrow.setDate(today.getDate() + 1);
-
-//         const checkAccess = await Access.findOne({
-//             user: authenticatedUser._id,
-//             createdAt: { $gte: today, $lt: tomorrow }
-//         });
-
-//         if (!checkAccess) {
-//             await access.save();
-//         }
-
-//         const pageSize = 6;
-//         const startIndex = (pageIndex - 1) * pageSize;
-//         const endIndex = pageIndex * pageSize;
-//         const uniquePostIds = new Set();
-//         const listBlog = [];
-
-//         const categories = await Category.find({ users: authenticatedUser._id });
-//         const follow = await followModel.findOne({ user: authenticatedUser._id });
-//         const users = follow ? follow.following : [];
-
-//         const allPostsPromises = categories.map(category => 
-//             Blog.find({ category: category._id, status: 'Published', isApproved: false })
-//                 .sort({ createdAt: -1 })
-//                 .populate('tags')
-//                 .populate('user')
-//                 .populate('category')
-//                 .exec()
-//                 .then(async query => {
-//                     let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser._id);
-//                     return this.findAndUpdatePermissions(posts, authenticatedUser._id);
-//                 })
-//         );
-
-//         const followPostsPromises = users.map(user => 
-//             Blog.find({ user: user._id, status: 'Published', isApproved: false })
-//                 .sort({ createdAt: -1 })
-//                 .populate('tags')
-//                 .populate('user')
-//                 .populate('category')
-//                 .exec()
-//                 .then(async query => {
-//                     let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser._id);
-//                     return this.findAndUpdatePermissions(posts, authenticatedUser._id);
-//                 })
-//         );
-
-//         const sharePostsPromises = users.map(async user => {
-//             const shareBlog = await Share.findOne({ user: user._id }).exec();
-//             if (shareBlog && shareBlog.listBlog) {
-//                 const blogFindShare = shareBlog.listBlog;
-//                 let posts = await this.findAndUpdateLikeAndSave(blogFindShare, authenticatedUser._id);
-//                 posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
-
-//                 const UserFind = await User.findById(user._id).exec();
-//                 posts.forEach(post => {
-//                     post.isShare = true;
-//                     post.shareBy = UserFind;
-//                 });
-
-//                 return posts;
-//             }
-//             return [];
-//         });
-
-//         const [allPostsResults, followPostsResults, sharePostsResults] = await Promise.all([
-//             Promise.all(allPostsPromises),
-//             Promise.all(followPostsPromises),
-//             Promise.all(sharePostsPromises)
-//         ]);
-
-//         const allPosts = allPostsResults.flat();
-//         const followPosts = followPostsResults.flat();
-//         const sharePosts = sharePostsResults.flat();
-
-//         [...allPosts, ...followPosts, ...sharePosts].forEach(post => {
-//             if (!uniquePostIds.has(post._id)) {
-//                 listBlog.push(post);
-//                 uniquePostIds.add(post._id);
-//             }
-//         });
-
-//         listBlog.sort((a, b) => {
-//             if (a.createdAt > b.createdAt) return -1;
-//             if (a.createdAt < b.createdAt) return 1;
-//             if (a.updatedAt > b.updatedAt) return -1;
-//             if (a.updatedAt < b.updatedAt) return 1;
-//             return 0;
-//         });
-
-//         const size = Math.ceil(listBlog.length / pageSize);
-//         const paginatedPosts = listBlog.slice(startIndex, endIndex);
-
-//         return { size, posts: paginatedPosts };
-//     } catch (error) {
-//         console.error("Error fetching most active posts:", error);
-//         return null;
-//     }
-// };
 static listBlogInFeed = async (authenticatedUser, pageIndex) => {
     try {
         const access = new Access({ user: authenticatedUser._id });
@@ -849,81 +744,67 @@ static listBlogInFeed = async (authenticatedUser, pageIndex) => {
 
         const pageSize = 6;
         const startIndex = (pageIndex - 1) * pageSize;
-
+        const endIndex = pageIndex * pageSize;
         const uniquePostIds = new Set();
         const listBlog = [];
 
-        const categories = await Category.find({ users: authenticatedUser._id }).exec();
-        const follow = await followModel.findOne({ user: authenticatedUser._id }).exec();
+        const categories = await Category.find({ users: authenticatedUser._id });
+        const follow = await followModel.findOne({ user: authenticatedUser._id });
         const users = follow ? follow.following : [];
 
-        const categoryIds = categories.map(category => category._id);
-        const userIds = users.map(user => user._id);
+        const allPostsPromises = categories.map(category => 
+            Blog.find({ category: category._id, status: 'Published', isApproved: false })
+                .sort({ createdAt: -1 })
+                .populate('tags')
+                .populate('user')
+                .populate('category')
+                .exec()
+                .then(async query => {
+                    let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser._id);
+                    return this.findAndUpdatePermissions(posts, authenticatedUser._id);
+                })
+        );
 
-        const commonPipeline = [
-            { $sort: { createdAt: -1 } },
-            { $lookup: { from: 'tags', localField: 'tags', foreignField: '_id', as: 'tags' } },
-            { $lookup: { from: 'users', localField: 'user', foreignField: '_id', as: 'user' } },
-            { $lookup: { from: 'categories', localField: 'category', foreignField: '_id', as: 'category' } },
-            { $lookup: { from: 'users', localField: 'listUserLikes', foreignField: '_id', as: 'listUserLikes' } },
-            { $lookup: { from: 'users', localField: 'savedBy', foreignField: '_id', as: 'savedBy' } },
-            { 
-                $lookup: {
-                    from: 'comments',
-                    localField: 'comments',
-                    foreignField: '_id',
-                    as: 'comments'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    let: { commentUsers: "$comments.user" },
-                    pipeline: [
-                        { $match: { $expr: { $in: ["$_id", "$$commentUsers"] } } },
-                        { $project: { _id: 1, name: 1 } }
-                    ],
-                    as: 'commentUsers'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'comments',
-                    let: { commentReplies: "$comments.replies" },
-                    pipeline: [
-                        { $match: { $expr: { $in: ["$_id", "$$commentReplies"] } } },
-                        { $project: { _id: 1, user: 1 } }
-                    ],
-                    as: 'commentReplies'
-                }
-            },
-            { $skip: startIndex },
-            { $limit: pageSize },
-        ];
+        const followPostsPromises = users.map(user => 
+            Blog.find({ user: user._id, status: 'Published', isApproved: false })
+                .sort({ createdAt: -1 })
+                .populate('tags')
+                .populate('user')
+                .populate('category')
+                .exec()
+                .then(async query => {
+                    let posts = await this.findAndUpdateLikeAndSave(query, authenticatedUser._id);
+                    return this.findAndUpdatePermissions(posts, authenticatedUser._id);
+                })
+        );
 
-        const allPostsPipeline = [
-            { $match: { category: { $in: categoryIds }, status: 'Published', isApproved: false } },
-            ...commonPipeline
-        ];
+        const sharePostsPromises = users.map(async user => {
+            const shareBlog = await Share.findOne({ user: user._id }).exec();
+            if (shareBlog && shareBlog.listBlog) {
+                const blogFindShare = shareBlog.listBlog;
+                let posts = await this.findAndUpdateLikeAndSave(blogFindShare, authenticatedUser._id);
+                posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
 
-        const followPostsPipeline = [
-            { $match: { user: { $in: userIds }, status: 'Published', isApproved: false } },
-            ...commonPipeline
-        ];
+                const UserFind = await User.findById(user._id).exec();
+                posts.forEach(post => {
+                    post.isShare = true;
+                    post.shareBy = UserFind;
+                });
 
-        const sharePostsPipeline = [
-            { $match: { user: { $in: userIds } } },
-            { $lookup: { from: 'blogs', localField: 'listBlog', foreignField: '_id', as: 'sharedBlogs' } },
-            { $unwind: '$sharedBlogs' },
-            { $replaceRoot: { newRoot: '$sharedBlogs' } },
-            ...commonPipeline
-        ];
+                return posts;
+            }
+            return [];
+        });
 
-        const [allPosts, followPosts, sharePosts] = await Promise.all([
-            Blog.aggregate(allPostsPipeline).exec(),
-            Blog.aggregate(followPostsPipeline).exec(),
-            Share.aggregate(sharePostsPipeline).exec()
+        const [allPostsResults, followPostsResults, sharePostsResults] = await Promise.all([
+            Promise.all(allPostsPromises),
+            Promise.all(followPostsPromises),
+            Promise.all(sharePostsPromises)
         ]);
+
+        const allPosts = allPostsResults.flat();
+        const followPosts = followPostsResults.flat();
+        const sharePosts = sharePostsResults.flat();
 
         [...allPosts, ...followPosts, ...sharePosts].forEach(post => {
             if (!uniquePostIds.has(post._id)) {
@@ -941,7 +822,7 @@ static listBlogInFeed = async (authenticatedUser, pageIndex) => {
         });
 
         const size = Math.ceil(listBlog.length / pageSize);
-        const paginatedPosts = listBlog.slice(0, pageSize);
+        const paginatedPosts = listBlog.slice(startIndex, endIndex);
 
         return { size, posts: paginatedPosts };
     } catch (error) {
@@ -949,6 +830,125 @@ static listBlogInFeed = async (authenticatedUser, pageIndex) => {
         return null;
     }
 };
+// static listBlogInFeed = async (authenticatedUser, pageIndex) => {
+//     try {
+//         const access = new Access({ user: authenticatedUser._id });
+//         const today = new Date();
+//         today.setHours(0, 0, 0, 0);
+//         const tomorrow = new Date(today);
+//         tomorrow.setDate(today.getDate() + 1);
+
+//         const checkAccess = await Access.findOne({
+//             user: authenticatedUser._id,
+//             createdAt: { $gte: today, $lt: tomorrow }
+//         });
+
+//         if (!checkAccess) {
+//             await access.save();
+//         }
+
+//         const pageSize = 6;
+//         const startIndex = (pageIndex - 1) * pageSize;
+
+//         const uniquePostIds = new Set();
+//         const listBlog = [];
+
+//         const categories = await Category.find({ users: authenticatedUser._id }).exec();
+//         const follow = await followModel.findOne({ user: authenticatedUser._id }).exec();
+//         const users = follow ? follow.following : [];
+
+//         const categoryIds = categories.map(category => category._id);
+//         const userIds = users.map(user => user._id);
+
+//         const commonPipeline = [
+//             { $sort: { createdAt: -1 } },
+//             { $lookup: { from: 'tags', localField: 'tags', foreignField: '_id', as: 'tags' } },
+//             { $lookup: { from: 'users', localField: 'user', foreignField: '_id', as: 'user' } },
+//             { $lookup: { from: 'categories', localField: 'category', foreignField: '_id', as: 'category' } },
+//             { $lookup: { from: 'users', localField: 'listUserLikes', foreignField: '_id', as: 'listUserLikes' } },
+//             { $lookup: { from: 'users', localField: 'savedBy', foreignField: '_id', as: 'savedBy' } },
+//             { 
+//                 $lookup: {
+//                     from: 'comments',
+//                     localField: 'comments',
+//                     foreignField: '_id',
+//                     as: 'comments'
+//                 }
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'users',
+//                     let: { commentUsers: "$comments.user" },
+//                     pipeline: [
+//                         { $match: { $expr: { $in: ["$_id", "$$commentUsers"] } } },
+//                         { $project: { _id: 1, name: 1 } }
+//                     ],
+//                     as: 'commentUsers'
+//                 }
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'comments',
+//                     let: { commentReplies: "$comments.replies" },
+//                     pipeline: [
+//                         { $match: { $expr: { $in: ["$_id", "$$commentReplies"] } } },
+//                         { $project: { _id: 1, user: 1 } }
+//                     ],
+//                     as: 'commentReplies'
+//                 }
+//             },
+//             { $skip: startIndex },
+//             { $limit: pageSize },
+//         ];
+
+//         const allPostsPipeline = [
+//             { $match: { category: { $in: categoryIds }, status: 'Published', isApproved: false } },
+//             ...commonPipeline
+//         ];
+
+//         const followPostsPipeline = [
+//             { $match: { user: { $in: userIds }, status: 'Published', isApproved: false } },
+//             ...commonPipeline
+//         ];
+
+//         const sharePostsPipeline = [
+//             { $match: { user: { $in: userIds } } },
+//             { $lookup: { from: 'blogs', localField: 'listBlog', foreignField: '_id', as: 'sharedBlogs' } },
+//             { $unwind: '$sharedBlogs' },
+//             { $replaceRoot: { newRoot: '$sharedBlogs' } },
+//             ...commonPipeline
+//         ];
+
+//         const [allPosts, followPosts, sharePosts] = await Promise.all([
+//             Blog.aggregate(allPostsPipeline).exec(),
+//             Blog.aggregate(followPostsPipeline).exec(),
+//             Share.aggregate(sharePostsPipeline).exec()
+//         ]);
+
+//         [...allPosts, ...followPosts, ...sharePosts].forEach(post => {
+//             if (!uniquePostIds.has(post._id)) {
+//                 listBlog.push(post);
+//                 uniquePostIds.add(post._id);
+//             }
+//         });
+
+//         listBlog.sort((a, b) => {
+//             if (a.createdAt > b.createdAt) return -1;
+//             if (a.createdAt < b.createdAt) return 1;
+//             if (a.updatedAt > b.updatedAt) return -1;
+//             if (a.updatedAt < b.updatedAt) return 1;
+//             return 0;
+//         });
+
+//         const size = Math.ceil(listBlog.length / pageSize);
+//         const paginatedPosts = listBlog.slice(0, pageSize);
+
+//         return { size, posts: paginatedPosts };
+//     } catch (error) {
+//         console.error("Error fetching most active posts:", error);
+//         return null;
+//     }
+// };
 
 
 
