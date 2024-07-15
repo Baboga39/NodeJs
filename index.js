@@ -147,7 +147,7 @@ socket.on("interactionMessage", async({ fromUser, chatId ,type, data }) => {
       const toUserId = userId._id.toString();
       if (recipientSocket) {
         console.log("User receiver is online.");
-        io.to(recipientSocket).emit("notificationMessage", {fromUser, toUserId,type, data,chatId});
+        io.to(recipientSocket).emit("notificationMessage", {fromUser, toUserId,type,data,chatId});
       }
       else{ console.log("User receiver is not online.");
     }

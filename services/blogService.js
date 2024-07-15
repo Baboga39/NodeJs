@@ -802,26 +802,51 @@ class BlogService{
             });
     
             // Lấy bài viết được chia sẻ từ những người dùng mà người dùng hiện tại theo dõi
+            // const sharePostsPromises = users.map(async (user) => {
+            //     const shareBlog = await Share.findOne({ user: user._id }).exec();
+            //     if (shareBlog) {
+            //         const blogFindShare = shareBlog.listBlog;
+            //         if (blogFindShare) {
+
+            //             let posts = await this.findAndUpdateLikeAndSave(blogFindShare, authenticatedUser._id);
+            //             posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
+            //             const blogs = await Blog.find({ _id: { $in: posts.map(post => post._id) } }).populate('category').exec();
+
+            //             const UserFind = await User.findById(user._id).exec();
+            //             posts.forEach(post => {
+            //                 post.isShare = true;
+            //                 post.shareBy = UserFind;
+            //             });
+    
+            //             return posts;
+            //         }
+            //     }
+            //     return [];
+            // });
             const sharePostsPromises = users.map(async (user) => {
                 const shareBlog = await Share.findOne({ user: user._id }).exec();
                 if (shareBlog) {
                     const blogFindShare = shareBlog.listBlog;
                     if (blogFindShare) {
+            
                         let posts = await this.findAndUpdateLikeAndSave(blogFindShare, authenticatedUser._id);
                         posts = await this.findAndUpdatePermissions(posts, authenticatedUser._id);
-    
+            
+                        // Truy vấn để lấy thông tin category cho mỗi post
+                        const blogs = await Blog.find({ _id: { $in: posts.map(post => post._id) } }).populate('category').exec();
+                        
                         const UserFind = await User.findById(user._id).exec();
-                        posts.forEach(post => {
-                            post.isShare = true;
-                            post.shareBy = UserFind;
+                        blogs.forEach(blog => {
+                            blog.isShare = true;
+                            blog.shareBy = UserFind;
                         });
-    
-                        return posts;
+            
+                        return blogs;
                     }
                 }
                 return [];
             });
-    
+            
             const [allPostsResults, followPostsResults, sharePostsResults] = await Promise.all([
                 Promise.all(allPostsPromises),
                 Promise.all(followPostsPromises),
