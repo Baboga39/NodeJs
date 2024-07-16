@@ -26,11 +26,9 @@ class ChatService {
         const group = await Group.findOne({
             $and: [
                 { listUser: { $in: [authenticationUser._id, userId] } }, 
-                { listLastUser: { $in: [authenticationUser._id, userId] } }, 
                 { isGroup: false },
             ]
         }).exec();
-
         if(!group){
             const newGroup = new Group({
                 createBy: authenticationUser._id,
