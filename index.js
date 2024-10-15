@@ -10,6 +10,11 @@ const http = require('http');
 const { Server } = require("socket.io");
 const schedule = require('node-schedule');
 const moment = require('moment-timezone');
+
+//Swagger 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocs = require('./config/swagger'); 
+
 const app = express();
 const Service = require('./services/chatService')
 const server = http.createServer(app);
@@ -42,6 +47,7 @@ const getUser = (id) => {
 
 io.on("connection", (socket) => {
   socket.on("addUser", ({ userId }) => {
+
     console.log("Add user in socket Success " + userId + " - ", socket.id);
     if (addUser(userId, socket.id)) {
       io.emit("getUsers", users);
@@ -163,6 +169,7 @@ socket.on("interactionMessage", async({ fromUser, chatId ,type, data }) => {
 });
 
 app.use(cors());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use(bodyParser.json());
 routes(app);
 
@@ -186,7 +193,7 @@ const job23 = schedule.scheduleJob('59 59 16 * * *', () => {
 //   console.log('Running scheduled task at 5m');
 //   console.log('--------------------------------------------------------------------------------------------------------------------');
 //   service.adminService.autoFilterBlog();
-// },60000); 
+// },6000); 
 
 
 const port = process.env.PORT || 3001;

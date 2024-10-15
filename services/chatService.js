@@ -28,7 +28,7 @@ class ChatService {
                 { listUser: { $in: [authenticationUser._id, userId] } }, 
                 { isGroup: false },
             ]
-        }).exec();
+        });
         if(!group){
             const newGroup = new Group({
                 createBy: authenticationUser._id,

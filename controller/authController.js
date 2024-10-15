@@ -160,6 +160,7 @@ const verify = async (req, res) => {
       });
     } else {
       user.status = 'completed';
+      user.loginAttempts = 0;
       await VerificationToken.deleteOne({ token: token });
       await user.save();
       console.log('User verified successfully')
