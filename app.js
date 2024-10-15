@@ -12,8 +12,8 @@ const schedule = require('node-schedule');
 const moment = require('moment-timezone');
 
 //Swagger 
-const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = require('./config/swagger'); 
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const Service = require('./services/chatService')
