@@ -19,9 +19,23 @@ const swaggerOptions = {
         description: 'Local development server',
       },
     ],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT', // Tùy thuộc vào loại token của bạn
+        },
+      },
+    },
+    security: [
+      {
+        BearerAuth: [],
+      },
+    ],
     paths: authDefinitions.paths,
   },
-  apis: [], // Không cần chỉ định file API vì chúng ta đã nhập paths trực tiếp.
+  apis: [],
 };
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);

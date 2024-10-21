@@ -882,6 +882,106 @@ class BlogService{
             return null;
         }
     };
+    static listBlogInFeed = async (authenticatedUser, pageIndex) => {
+        try {
+            const access = new Access({ user: authenticatedUser._id });
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+    
+            const checkAccess = await Access.findOne({
+                user: authenticatedUser._id,
+                createdAt: { $gte: today, $lt: tomorrow }
+            });
+            if (!checkAccess) {
+                await access.save();
+            }
+    
+            const pageSize = 6;
+            const startIndex = (pageIndex - 1) * pageSize;
+    
+            // Lấy danh sách các category và người dùng mà authenticatedUser theo dõi
+            const categories = await Category.find({ users: authenticatedUser._id }).exec();
+            const follow = await followModel.findOne({ user: authenticatedUser._id }).exec();
+            const users = follow ? follow.following.map(user => user._id) : [];
+            const categoryIds = categories.map(category => category._id);
+    
+            // Kết hợp các bài viết từ danh mục và người dùng theo dõi
+            const allPosts = await Blog.find({
+                $or: [
+                    { category: { $in: categoryIds }, user: { $ne: authenticatedUser._id } },
+                    { user: { $in: users } }
+                ],
+                status: 'Published',
+                isApproved: false
+            }, 'title createdAt tags user category') // Chỉ lấy các trường cần thiết
+                .sort({ createdAt: -1 })
+                .populate('tags', 'name') // Chỉ lấy trường name của tags
+                .populate('user', 'name')
+                .populate('category', 'name')
+                .limit(pageSize)
+                .skip(startIndex)
+                .exec();
+    
+            // Lấy bài viết được chia sẻ từ những người dùng mà authenticatedUser theo dõi
+            const sharePosts = await Share.find({
+                user: { $in: users }
+            })
+                .populate({
+                    path: 'listBlog',
+                    match: {
+                        status: 'Published',
+                        isApproved: false
+                    },
+                    select: 'title createdAt tags user category',
+                    populate: [
+                        { path: 'tags', select: 'name' },
+                        { path: 'user', select: 'name' },
+                        { path: 'category', select: 'name' }
+                    ]
+                })
+                .exec();
+    
+            // Xử lý các bài viết được chia sẻ và kết hợp chúng vào allPosts
+            const sharedBlogs = sharePosts.flatMap(share => {
+                const userShared = users.find(user => user.equals(share.user));
+                return share.listBlog.map(blog => {
+                    blog.isShare = true;
+                    blog.shareBy = userShared;
+                    return blog;
+                });
+            });
+    
+            // Kết hợp các bài viết vào danh sách và loại bỏ các bài viết trùng lặp bằng _id
+            const uniquePostIds = new Set();
+            const listBlog = [...allPosts, ...sharedBlogs].filter(post => {
+                if (uniquePostIds.has(post._id.toString())) {
+                    return false;
+                }
+                uniquePostIds.add(post._id.toString());
+                return true;
+            });
+    
+            // Sắp xếp lại danh sách các bài viết theo ngày tạo và cập nhật
+            listBlog.sort((a, b) => {
+                if (a.createdAt > b.createdAt) return -1;
+                if (a.createdAt < b.createdAt) return 1;
+                if (a.updatedAt > b.updatedAt) return -1;
+                if (a.updatedAt < b.updatedAt) return 1;
+                return 0;
+            });
+    
+            const size = Math.ceil(listBlog.length / pageSize);
+            const paginatedPosts = listBlog.slice(0, pageSize); // Chỉ lấy số lượng bài viết cần thiết
+    
+            return { size, posts: paginatedPosts };
+        } catch (error) {
+            console.error("Error fetching most active posts:", error);
+            return null;
+        }
+    };
+    
     
     
     

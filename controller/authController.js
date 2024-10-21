@@ -341,7 +341,7 @@ const resetPassword = async (req, res) => {
   if (!user) {
     console.log('Not found user in database')
     console.log('--------------------------------------------------------------------------------------------------------------------')
-    return res.status(401).json({
+    return res.status(400).json({
       success: false,
       statusCode: 400,
       message: 'Not found. Please try again',

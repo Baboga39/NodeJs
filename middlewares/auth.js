@@ -37,7 +37,6 @@ const authenticateToken = (req, res, next) => {
 
 const getJwt = (req) => {
   const authHeader = req.header('Authorization');
-
   if (authHeader && authHeader.startsWith('Bearer')) {
     return authHeader.replace('Bearer ', '');
   }
