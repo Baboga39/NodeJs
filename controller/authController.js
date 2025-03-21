@@ -4,6 +4,8 @@ const AuthService= require('../services/authService');
 const bcryptjs = require('bcryptjs');
 const VerificationToken = require('../models/VerificationTokenModel');
 const UserDTO = require('../dto/request/UserDTO');
+const redisClient = require('../config/redis');
+
 
 // Register function
 const register = async (req, res) => {
@@ -358,11 +360,28 @@ const resetPassword = async (req, res) => {
     result: null,
   });
 } 
+
+const logout = async (req, res) => {
+
+  const tokenKey = `TOKEN_BLACK_LIST_${req.user.user._id}_${req.user.user.jti}`;
+  const isBlacklisted = await redisClient.set(tokenKey,1);
+  
+
+  return res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'Logout successfully',
+    result: isBlacklisted,
+  });
+
+}
+
 module.exports = {
   register,
   verify,
   login,
   forgotPassword,
   resetPassword,
-  registerAdmin
+  registerAdmin,
+  logout
 };

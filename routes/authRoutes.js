@@ -8,6 +8,7 @@ router.post('/register', UserController.register) ;
 router.post('/registerAdmin',middleware.authenticateToken,middleware.filter('Admin'),UserController.registerAdmin)
 router.post('/verify', UserController.verify);
 router.post('/login', UserController.login);
+router.post('/logout',middleware.authenticateToken, UserController.logout);
 router.post('/forgot-password', UserController.forgotPassword);
 router.post('/reset-password', UserController.resetPassword);
 

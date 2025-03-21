@@ -707,6 +707,7 @@ static shareBlog = async (authenticatedUser, blogId) =>{
 //////////////////////////////// Interaction with User //////////////////////////////////////////////////////////////////
 static followUser = async (user_id, authenticatedUser) => {
   try {
+    console.log(authenticatedUser)
     const userToFollow = await usermodel.findById(user_id);
     const user = await UserModel.findById(user_id);
     const userAuthentication = await UserModel.findById(authenticatedUser._id)

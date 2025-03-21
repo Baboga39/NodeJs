@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 //const bcrypt = require('bcrypt');
 const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid')
+
 
 if (mongoose.models.User) {
   delete mongoose.models.User;
@@ -101,6 +103,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  jti: {
+    type: String,
+  },
+
 }, { timestamps: false,  strict: false });
 userSchema.index({
   name: 'text',

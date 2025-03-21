@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
 const mailService = require('../services/mailService');
+const { v4: uuidv4 } = require('uuid')
 const VerificationToken = require('../models/VerificationTokenModel');
 class AuthService {
+  
   static generateToken(payload) {
+    payload.jti = uuidv4();
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1w' });
   }
   static isTokenExpired = (expiryDate) => {
