@@ -19,20 +19,19 @@ const authenticateToken = async (req, res, next) => {
 
     const decoded = await verifyJwt(token, process.env.JWT_SECRET);
 
-    console.log(decoded)
 
-    const tokenKey = `TOKEN_BLACK_LIST_${decoded.user._id}_${decoded.user.jti}`;
-    const isBlacklisted = await redisClient.get(tokenKey);
+    // const tokenKey = `TOKEN_BLACK_LIST_${decoded.user._id}_${decoded.user.jti}`;
+    // const isBlacklisted = await redisClient.get(tokenKey);
 
 
-    if (isBlacklisted) {
-      return res.status(401).json({
-        success: false,
-        statusCode: 401,
-        message: 'Token has been revoked',
-        result: null,
-      });
-    }
+    // if (isBlacklisted) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     statusCode: 401,
+    //     message: 'Token has been revoked',
+    //     result: null,
+    //   });
+    // }
 
     req.user = decoded;
     next();

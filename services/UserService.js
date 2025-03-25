@@ -12,6 +12,7 @@ const categoryService = require('../services/categoryService')
 const blogService= require('../services/blogService')
 const notifyService = require('../services/notificationService')
 const removeDiacritics = require('diacritics').remove;
+const ElasticsearchService = require('../services/elasticsearchService');
 const Access = require('../models/accessModel')
 class UserService {
 static getUserInfo = async (userId) => {
@@ -855,9 +856,13 @@ static search =async(keyword, type, authenticatedUser) =>
   const regex = new RegExp(keyword, 'i');
   const user = await usermodel.findById(authenticatedUser._id);
   if(type==='Blog')
-  {
-    const blogs = await blogService.listBlogSearch(user, keyword)
-    return blogs;
+  // {
+  //   const blogs = await blogService.listBlogSearch(user, keyword)
+    
+  //   return blogs;
+  // }
+  if (type === 'Blog') {
+    return await ElasticsearchService.searchBlogs(keyword);
   }
   if(type==='Category'){
     const categories = await categoryService.listCategorySearch(user, keyword) 

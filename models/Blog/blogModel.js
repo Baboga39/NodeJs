@@ -1,6 +1,7 @@
 // models/Blog.js
 const mongoose = require('mongoose');
 const autopopulate = require('mongoose-autopopulate');
+const ElasticsearchService = require('../../services/elasticsearchService');
 const Tag = require('./tagModel');
 if (mongoose.models.Blog) {
     delete mongoose.models.Blog;
@@ -82,7 +83,11 @@ blogSchema.post('save', async function () {
 
   const count = await this.model('Blog').countDocuments({ tags: { $in: this.tags } });
 
+
   await Tag.updateMany({ _id: { $in: this.tags } }, { sumBlog: count });
+
+  await ElasticsearchService.indexBlog(this);
+  
   blogSchema.post('save', async function () {
     const count = await this.model('Blog').countDocuments({ tags: { $in: this.tags } });
     await Tag.updateMany({ _id: { $in: this.tags } }, { sumBlog: count });
